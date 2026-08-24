@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Repository Revision Metadata &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Protocol Revision Metadata" href="protocol.html">
+    <link rel="prev" title="Revisioning Interface" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Revisioning<br>Repository Revision Metadata</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell on" href="index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="repository-revision-metadata">
+<div class="rail"><div class="vlabel">revisioning</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Revisioning Interface</p>
+<h1>Repository Revision Metadata</h1>
+<p>Each Dydra repository possesses two kinds of metadata: intrinsic  and historic.
+Information about revisions belongs to the historic data which is made available
+primarily in the form of a <cite>timemap</cite>.
+This section describes metadata which Dydra maintains on repository
+revisions, how to retrieve this information, and how to use it to
+perform revision-specific queries.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#revision-id"><span class="tn">01</span> Revision ID</a></li>
+<li><a href="#metadata"><span class="tn">02</span> Metadata</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="revision-id">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">revision id</div></div>
+<div class="content">
+<h2>Revision ID</h2>
+<p>Each revision is identified by the <a class="reference external" href="https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_1_(date-time_and_MAC_address)">UUID</a> of the transaction which created it.
+The UUID are type 1, which means they comprise the location of the service host on which the transaction
+originated and a time sequence value.</p>
+<p>Beyond its identifier, the intrinsic metadata, which includes things like the repository name or
+its description, the supported access methods, protocols, and locations
+is the primary subject the repository <a class="reference external" href="http://www.w3.org/TR/sparql11-service-description/">service description</a>.
+In combination with a revision specification, however, the service description
+carries also historic metadata in the form of the constituent graphs
+contingent on the revision.</p>
+</div>
+</section>
+<section class="section" id="metadata">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">metadata</div></div>
+<div class="content">
+<h2>Metadata</h2>
+<div class="subsection" id="historic-metadata-timemap">
+<h3>Historic Metadata - timemap</h3>
+<p>A repository history is available as a <a class="reference external" href="http://www.mementoweb.org/guide/rfc/ID/">timemap</a> .
+This enumerates the revisions as subjects of type
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:Revision&gt;</span></code> with <code class="docutils literal notranslate"><span class="pre">&lt;http://www.mementoweb.org/terms/tb/start&gt;</span></code>
+and, optionally, <code class="docutils literal notranslate"><span class="pre">&lt;http://www.mementoweb.org/terms/tb/end&gt;</span></code> properties
+to indicate their respective temporal bounds.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -s -L -H &quot;Accept: application/link-format&quot; &quot;http://dydra.com/statistics/dydra.com&quot; \
+  | rapper --quiet -i ntriples -o turtle /dev/stdin -
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+&lt;http://dydra.com/statistics/dydra.com&gt;
+    &lt;http://purl.org/dc/terms/created&gt; &quot;2013-04-21T10:10:51Z&quot;^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; ;
+    &lt;http://purl.org/dc/terms/modified&gt; &quot;2013-04-21T10:10:51Z&quot;^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; ;
+    &lt;http://www.mementoweb.org/terms/tb/covers&gt; [
+        &lt;http://www.mementoweb.org/terms/tb/start&gt; &quot;2013-04-21T03:40:26Z&quot;^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; ;
+        a &lt;http://www.mementoweb.org/terms/tb/Period&gt;
+    ] ;
+    &lt;http://www.mementoweb.org/terms/tb/timeGateFor&gt; &lt;http://dydra.com/statistics/dydra.com&gt; ;
+    &lt;http://www.openarchives.org/ore/terms/describes&gt; [
+        &lt;http://purl.org/dc/elements/1.1/title&gt; &quot;Memento Time Bundle for &#39;http://dydra.com/statistics/dydra.com&#39;&quot; ;
+        &lt;http://www.openarchives.org/ore/terms/aggregates&gt; &lt;http://dydra.com/statistics/dydra.com&gt;,
+                                                           &lt;urn:dydra:revision:dcb8778f-e823-d84e-9d3e-dce6f563d0d7&gt; ;
+        a &lt;http://www.mementoweb.org/terms/tb/TimeBundle&gt;,
+          &lt;http://www.openarchives.org/ore/terms/Aggregation&gt;
+    ] ;
+    a &lt;http://www.mementoweb.org/terms/tb/OriginalResource&gt;,
+      &lt;http://www.mementoweb.org/terms/tb/TimeGate&gt;,
+      &lt;http://www.mementoweb.org/terms/tb/TimeMap&gt;,
+      &lt;http://www.openarchives.org/ore/terms/ResourceMap&gt; .
+
+&lt;urn:dydra:revision:dcb8778f-e823-d84e-9d3e-dce6f563d0d7&gt;
+    &lt;http://www.mementoweb.org/terms/tb/mementoFor&gt; &lt;http://dydra.com/statistics/dydra.com&gt; ;
+    &lt;http://www.mementoweb.org/terms/tb/validOver&gt; [
+        &lt;http://www.mementoweb.org/terms/tb/start&gt; &quot;2013-04-21T03:40:26Z&quot;^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; ;
+        a &lt;http://www.mementoweb.org/terms/tb/Period&gt;
+    ] ;
+    a &lt;http://www.mementoweb.org/terms/tb/Memento&gt;,
+      &lt;urn:dydra:Revision&gt; .
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="static-metadata-service-description">
+<h3>Static Metadata - service-description</h3>
+<p>A repository service description enumerates the graphs and statement counts for the
+respective revision, in addition to intrinsic metadata.
+When no revision is specified, the document describes the latest revision.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -s -L &quot;http://dydra.com/statistics/dydra.com&quot; \
+  | rapper --quiet -i ntriples -o turtle /dev/stdin -
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+&lt;http://dydra.com/statistics/dydra.com&gt;
+    a &lt;http://www.w3.org/ns/sparql-service-description#Service&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#availableGraphs&gt; [
+        a &lt;http://www.w3.org/ns/sparql-service-description#GraphCollection&gt; ;
+        &lt;http://www.w3.org/ns/sparql-service-description#namedGraph&gt;
+          &lt;http://dydra.com/jhacker/149-describe-1&gt;,
+          &lt;http://dydra.com/jhacker/726-base&gt;,
+          &lt;http://dydra.com/jhacker/726-provenance&gt;,
+          &lt;http://dydra.com/jhacker/aggregates-agg-avg-01&gt;,
+          # ...
+          &lt;urn:dydra:all&gt;, &lt;urn:dydra:default&gt;, &lt;urn:dydra:named&gt;
+    ] ;
+    &lt;http://www.w3.org/ns/sparql-service-description#defaultDataset&gt; [
+        a &lt;http://www.w3.org/ns/sparql-service-description#Dataset&gt; ;
+        &lt;http://www.w3.org/ns/sparql-service-description#defaultGraph&gt; &lt;urn:dydra:default&gt;
+    ] ;
+    &lt;http://www.w3.org/ns/sparql-service-description#endpoint&gt; &lt;http://dydra.com/statistics/dydra.com&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#inputFormat&gt;
+      &lt;http://www.w3.org/ns/formats/N-Triples&gt;,
+      &lt;http://www.w3.org/ns/formats/RDF_XML&gt;,
+      &lt;http://www.w3.org/ns/formats/Turtle&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#resultFormat&gt;
+      &lt;http://www.w3.org/ns/formats/RDF_XML&gt;,
+      &lt;http://www.w3.org/ns/formats/SPARQL_Results_CSV&gt;,
+      &lt;http://www.w3.org/ns/formats/SPARQL_Results_JSON&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#supportedLanguage&gt;
+      &lt;http://www.w3.org/ns/sparql-service-description#SPARQL10Query&gt;,
+      &lt;http://www.w3.org/ns/sparql-service-description#SPARQL11Query&gt;,
+      &lt;http://www.w3.org/ns/sparql-service-description#SPARQL11Update&gt; .
+
+&lt;http://dydra.com/jhacker/149-describe-1&gt;
+    &lt;http://rdfs.org/ns/void#triples&gt; 118 ;
+    a &lt;http://www.w3.org/ns/sparql-service-description#NamedGraph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;http://dydra.com/jhacker/149-describe-1&gt; .
+
+&lt;http://dydra.com/jhacker/726-base&gt;
+    &lt;http://rdfs.org/ns/void#triples&gt; 272 ;
+    a &lt;http://www.w3.org/ns/sparql-service-description#NamedGraph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;http://dydra.com/jhacker/726-base&gt; .
+
+&lt;http://dydra.com/jhacker/726-provenance&gt;
+    &lt;http://rdfs.org/ns/void#triples&gt; 578 ;
+    a &lt;http://www.w3.org/ns/sparql-service-description#NamedGraph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;http://dydra.com/jhacker/726-provenance&gt; .
+
+&lt;http://dydra.com/jhacker/aggregates-agg-avg-01&gt;
+    &lt;http://rdfs.org/ns/void#triples&gt; 119 ;
+    a &lt;http://www.w3.org/ns/sparql-service-description#NamedGraph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;http://dydra.com/jhacker/aggregates-agg-avg-01&gt; .
+
+# ...
+
+&lt;urn:dydra:all&gt;
+    a &lt;http://www.w3.org/ns/sparql-service-description#Graph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;urn:dydra:all&gt; .
+
+&lt;urn:dydra:default&gt;
+    &lt;http://rdfs.org/ns/void#triples&gt; 0 ;
+    a &lt;http://www.w3.org/ns/sparql-service-description#Graph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;urn:dydra:default&gt; .
+
+&lt;urn:dydra:named&gt;
+    a &lt;http://www.w3.org/ns/sparql-service-description#Graph&gt; ;
+    &lt;http://www.w3.org/ns/sparql-service-description#name&gt; &lt;urn:dydra:named&gt; .
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> Revisioning Interface</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Revisioning Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="protocol.html"><span class="dir">Next</span> Protocol Revision Metadata</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

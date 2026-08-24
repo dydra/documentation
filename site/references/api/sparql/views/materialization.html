@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>View Materialization &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="View Management" href="management.html">
+    <link rel="prev" title="View Requests" href="requests.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>View Materialization</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="view-materialization">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; SPARQL Views</p>
+<h1>View Materialization</h1>
+<p>Dydra extends the W3C SPARQL HTTP Protocol to permit access to repositories
+which constitute materialized views.
+The facility permits to materialize the results for any query defined in a repository’s web
+interface under</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/&#64;query</span></code></p>
+</div></blockquote>
+<p>A materialized request is a GET request to the repository which stores the materialized cache.
+As a convention, these repositories carry a name which combines the name of the base repository
+with that of the view and an indicator for the view form.
+Each view form interprets the requst argument values and yields results
+respective its index.
+(See <a class="reference internal" href="../../graphstore/materialization.html#materializedrepositorymanagement"><span class="std std-ref">Materialized Repository Management</span></a> .)</p>
+</div>
+</section>
+<section class="section" id="get">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">get</div></div>
+<div class="content">
+<span id="materializedrepositoryrequests"></span><h2>GET</h2>
+<p>A GET request to a <code class="docutils literal notranslate"><span class="pre">view</span></code> endpoint returns the results from materialized form
+which correspond to the query argument values</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;source-repository-name&gt;__&lt;view-name&gt;__view/sparql?parameterName=argumentValue</span></code></p>
+</div></blockquote>
+<p>The accept type should correspond to the form of the source query, which may be either a SELECT or and CONSTRUCT.</p>
+<p>The index and result generation process  varies respective the view repository type</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 61%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>repository class</p></th>
+<th class="head"><p>processing</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">internal-view-repository</span></code></p></td>
+<td><ul class="simple">
+<li><p>parameters are established by the associated query</p></li>
+<li><p>request argument values permit any term type</p></li>
+<li><p>the solution set or graph reflects the projection
+or construct template of the associated query</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">internal-text-repository</span></code></p></td>
+<td><ul class="simple">
+<li><p>the string pattern is the one parameter</p></li>
+<li><p>the request argument values permits a string only</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">internal-text-view-repository</span></code></p></td>
+<td><ul class="simple">
+<li><p>parameters are established by the associated query</p></li>
+<li><p>request argument values permit strings only</p></li>
+<li><p>the solution set or graph reflects the projection
+or construct template of the associated query</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the SPARQL response document media type.</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="query-arguments">
+<h3>Query Arguments</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">$&lt;parameterName&gt;=&quot;&lt;argumentValue&gt;&quot;</span></code></div>
+</div>
+</div></blockquote>
+<p>nb. the URL formulation should observe url encoding rules.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="requests.html"><span class="dir">Previous</span> View Requests</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL Views</a>
+    <span class="spacer"></span>
+    <a class="cell" href="management.html"><span class="dir">Next</span> View Management</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

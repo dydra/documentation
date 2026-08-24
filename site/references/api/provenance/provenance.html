@@ -1,0 +1,253 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Provenance &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Revisioning Interface" href="../revisioning/index.html">
+    <link rel="prev" title="Provenance Interface" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Provenance<br>Provenance</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell on" href="index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="provenance">
+<div class="rail"><div class="vlabel">provenance</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Provenance Interface</p>
+<h1>Provenance</h1>
+<p><a class="reference external" href="http://www.w3.org/TR/prov-overview/">Provenance</a> concerns
+information about how an entity came to be and about its contributions
+towards the existence of others. Dydra exposes meta-data about
+repositories sufficient to answer questions about - data lineage -
+retrospective repository state - responsibility for changes</p>
+<p>Lineage is first-order only. That is, the information about a
+transaction enumerates the data set constituents at the level of graphs.
+In does not describe dependencies at the level of individual inserted or
+deleted statement, <a class="reference internal" href="#cui2001" id="id2"><span>[cui2001]</span></a> and no attempt is made to identify graph
+subcomponents <a class="reference internal" href="#ding2005" id="id3"><span>[ding2005]</span></a> .</p>
+<p>Each repository can specify a respective provenance repository. This is
+reflected in the base repository’s service description as a
+prov:hasProvenanceService association. along with additional
+prov:hasProvenance associations to aid discovery for revisions. In
+addition refrences appear in SPARQL protocol responses in the HTTP
+response headers, as proposed by PROV-AQ<a class="reference internal" href="#prov-aq" id="id4"><span>[prov-aq]</span></a>(3.1) - the query
+response header rel=’prov:has_query_service’ specifies as the anchor the
+sparql query service for the respective provenance repository. - the
+query response header rel=’prov:has_provenance’ specifies as the anchor the
+graph identifier for repository revision effective for the query</p>
+<hr class="docutils" />
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#provenance-schema"><span class="tn">01</span> Provenance Schema</a></li>
+<li><a href="#provenance-information"><span class="tn">02</span> Provenance Information</a></li>
+<li><a href="#a-simple-example"><span class="tn">03</span> A Simple Example</a></li>
+<li><a href="#query-responses"><span class="tn">04</span> Query Responses</a></li>
+<li><a href="#configuration"><span class="tn">05</span> Configuration</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="provenance-schema">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">provenance schema</div></div>
+<div class="content">
+<h2>Provenance Schema</h2>
+<p>The schema derives from the w3c <a class="reference external" href="prov-o">proposed provenance ontology</a> .</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>@prefix : &lt;urn:dydra:&gt; .
+@prefix prov: &lt;http://www.w3.org/ns/prov#&gt; .
+:Transaction rdfs:subClassOf [prov:Activity](http://www.w3.org/TR/prov-o/#Activity) .
+:Revision rdfs:subClassOf [prov:Entity](http://www.w3.org/TR/prov-o/#Entity) .
+:Graph rdfs:subClassOf [prov:Entity](http://www.w3.org/TR/prov-o/#Entity) .
+:Account rdfs:subClassOf [prov:Agent](http://www.w3.org/TR/prov-o/#Agent) .
+:Operation rdfs:subClassOf [prov:Entity](http://www.w3.org/TR/prov-o/#Entity) .
+:Query rdfs:subClassOf :operation .
+:Repository rdfs:subClassOf [prov:Collection](http://www.w3.org/TR/prov-o/#) .
+</pre></div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="provenance-information">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">provenance information</div></div>
+<div class="content">
+<h2>Provenance Information</h2>
+<p>The provenance information is compiled subsequent to each update request
+when a provenance repository has been specified. It states the
+identities of the transaction entities: account, repository, query,
+transaction, and generated revision. For each of those, it records
+the following subject and associations:</p>
+<div class="subsection" id="account">
+<h3>Account</h3>
+</div>
+<div class="subsection" id="repository">
+<h3>Repository</h3>
+<ul class="simple">
+<li><p>prov:wasAssociatedWith : the account</p></li>
+<li><p>prov:hadMember : the revision</p></li>
+<li><p>as graph : the context for the query, transaction, and revision
+statements</p></li>
+</ul>
+</div>
+<div class="subsection" id="query">
+<h3>Query</h3>
+<ul class="simple">
+<li><p><a class="reference external" href="urn:dydra:signature">urn:dydra:signature</a> : the query text hash sum</p></li>
+<li><p><a class="reference external" href="urn:dydra:user_id">urn:dydra:user_id</a> : the request identifier supplied by the client</p></li>
+</ul>
+</div>
+<div class="subsection" id="transaction">
+<h3>Transaction</h3>
+<ul class="simple">
+<li><p>prov:used : the parent revision (unless initial)</p></li>
+<li><p>prov:generated : the revision</p></li>
+<li><p>prov:hadPlan : the query</p></li>
+<li><p>prov:startedAtTime, prov:endedAtTime</p></li>
+<li><p>prov:wasRevisionOf : the parent revision (unless initial)</p></li>
+</ul>
+</div>
+<div class="subsection" id="revision">
+<h3>Revision</h3>
+<ul class="simple">
+<li><p>prov:wasDerivedFrom : read graphs</p></li>
+<li><p>prov:wasGeneratedBy : the transaction</p></li>
+<li><p>prov:wasInvalidateBy : the succeeding transaction (if applicable)</p></li>
+<li><p>prov:wasRevisionOf : the parent revision</p></li>
+<li><p>prov:wasUsedBy : the succeeding transaction (if applicable)</p></li>
+<li><p>prov:startedAtTime</p></li>
+</ul>
+</div>
+<div class="subsection" id="parent-revision">
+<h3>Parent Revision</h3>
+<ul class="simple">
+<li><p>prov:endedAtTime</p></li>
+</ul>
+</div>
+<div class="subsection" id="graphs">
+<h3>Graphs</h3>
+<ul class="simple">
+<li><p>prov:wasGeneratedBy, prov:wasInvalidatedBy, prov:wasInfluencedBy :
+the transaction, depending on creation, deletion, or modification.</p></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="section heavy" id="a-simple-example">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">a simple example</div></div>
+<div class="content">
+<h2>A Simple Example</h2>
+<p>The information collected in a provenance repository after a simple sequence of three
+of three updates was performed on its base repository would appear as
+follows:</p>
+<a class="reference internal image-reference" href="../_images/provenance.svg"><img alt="../_images/provenance.svg" src="../_images/provenance.svg" width="100%" /></a>
+</div>
+</section>
+<section class="section heavy" id="query-responses">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">query responses</div></div>
+<div class="content">
+<h2>Query Responses</h2>
+<p>Update query responses include links to provenance information in the
+headers and or the encoded body, depending on the particular encoding. (NYI)</p>
+<div class="subsection" id="html">
+<h3>HTML</h3>
+<p>For html responses - eg. the query editor page, provenance and
+provenance-service links should be present along with an anchor link to
+the abstract repositiory, in the head. (NYI)</p>
+</div>
+<div class="subsection" id="rdf">
+<h3>RDF</h3>
+<p>For RDF responses, the
+prov:hasProvenance, prov:hasAnchor, and prov:hasProvenanceService
+properties should be incorporated into the encoded result. <a class="reference internal" href="#prov-o" id="id5"><span>[prov-o]</span></a>,[prov-aq]_(3.2.1) (NYI)</p>
+</div>
+</div>
+</section>
+<hr class="docutils" />
+<section class="section" id="configuration">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">configuration</div></div>
+<div class="content">
+<h2>Configuration</h2>
+<p>In order to enable provenance processing:</p>
+<ul>
+<li><p>Configure the base repository to record provenance data</p>
+<p><code class="docutils literal notranslate"><span class="pre">&lt;&gt;</span> <span class="pre">&lt;urn:dydra:provenanceRepositoryId&gt;</span> <span class="pre">&lt;http://localhost/account/provenance-repo-id&gt;</span></code></p>
+</li>
+<li><p>Specify the repository as a request pragma</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PREFIX provenanceRepositoryId: &lt;http://localhost/account/provenance-repo-id&gt;
+INSERT DATA {
+  http://examle.org/uri1/0001 &#39;object~:0001&#39; .
+  http://examle.org/uri1/0001 rdf:type http://example.org/thing .
+}
+</pre></div>
+</div>
+<hr class="docutils" />
+<dl class="citation">
+<dt class="label" id="cui2001"><span class="brackets"><a class="fn-backref" href="#id2">cui2001</a></span></dt>
+<dd><p><a class="reference external" href="ftp://db.stanford.edu/pub/dbpubs/2001/56/56.pdf.gz">ftp://db.stanford.edu/pub/dbpubs/2001/56/56.pdf.gz</a></p>
+</dd>
+<dt class="label" id="ding2005"><span class="brackets"><a class="fn-backref" href="#id3">ding2005</a></span></dt>
+<dd><p><a class="reference external" href="ftp://www.ksl.stanford.edu/local/pub/KSL_Reports/KSL-05-06.pdf">ftp://www.ksl.stanford.edu/local/pub/KSL_Reports/KSL-05-06.pdf</a></p>
+</dd>
+<dt class="label" id="prov-aq"><span class="brackets"><a class="fn-backref" href="#id4">prov-aq</a></span></dt>
+<dd><p><a class="reference external" href="http://www.w3.org/TR/prov-aq/#resource-accessed-by-http">http://www.w3.org/TR/prov-aq/#resource-accessed-by-http</a></p>
+</dd>
+<dt class="label" id="prov-o"><span class="brackets"><a class="fn-backref" href="#id5">prov-o</a></span></dt>
+<dd><p><a class="reference external" href="http://www.w3.org/TR/prov-o/">http://www.w3.org/TR/prov-o/</a></p>
+</dd>
+</dl>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> Provenance Interface</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Provenance Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../revisioning/index.html"><span class="dir">Next</span> Revisioning Interface</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

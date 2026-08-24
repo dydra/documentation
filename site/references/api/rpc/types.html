@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Data Types &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">JSON-RPC<br>Data Types</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="data-types">
+<div class="rail"><div class="vlabel">json-rpc</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Native RPC Interface</p>
+<h1>Data Types</h1>
+<p>This section describes the supported data types for values provided as
+arguments to RPC operations and returned as the results of RPC operations.</p>
+<p>The available data types are the intersection of the data types supported by
+both the JSON-RPC and XML-RPC protocols.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#scalar-types"><span class="tn">01</span> Scalar Types</a></li>
+<li><a href="#composite-types"><span class="tn">02</span> Composite Types</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="scalar-types">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">scalar types</div></div>
+<div class="content">
+<h2>Scalar Types</h2>
+<p>The RPC interface supports five basic scalar data types, available in
+virtually all commonly-used programming languages:</p>
+<div class="subsection" id="null">
+<h3>null</h3>
+<p>The canonical <code class="docutils literal notranslate"><span class="pre">null</span></code> value.</p>
+</div>
+<div class="subsection" id="bool">
+<h3>bool</h3>
+<p>The boolean <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code> truth values.</p>
+</div>
+<div class="subsection" id="int">
+<h3>int</h3>
+<p>A signed long (64-bit) integer.</p>
+</div>
+<div class="subsection" id="float">
+<h3>float</h3>
+<p>A signed double-precision (64-bit) floating-point number.</p>
+</div>
+<div class="subsection" id="string">
+<h3>string</h3>
+<p>A Unicode character string.</p>
+</div>
+</div>
+</section>
+<section class="section" id="composite-types">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">composite types</div></div>
+<div class="content">
+<h2>Composite Types</h2>
+<div class="subsection" id="array">
+<h3>array</h3>
+<p>An ordered sequence of values. The values may be of any supported data type.</p>
+</div>
+<div class="subsection" id="struct">
+<h3>struct</h3>
+<p>An unordered set of key-value mappings. The keys are always strings, but the
+values may be of any supported data type.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Up</span> Native RPC Interface</a>
+    <span class="spacer"></span>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

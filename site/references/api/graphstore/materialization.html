@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Graph Store View Materialization HTTP Protocol &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="GSP Request Succession" href="successors.html">
+    <link rel="prev" title="Graph Store Replication HTTP Protocol" href="replication.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Graph store<br>Graph Store View Materialization HTTP Protocol</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell on" href="index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="graph-store-view-materialization-http-protocol">
+<div class="rail"><div class="vlabel">graph store</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Graph Store HTTP Protocol Interface</p>
+<h1>Graph Store View Materialization HTTP Protocol</h1>
+<p>The “Graph View Materialization Protocol”
+extends the W3C “SPARQL Graph Store HTTP Protocol”
+to manage the state of materialized view repositories as a side-effect of graph store requests.</p>
+<p>A materialized view repository differs from a standard repository in that
+its content represents the results from applying a view to a base repository.
+The content is generated subsequent to a DELETE request to the materialized view repository
+and retained until the next DELETE.</p>
+<p>both SELECT and CONSTRUCT source views are permitted.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#materialization-requests"><span class="tn">01</span> Materialization Requests</a></li>
+<li><a href="#materialized-repository-management"><span class="tn">02</span> Materialized Repository Management</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="materialization-requests">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">materialization</div></div>
+<div class="content">
+<h2>Materialization Requests</h2>
+<p>Materialization requests are adressed to the graph store materialized repository end point
+in the form of a DELETE request</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;source-repository-name&gt;__&lt;view-name&gt;__&lt;view-form&gt;/service</span></code></p>
+</div></blockquote>
+<p>The consequence is that the cached view result state is cleared and replaced with that
+from applying the view to the source repository anew.
+This cache is augmented with indices for those variables in the view query which are prefixed with <code class="docutils literal notranslate"><span class="pre">$</span></code> rather
+than <code class="docutils literal notranslate"><span class="pre">?</span></code> .
+At least one must be present in order that the materialization process succeed.</p>
+<p>A successful update to the materialization cache is reported to a specified location in the form of the
+same graph store response as returned for an immediate update.
+The direct response is a ‘204.</p>
+<div class="subsection" id="head">
+<h3>HEAD</h3>
+<p>A HEAD returns the repository description, as for a standard repository.</p>
+<div class="subsection" id="headers">
+<h4>Headers</h4>
+</div>
+</div>
+<div class="subsection" id="delete">
+<h3>DELETE</h3>
+<p>A DELETE request regenerates the cached content.
+It executes the respective view query against the base repository and records the results
+in the materialzed cache.
+The request is executed asynchronously, with the final status reported to the specified location.</p>
+<div class="subsection" id="id1">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept-Asynchronous: notify.</div>
+<div class="line">Asynchronous-Method: the asynchronous response method</div>
+<div class="line">Asynchronous-Location: the http request location for the asynchronous notification</div>
+<div class="line">Asynchronous-Content-Type: the asynchronous response content type</div>
+<div class="line">Authorization: the request and notification authentication information</div>
+<div class="line">Client-Request-ID: the client id to be relayed with the asynchronous response</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="get">
+<h3>GET</h3>
+<p>A GET request is not defined.
+(See <a class="reference internal" href="../sparql/views/materialization.html#materializedrepositoryrequests"><span class="std std-ref">GET</span></a> .)</p>
+</div>
+<div class="subsection" id="put">
+<h3>PUT</h3>
+<p>A PUT request is not defined.</p>
+</div>
+<div class="subsection" id="post">
+<h3>POST</h3>
+<p>A POST request is not defined.</p>
+</div>
+<div class="subsection" id="patch">
+<h3>PATCH</h3>
+<p>A PATCH request is not defined.</p>
+</div>
+</div>
+</section>
+<section class="section" id="materialized-repository-management">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">materialized</div></div>
+<div class="content">
+<span id="materializedrepositorymanagement"></span><h2>Materialized Repository Management</h2>
+<div class="subsection" id="creation">
+<h3>Creation</h3>
+<p>Each view is maintained as a distinct repository which corresponds to a view on a source repository.
+In order to create a view, create a repository with a name which follows the pattern</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&lt;source-repository-name&gt;__&lt;view-name&gt;__&lt;view-form&gt;</span></code></p>
+</div></blockquote>
+<p>The update process compares the source view with the attributes of an existing cache before
+it performs an update and recreates the cache if the source view has changed.</p>
+</div>
+<div class="subsection" id="index">
+<h3>Index</h3>
+<p>When the view is first generated, an index is created for each combination of those
+query variables in the named view
+sparql text which begin with <code class="docutils literal notranslate"><span class="pre">$</span></code> .</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 79%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>form</p></th>
+<th class="head"><p>index</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">view</span></code></p></td>
+<td><p>a term number index is created for each parameter
+combination.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">textview</span></code></p></td>
+<td><ul class="simple">
+<li><p>a distinct text index is created for each parameter</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note that each index name combines the names of the source repository, the view, and the parameter.
+The name must be no longer than sixty-three characters.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="replication.html"><span class="dir">Previous</span> Graph Store Replication HTTP Protocol</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="successors.html"><span class="dir">Next</span> GSP Request Succession</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

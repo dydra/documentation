@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>HTTP Request Parameters &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Sparql Response" href="response.html">
+    <link rel="prev" title="SPARQL 1.1 Protocol Interface" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>HTTP Request Parameters</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="http-request-parameters">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>HTTP Request Parameters</h1>
+<p>When Dydra processes a query request, it combines the algebra expression which it generates from the query text
+with several bits of metadata which it extracts from the protocol request or gathers from
+the request repository and system configuration.</p>
+<p>Some of the properties are specified in the standards for the SPARQL language and request protocols.
+Others are specific to Dydra’s processing interface. Some are implicit in the standards,
+but no means is described to include them in a request. This document describes how to
+set these properties, either for individual queries or for all processing for a repostiory
+or an account, how these settings interact, and how a given effective setting affects the query processing.</p>
+<p>The following properties govern query execution</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>request
+protocol</p></th>
+<th class="head"><p>request
+text</p></th>
+<th class="head"><p>repository
+configuration</p></th>
+<th class="head"><p>account
+configuration</p></th>
+<th class="head"><p>system
+configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>access authentication <a class="reference internal" href="../glossary.html#term-api-key"><span class="xref std std-term">key</span></a> :</p>
+<ul class="simple">
+<li><p>authentication-key. api-key (string)</p></li>
+</ul>
+</td>
+<td><p>URL,
+HEADER</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-base-iri"><span class="xref std std-term">base iri</span></a> :</p>
+<ul class="simple">
+<li><p>base-iri (iri)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>BASE</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-user-query-id"><span class="xref std std-term">user query id</span></a> :</p>
+<ul class="simple">
+<li><p>Client-Request-ID (string)</p></li>
+</ul>
+</td>
+<td><p>HEADER</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-dataset"><span class="xref std std-term">dataset</span></a> :</p>
+<ul>
+<li><p>named-graphs, named-graph-uri (iri list)</p></li>
+<li><p>default-graphs, default-graph-iri (iri list)</p></li>
+<li><p>default-context-term (urn) :</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:all&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:default&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:named&gt;</span></code></div>
+</div>
+</li>
+<li><p>named-contexts-term (urn) :</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:all&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:default&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:named&gt;</span></code></div>
+</div>
+</li>
+</ul>
+</td>
+<td></td>
+<td><p>FROM,
+FROM-NAMED,
+WITH,
+WITH-NAMED</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>request
+protocol</p></th>
+<th class="head"><p>request
+text</p></th>
+<th class="head"><p>repository
+configuration</p></th>
+<th class="head"><p>account
+configuration</p></th>
+<th class="head"><p>system
+configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-describe-form"><span class="xref std std-term">describe form</span></a>:</p>
+<ul>
+<li><p>describe-form (urn) :</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:simple-concise-bounded-description&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:simple-symmetric-concise-bounded-description&gt;</span></code></div>
+</div>
+</li>
+<li><p>describe-subject-depth (integer)</p></li>
+<li><p>describe-object-depth (integer)</p></li>
+<li><p>describe-properties :</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:true&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:false&gt;</span></code></div>
+</div>
+</li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-dynamic-binding"><span class="xref std std-term">dynamic binding</span></a> :</p>
+<ul class="simple">
+<li><p>$<em>variable</em>=<em>value</em></p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-entailment"><span class="xref std std-term">entailment</span></a> mode :</p>
+<ul class="simple">
+<li><p>entailment-ruleset, ruleset (iri list)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>request
+protocol</p></th>
+<th class="head"><p>request
+text</p></th>
+<th class="head"><p>repository
+configuration</p></th>
+<th class="head"><p>account
+configuration</p></th>
+<th class="head"><p>system
+configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-federation"><span class="xref std std-term">federation</span></a> mode :</p>
+<ul>
+<li><p>federation, federation-mode (urn):</p>
+<div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:external&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:internal&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:none&gt;</span></code></div>
+</div>
+</li>
+<li><p>authorized-client-locations (iri, repository only)</p></li>
+<li><p>authorized-service-locations (iri, repository only)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-index"><span class="xref std std-term">index</span></a>:</p>
+<ul class="simple">
+<li><p>property-index (list string iri)</p></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-processing-bounds"><span class="xref std std-term">processing bounds</span></a>:</p>
+<ul class="simple">
+<li><p>memory-limit (integer)</p></li>
+<li><p>solution-limit (integer)</p></li>
+<li><p>time-limit, timeout (integer)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-provenance-information"><span class="xref std std-term">provenance mode</span></a> :</p>
+<ul class="simple">
+<li><p>provenance-repository-id (string)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>request
+protocol</p></th>
+<th class="head"><p>request
+text</p></th>
+<th class="head"><p>repository
+configuration</p></th>
+<th class="head"><p>account
+configuration</p></th>
+<th class="head"><p>system
+configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-repository"><span class="xref std std-term">repository</span></a> id:</p>
+<ul class="simple">
+<li><p>repository-id (string)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-response-bounds"><span class="xref std std-term">response bounds</span></a> :</p>
+<ul class="simple">
+<li><p>limit, response-limit (integer)</p></li>
+<li><p>offset, response-offset (integer)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p>response <a class="reference internal" href="../glossary.html#term-content-type"><span class="xref std std-term">content type</span></a> :</p>
+<blockquote>
+<div><p>accept, response-content-type</p>
+</div></blockquote>
+</td>
+<td><p>HEADER</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-query-text"><span class="xref std std-term">query text</span></a> :</p>
+<ul class="simple">
+<li><p>query (string)</p></li>
+</ul>
+</td>
+<td><p>URL
+DATA</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-revision"><span class="xref std std-term">revision</span></a> id :</p>
+<ul class="simple">
+<li><p>revision-uuid (string)</p></li>
+<li><p>revision-id (string)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-revision-windows"><span class="xref std std-term">revision-windows</span></a> :</p>
+<ul class="simple">
+<li><p>revision-window (string)</p></li>
+</ul>
+</td>
+<td><p>HEADER
+(MQTT)</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 52%" />
+<col style="width: 7%" />
+<col style="width: 9%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>request
+protocol</p></th>
+<th class="head"><p>request
+text</p></th>
+<th class="head"><p>repository
+configuration</p></th>
+<th class="head"><p>account
+configuration</p></th>
+<th class="head"><p>system
+configuration</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-skolemization-mode"><span class="xref std std-term">skolemization mode</span></a> :</p>
+<ul class="simple">
+<li><p>skolemize (urn) :</p></li>
+</ul>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:skolemize&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:skolemize-export&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:skolemize-import&gt;</span></code></div>
+</div>
+</div></blockquote>
+<ul class="simple">
+<li><p>skolemize-prefix (string)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-undefined-variable"><span class="xref std std-term">undefined variable</span></a> behavior :</p>
+<ul class="simple">
+<li><p>undefined-variable-behavior (urn) :</p></li>
+</ul>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:error&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:dynamic-binding&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:warning&gt;</span></code></div>
+</div>
+</div></blockquote>
+</td>
+<td><p>URL</p></td>
+<td><p>PREFIX</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+<td><p>yes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-user-query-id"><span class="xref std std-term">user query id</span></a> :</p>
+<ul class="simple">
+<li><p>user-id (string)</p></li>
+<li><p>user_id (string)</p></li>
+</ul>
+</td>
+<td><p>URL</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../glossary.html#term-xslt"><span class="xref std std-term">xslt</span></a> style sheet :</p>
+<ul class="simple">
+<li><p>xslt (iri)</p></li>
+</ul>
+</td>
+<td><p>URL
+HEADER</p></td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+<td><ul class="simple">
+<li></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../glossary.html#term-values-clauses"><span class="xref std std-term">values clauses</span></a> :</p>
+<ul class="simple">
+<li><p>values (string)</p></li>
+</ul>
+</td>
+<td><p>URL
+DATA</p></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As these parameters may be specified in a number of ways, the Dydra query processor combines the values to produce the
+setting in effect for a given request.
+For those parameters which can be specified in the request, for example, the request dataset, the <a class="reference external" href="http://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/">SPARQL protocol</a>,
+requires that the protocol request values supercede any values present in the query text itself.
+Dydra applies the same rule to all parameters and, as an extension, supercedes any configuration values with those from the request.
+Among the configuration parameters, repository settings supercede those of the respective account, which supercede those of the system.
+In the case of a limit, however, no more specific value may increase the value beyond that of a more general setting.</p>
+<p>When a request specifies a stored query, these precedence rules apply directly, as that stored query text is processed as if it were
+included in the request.</p>
+<p>When, on the other hand, the processor caches queries, the cached instance entrains several of the original effective parameters in
+its compiled form.
+As a consequence, when the query is re-executed - whether by intent with new variable bindings or implicity,
+any compiled-in variations remain unaffected by any properties which change in the subsequent request.
+This is the case for the following parameters.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>repository-id : a repository’s term and statement statistics affect pattern suppression and reordering as well as solution propagation.</p></li>
+<li><p>dataset: iff a dataset was specified, the respective complement may be changed.</p></li>
+<li><p>entailment mode : any applicable rules are compiled into the bgp interpretation.</p></li>
+<li><p>federation mode : the mode determines sub-selects generated for implicit internal and explicit external cross-references.</p></li>
+<li><p>base-iri: any initial base iri is used to expand qname terms when the query text is parsed.</p></li>
+<li><p>undefined-variable-behavior: the mode determines the mechamism generated to interpret free variable references.</p></li>
+</ul>
+</div></blockquote>
+<p>Where the request protocol indicates “MQTT”, the operation applies to streaming requests over MQTT only.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#revision-window-syntax"><span class="tn">01</span> Revision Window Syntax</a></li>
+<li><a href="#describe-form"><span class="tn">02</span> Describe Form</a></li>
+<li><a href="#query-text"><span class="tn">03</span> Query Text</a></li>
+<li><a href="#values-clauses"><span class="tn">04</span> Values Clauses</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="revision-window-syntax">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">revision window syntax</div></div>
+<div class="content">
+<h2>Revision Window Syntax</h2>
+<p>A request which intends to generate a repetitive result specifies the target revision’s temporal properties as a revision window.
+(See <a class="reference internal" href="../revisioning/protocol.html#windowspecification"><span class="std std-ref">Revision Window Specification</span></a> .)</p>
+</div>
+</section>
+<section class="section heavy" id="describe-form">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">describe form</div></div>
+<div class="content">
+<h2>Describe Form</h2>
+<p>A standard <a class="reference external" href="https://www.w3.org/Submission/CBD/">concise bounded description</a> comprises the statments which share blank nodes as subject and object terms.
+In order to include statements which share other terms, specify <cite>&lt;urn:dydra:true&gt;</cite> as the <a href="#id1"><span class="problematic" id="id2">`</span></a>describeProperties`parameter.</p>
+<p>The <cite>describeSubjectDepth</cite> refers to the depth to which a term serves to match statement subjects while the
+<cite>describeObjectDepth</cite> refers to the depth to which a term serves to match statement objects.</p>
+</div>
+</section>
+<section class="section heavy" id="query-text">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">query text</div></div>
+<div class="content">
+<h2>Query Text</h2>
+<p>The query text for a GET request is associated with the request <cite>query</cite> argument.
+This may appear as in the request URL as an argument or may be provided as an argument in a request form.</p>
+</div>
+</section>
+<section class="section" id="values-clauses">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">values clauses</div></div>
+<div class="content">
+<h2>Values Clauses</h2>
+<p>The replacement text for values clauses is provided through arguments in a request form.
+This may appear as in the request URL as an argument or may be provided as an argument in a request form.
+The argument syntax corresponds to the <a class="reference external" href="https://www.w3.org/TR/2013/REC-sparql11-query-20130321/#rDataBlock">datablock</a> production of the SPARQL query syntax.</p>
+<p>The correspondence between arguments and clauses in the query test is established on the basis of the clauses’ projection variables.
+See <a class="reference external" href="https://github.com/dydra/http-api-tests/blob/master/extensions/sparql-protocol/values/inline-query-multiple.sh">valuesClauses</a> for an example.</p>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> SPARQL 1.1 Protocol Interface</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="response.html"><span class="dir">Next</span> Sparql Response</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

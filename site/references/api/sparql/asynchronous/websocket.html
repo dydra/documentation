@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Websocket Streaming &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="Asynchronous View Processing" href="views.html">
+    <link rel="prev" title="MQTT Streaming" href="mqtt.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Websocket Streaming</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="websocket-streaming">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; Asynchronous SPARQL Processing</p>
+<h1>Websocket Streaming</h1>
+<p>Websocket streaming concerns SPARQL queries which are
+executed in through interaction with a Websocket connection.
+The connection is established through an initial WS/HTTP request.
+This “upgrades” the connection to a websocket connection,
+after which it is retained for successive request/response exchanges.</p>
+<p>These can be either synchronic requests - that is targeting a single repository version,
+or they can be diachronic requests over a version window.
+Each requst is accompanied with the requisite HTTP request headers and
+each response frame includes the corresponding response headers.</p>
+<p>executed immediately to yield the completion code, but instead are
+queued for subsequent, serialized execution and notification through
+a separate request to an external location.</p>
+<p>The request headers <code class="docutils literal notranslate"><span class="pre">Location``and</span>&#160; <span class="pre">``Content-Disposition</span></code> govern
+destination for responses.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>mode</p></th>
+<th class="head"><p>effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">notify</span></code></p></td>
+<td><p>The  request is executed asynchronously
+returning a 204 status, the task identifier
+and any user id</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execute</span></code></p></td>
+<td><p>The request is executed immediately
+with the status and the result returned as
+response</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="section" id="websocket-request-form">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">websocket request form</div></div>
+<div class="content">
+<h2>Websocket Request Form</h2>
+<p>The initial request takes the form of an HTTP request object
+which upgrades the connection to a websocket.
+This includes the minimal authentication information and
+carries client location information.</p>
+<p>Subsequent requests carry a content disposition</p>
+<div class="subsection" id="authorization">
+<h3>Authorization</h3>
+<p>The client authentication header to be used to execute the asynchronous import.</p>
+</div>
+<div class="subsection" id="client-request-id">
+<h3>Client-Request-ID</h3>
+<p>The client request id to be reported with the notification request.</p>
+</div>
+<div class="subsection" id="content-disposition">
+<h3>Content-Disposition</h3>
+<p>The client socket identifier to route responses to websocket destinations.</p>
+</div>
+<div class="subsection" id="content-type">
+<h3>Content-Type</h3>
+<p>The content type to be used to execute the asynchronous import.</p>
+</div>
+<div class="subsection" id="context">
+<h3>Context</h3>
+<p>The graph to be used to execute the asynchronous import.
+For a POST request, this will have been generated if none was provided</p>
+</div>
+<div class="subsection" id="location">
+<h3>Location</h3>
+<p>The client socket identifier to mark the created websocket as a response destination.</p>
+</div>
+<div class="subsection" id="request-id">
+<h3>Request-ID</h3>
+<p>The task id from the initial request to be used to track the asynchronous execution.</p>
+</div>
+<div class="subsection" id="revision-windows">
+<h3>Revision-Windows</h3>
+<p>An ISO-8601 temporal interval which indicates how to reiterate the query in order to
+generate a sequence of respones.
+(See <a class="reference internal" href="../../revisioning/protocol.html#windowspecification"><span class="std std-ref">Revision Window Specification</span></a> .)</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="mqtt.html"><span class="dir">Previous</span> MQTT Streaming</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Asynchronous SPARQL Processing</a>
+    <span class="spacer"></span>
+    <a class="cell" href="views.html"><span class="dir">Next</span> Asynchronous View Processing</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

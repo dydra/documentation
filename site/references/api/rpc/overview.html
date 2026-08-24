@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Overview &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">JSON-RPC<br>Overview</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="overview">
+<div class="rail"><div class="vlabel">json-rpc</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Native RPC Interface</p>
+<h1>Overview</h1>
+</div>
+</section>
+<section class="section" id="making-rpc-requests">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">making rpc requests</div></div>
+<div class="content">
+<h2>Making RPC Requests</h2>
+<p>Dydra provides a web service with an <abbr title="Remote Procedure Call">RPC</abbr>
+interface.</p>
+<p>To perform an API operation, you must encode a <cite>request message</cite> in either
+<a class="reference external" href="http://www.json.org/">JSON</a> or <a class="reference external" href="http://www.w3.org/XML/">XML</a> form, send the message (together with your authentication
+credentials) to the RPC endpoint using HTTP as the transport, and read back
+a <cite>response message</cite>. This interaction can be thought of as a remote
+procedure call, with the request message containing a method name and
+arguments for any parameters required by the method, and with the response
+message containing a result value or an error condition.</p>
+<p>This endpoint supports both the <a class="reference external" href="http://en.wikipedia.org/wiki/JSON-RPC">JSON-RPC</a> and <a class="reference external" href="http://en.wikipedia.org/wiki/XML-RPC">XML-RPC</a> protocols. The
+former is strongly preferred due to its relative simplicity and efficiency.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Tooling and library support for XML-RPC is at the time of writing still
+more ubiquitous than for JSON-RPC, but XML-RPC messages are several times
+larger on the wire than the equivalent JSON-RPC messages. JSON-RPC also
+provides additional support for advanced features such as asynchronous
+batch operations. New applications should therefore always prefer
+JSON-RPC over XML-RPC whenever feasible.</p>
+</div>
+<p>Refer to the <a class="reference external" href="http://www.jsonrpc.org/specification">JSON-RPC 2.0 Specification</a> and the <a class="reference external" href="http://xmlrpc.scripting.com/spec.html">XML-RPC Specification</a>,
+respectively, for the particulars of these RPC protocols.</p>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Up</span> Native RPC Interface</a>
+    <span class="spacer"></span>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>View Management &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="Index Management" href="index-management.html">
+    <link rel="prev" title="Repository Management" href="repository-management.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Administration<br>View Management</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell on" href="../index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="view-management">
+<div class="rail"><div class="vlabel">administration</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Administrative Resources &middot; Resource Management</p>
+<h1>View Management</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#get"><span class="tn">01</span> GET</a></li>
+<li><a href="#post"><span class="tn">02</span> POST</a></li>
+<li><a href="#delete"><span class="tn">03</span> DELETE</a></li>
+<li><a href="#id1"><span class="tn">04</span> GET</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="get">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">get</div></div>
+<div class="content">
+<h2>GET</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account</span> <span class="pre">name&gt;/repositories/&lt;repository-name&gt;/views</span></code></p>
+</div></blockquote>
+<p>Returns a json document which records the metadata about the repository views.</p>
+</div>
+</section>
+<section class="section heavy" id="post">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">post</div></div>
+<div class="content">
+<h2>POST</h2>
+<p>In order to create a view, post to the abstract account resource:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts</span></code></p>
+</div></blockquote>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="content">
+<h3>Content</h3>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;account&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;&lt;new account name&gt;&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="delete">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">delete</div></div>
+<div class="content">
+<h2>DELETE</h2>
+<p>In order to delete an view, delete the specific resource:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/views/&lt;view&gt;</span></code></p>
+</div></blockquote>
+</div>
+</section>
+<section class="section" id="id1">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">get</div></div>
+<div class="content">
+<h2>GET</h2>
+<p>Retrieve metadata concerning a given view:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/views/&lt;view&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id2">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="response">
+<h3>Response</h3>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;@type&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;view&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;location&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">host</span><span class="o">-</span><span class="nx">specific</span><span class="w"> </span><span class="nx">HTTP</span><span class="w"> </span><span class="nx">API</span><span class="w"> </span><span class="nx">URL</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;identifier&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="nx">metadata</span><span class="w"> </span><span class="nx">resource</span><span class="w"> </span><span class="nx">identifier</span>
+<span class="w"> </span><span class="s2">&quot;constructPatterns&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">construct</span><span class="w"> </span><span class="nx">query</span><span class="w"> </span><span class="nx">predicate</span><span class="w"> </span><span class="nx">patterns</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;modifyPatterns&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">update</span><span class="w"> </span><span class="nx">query</span><span class="w"> </span><span class="nx">insertion</span><span class="w"> </span><span class="nx">patterns</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;wherePatterns&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">select</span><span class="w"> </span><span class="nx">query</span><span class="w"> </span><span class="nx">insertion</span><span class="w"> </span><span class="nx">patterns</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;predicates&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">predicate</span><span class="w"> </span><span class="nx">present</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">view</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;references&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;services&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">any</span><span class="w"> </span><span class="nx">device</span><span class="w"> </span><span class="nx">locations</span><span class="w"> </span><span class="nx">present</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">view</span><span class="p">,</span>
+<span class="w">                </span><span class="s2">&quot;views&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">any</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">locations</span><span class="w"> </span><span class="nx">present</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">view</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w"> </span><span class="s2">&quot;description&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">view</span><span class="w"> </span><span class="nx">description</span><span class="w"> </span><span class="nx">text</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="repository-management.html"><span class="dir">Previous</span> Repository Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Resource Management</a>
+    <span class="spacer"></span>
+    <a class="cell" href="index-management.html"><span class="dir">Next</span> Index Management</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

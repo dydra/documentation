@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Protocol Revision Metadata &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="SPARQL Revision Metadata" href="sparql.html">
+    <link rel="prev" title="Repository Revision Metadata" href="overview.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Revisioning<br>Protocol Revision Metadata</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell on" href="index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="protocol-revision-metadata">
+<div class="rail"><div class="vlabel">revisioning</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Revisioning Interface</p>
+<h1>Protocol Revision Metadata</h1>
+<p>Revisions figure at the protocol level in two ways</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>metadata retrieval variants</p></li>
+<li><p>request revision specification</p></li>
+</ul>
+</div></blockquote>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#revision-metadata-retrieval-via-http"><span class="tn">01</span> Revision Metadata Retrieval via HTTP</a></li>
+<li><a href="#revision-designator-specification"><span class="tn">02</span> Revision Designator Specification</a></li>
+<li><a href="#revision-window-specification"><span class="tn">03</span> Revision Window Specification</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="revision-metadata-retrieval-via-http">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">revision metadata</div></div>
+<div class="content">
+<h2>Revision Metadata Retrieval via HTTP</h2>
+<p>Revision metadata is available both through
+content negotiation on a repository’s SPARQL service URI and
+in response to an HTTP request
+either to a repository resource specific to its timemap.</p>
+<p>The SPARQL service URI for a given repository is</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/&lt;account</span> <span class="pre">name&gt;/&lt;repository-name&gt;/sparql</span></code></p>
+</div></blockquote>
+<p>for which, a request with the single accept header <code class="docutils literal notranslate"><span class="pre">application/link-format</span></code>
+generates a Memento timemap as the response. For example</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>GET /jhacker/foaf
+Host: dydra.com
+Accept: application/link-format
+</pre></div>
+</div>
+<p>returns the timemap for the jhacker/foaf repository encoded in
+the link format as introduced by
+<a class="reference external" href="https://www.ietf.org/rfc/rfc6690.txt">Shelby, Z., “Constrained RESTful Environments (CoRE) Link Format”, RFC 6690, August 2012</a>.</p>
+</div>
+</section>
+<section class="section heavy" id="revision-designator-specification">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">revision designator</div></div>
+<div class="content">
+<span id="revisionidentifierspecification"></span><h2>Revision Designator Specification</h2>
+<p>Dydra accepts the URL query parameter <code class="docutils literal notranslate"><span class="pre">revision-id</span></code> in SPARQL and Graph Store protocol requests
+to indicate that the request is to apply to a specific repository revision. For
+example,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>GET /account/repository/sparql? \
+  revision-id=a7b7ff5d-a73d-1545-be41-275337a28d70&amp; \
+  query=SELECT%20(%20count(*)%20as%20%3FstatementCount%20)%0A%20%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D \
+  HTTP/1.1
+Host: dydra.com
+</pre></div>
+</div>
+<p>A specific revision is permitted for read-only queries only.
+Update operations apply to the current revision only.</p>
+<p>A Revision reference takes one of several forms, which are described below.</p>
+</div>
+</section>
+<section class="section" id="revision-window-specification">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">revision window</div></div>
+<div class="content">
+<span id="windowspecification"></span><h2>Revision Window Specification</h2>
+<p>Dydra HTTP, MQTT, and WebSockets requests may include
+a window specification in the
+the request header <code class="docutils literal notranslate"><span class="pre">Windows</span></code> (or <code class="docutils literal notranslate"><span class="pre">RevisionWindows</span></code>) or
+the URL query argument <code class="docutils literal notranslate"><span class="pre">windows</span></code> (or <code class="docutils literal notranslate"><span class="pre">revision-windows</span></code>)
+to indicate the temporal properties of the target dataset to be used to
+determine the structure of streamed results.
+The header value takes the form of a <code class="docutils literal notranslate"><span class="pre">WindowRef</span></code> of the  following syntax</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>WindowRef ::= ( &#39;R&#39; Integer ? &#39;/&#39; ) ? WindowRelation
+WindowRelation ::=  RevisionInterval ( &#39;/&#39; ( RevisionRef | XPathDuration ) ( &#39;/&#39; ( XPathDuration | Integer ) )? )?
+RevisionInterval ::= RevisionRef | (RevisionRef &#39;--&#39; RevisionRef)
+RevisionRef ::= UUID(&#39;~&#39;(&#39;+&#39;|&#39;-&#39;)?[0-9]+)? | HEAD(&#39;~&#39;(&#39;+&#39;|&#39;-&#39;)?[0-9]+)? | XPathDateTime | Integer
+</pre></div>
+</div>
+<p>The windows can be either retrospective or prospective.
+Where a revision interval is specified, the specification is retrospective.
+Where <code class="docutils literal notranslate"><span class="pre">HEAD</span></code> is provided as the revision reference, the specification is prospective.
+This means that the query is applied to revisions as they are created by modifications made to the repository.</p>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="overview.html"><span class="dir">Previous</span> Repository Revision Metadata</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Revisioning Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="sparql.html"><span class="dir">Next</span> SPARQL Revision Metadata</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

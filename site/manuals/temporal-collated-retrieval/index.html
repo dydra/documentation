@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temporal Graphs &amp; Collated Retrieval — User Guide</title>
+<style>
+  :root{ --ink:#111; --paper:#fafafa; --muted:#585858; --dcdc:#dcdcdc; --hair:#ddd; --ex:#fcfcfc; }
+  *{ box-sizing:border-box; }
+  html{ background:#e9e9e9; }
+  body{ margin:0; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; color:var(--ink);
+        background:var(--paper); -webkit-font-smoothing:antialiased; }
+  .container{ max-width:1280px; margin:0 auto; background:var(--paper);
+        border-left:1px solid var(--hair); border-right:1px solid var(--hair); }
+  a{ color:inherit; }
+  .masthead{ display:grid; grid-template-columns:1fr auto; align-items:end;
+        padding:30px 56px 18px; border-bottom:7px solid var(--ink); }
+  .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:.34em; margin-bottom:12px; }
+  .wordmark{ font-size:42px; font-weight:700; letter-spacing:-.03em; line-height:.9; }
+  .masthead .meta{ text-align:right; font-size:12px; text-transform:uppercase; letter-spacing:.18em; line-height:1.8; }
+  .title{ display:grid; grid-template-columns:88px 1fr; border-bottom:7px solid var(--ink); }
+  .title .rail{ border-right:1px solid var(--ink); position:relative; }
+  .title .content{ padding:56px 56px 54px 48px; }
+  .chapno{ font-size:12px; text-transform:uppercase; letter-spacing:.3em; color:var(--muted); margin:0 0 18px; }
+  h1{ font-size:82px; font-weight:700; line-height:.9; letter-spacing:-.04em; margin:0; max-width:15ch; text-wrap:balance; }
+  .lede{ font-size:18px; line-height:1.5; max-width:62ch; margin:34px 0 0; }
+  /* compact table of contents */
+  .toc{ margin:44px 0 0; max-width:560px; }
+  .toc-label{ font-size:11px; text-transform:uppercase; letter-spacing:.28em; color:var(--muted); margin:0 0 6px; }
+  .toc-list{ list-style:none; margin:0; padding:0; border-top:1px solid var(--ink); }
+  .toc-list li{ border-bottom:1px solid var(--hair); }
+  .toc-list a{ display:flex; align-items:baseline; gap:18px; text-decoration:none; padding:8px 0; font-size:15px; }
+  .toc-list a:hover{ opacity:.5; }
+  .toc-list .tn{ font-weight:300; letter-spacing:.05em; color:var(--muted); min-width:2ch; }
+  .section{ display:grid; grid-template-columns:88px 1fr; }
+  .section.heavy{ border-bottom:7px solid var(--ink); }
+  .rail{ border-right:1px solid var(--ink); padding-top:34px; }
+  .numeral{ font-size:58px; font-weight:300; line-height:.8; padding-left:18px; }
+  .vlabel{ writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;
+        font-size:11px; letter-spacing:.3em; margin:26px 0 0 34px; color:var(--muted); }
+  .content{ padding:36px 56px 52px 48px; }
+  h2{ font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:.24em; margin:0 0 30px; }
+  h3{ font-size:22px; font-weight:700; letter-spacing:-.02em; margin:38px 0 14px; }
+  h4{ font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.16em; margin:30px 0 12px;
+        border-bottom:3px solid var(--ink); padding-bottom:10px; }
+  p{ font-size:16px; line-height:1.55; max-width:74ch; margin:0 0 16px; }
+  ul,ol{ font-size:16px; line-height:1.55; max-width:74ch; padding-left:22px; }
+  li{ margin:0 0 8px; }
+  code{ font-family:"Courier New",Courier,"Nimbus Mono",monospace; font-size:.92em; }
+  strong{ font-weight:700; }
+  .muted{ color:var(--muted); }
+  .step{ font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--muted); }
+  /* examples: black border, almost-white ground, Courier (NOT reversed) */
+  pre{ background:var(--ex); color:var(--ink); border:1px solid var(--ink);
+        font-family:"Courier New",Courier,"Nimbus Mono",monospace;
+        font-size:13px; line-height:1.6; padding:18px 22px; overflow-x:auto; margin:18px 0 8px; }
+  pre .k{ font-weight:700; } pre .c{ color:#777; }
+  .callout{ border-left:1px solid var(--ink); padding:4px 0 4px 24px; margin:24px 0; }
+  table.data{ border-collapse:collapse; width:100%; font-size:13.5px; margin:18px 0 8px; }
+  table.data th,table.data td{ border:1px solid var(--ink); padding:9px 12px; text-align:left; }
+  table.data th{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; font-weight:700; }
+  table.data td.num{ font-variant-numeric:tabular-nums; text-align:right; }
+  .footer{ border-top:7px solid var(--ink); padding:28px 56px; display:grid; grid-template-columns:1fr auto;
+        align-items:center; gap:40px; }
+  .footer .wm{ font-size:22px; font-weight:700; }
+  .footer .fl{ font-size:12px; text-transform:uppercase; letter-spacing:.16em; text-align:right; line-height:1.9; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database · Triple Store · User Guide</div>
+      <div class="wordmark">dydra</div>
+    </div>
+    <div class="meta">User Guide · Chapter<br>Temporal Graphs</div>
+  </header>
+
+  <section class="title">
+    <div class="rail"><div class="vlabel">chapter</div></div>
+    <div class="content">
+      <p class="chapno">Chapter — Temporal graphs &amp; collated retrieval</p>
+      <h1>Query time, one sample at a time.</h1>
+      <p class="lede">Dydra can index the <em>valid time</em> your data carries and retrieve a whole
+      entity in one pass. This chapter shows how to prepare a repository, declare the temporal
+      property, shape and load a dataset, and write time-windowed collated queries — with a worked
+      example end to end.</p>
+      <nav class="toc" aria-label="Contents">
+        <div class="toc-label">Contents</div>
+        <ol class="toc-list">
+          <li><a href="#s01"><span class="tn">01</span> What this capability is</a></li>
+          <li><a href="#s02"><span class="tn">02</span> Prepare the repository</a></li>
+          <li><a href="#s03"><span class="tn">03</span> Shape &amp; load the dataset</a></li>
+          <li><a href="#s04"><span class="tn">04</span> Write the queries</a></li>
+          <li><a href="#s05"><span class="tn">05</span> A worked example — equity ticks</a></li>
+          <li><a href="#s06"><span class="tn">06</span> Getting the fast path</a></li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- 01 WHAT IT IS -->
+  <section id="s01" class="section heavy">
+    <div class="rail"><div class="numeral">01</div><div class="vlabel">the idea</div></div>
+    <div class="content">
+      <h2>What this capability is</h2>
+      <p>A great deal of graph data is a series of <strong>samples</strong>: an observation, a
+      reading, a tick, an event — each a subject with a small cluster of properties, and one of those
+      properties a timestamp. Two questions dominate:</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink);border:1px solid var(--ink);margin:8px 0;">
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">By time</h4>
+          <p style="font-size:14.5px;margin:0;">“Everything that happened between <em>t₁</em> and
+          <em>t₂</em>.” A window on the valid-time axis.</p>
+        </div>
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">By entity</h4>
+          <p style="font-size:14.5px;margin:0;">“For this sample, all of its properties together” —
+          the <em>star</em>, returned as one row rather than reassembled by the client.</p>
+        </div>
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">Both at once</h4>
+          <p style="font-size:14.5px;margin:0;">“Every sample in the window, with its whole star.”
+          The pattern this capability is built to serve.</p>
+        </div>
+      </div>
+      <p>You do not change your data model to use it. Valid time stays an ordinary typed literal —
+      an <code>xsd:dateTime</code> object on one of your predicates. You simply tell the repository
+      <em>which</em> predicate carries valid time; Dydra maintains a time-ordered index over it and
+      the query planner uses that index automatically when your query bounds that value.</p>
+    </div>
+  </section>
+
+  <!-- 02 REPOSITORY -->
+  <section id="s02" class="section heavy">
+    <div class="rail"><div class="numeral">02</div><div class="vlabel">prepare</div></div>
+    <div class="content">
+      <h2>Prepare the repository</h2>
+
+      <p class="step">Step 1 — create a temporal repository</p>
+      <p>Create the repository with the temporal storage class. This provisions the time-ordered
+      index alongside the ordinary quad indices.</p>
+      <pre><span class="c">;; create a repository that maintains a valid-time index</span>
+(<span class="k">create-repository</span> "acme/ticks"
+                   :class 'temporal-value-lmdb-repository)</pre>
+
+      <p class="step">Step 2 — declare the temporal predicate</p>
+      <p>Tell the repository which predicate’s object is the valid time. This is recorded in the
+      repository’s <code>temporal-properties</code> metadata; only quads on a declared predicate are
+      added to the time-ordered index. You may declare more than one.</p>
+      <pre><span class="c">;; the object of ex:timestamp is this repository's valid time</span>
+(<span class="k">declare-temporal-predicates</span> "acme/ticks"
+    '("http://example.org/timestamp"))</pre>
+
+      <div class="callout">
+        <p class="muted"><strong>Two time axes.</strong> The temporal index is <em>valid time</em> —
+        the time your facts are about. It composes with Dydra’s existing <em>transaction time</em>
+        (repository revisions): query a past revision to ask “as the graph stood then,” bound the
+        temporal value to ask “about that period,” or do both together.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 DATASET -->
+  <section id="s03" class="section heavy">
+    <div class="rail"><div class="numeral">03</div><div class="vlabel">the data</div></div>
+    <div class="content">
+      <h2>Shape &amp; load the dataset</h2>
+
+      <h3>Shape</h3>
+      <p>Model each sample as one subject. Give it its properties as a star, and make the valid-time
+      property a <strong>typed</strong> <code>xsd:dateTime</code> literal — the type is what lets the
+      index decode and order it. Numeric and string properties are ordinary literals.</p>
+      <pre><span class="c"># one sample = one subject with a star of properties (N-Triples)</span>
+&lt;http://example.org/s42&gt; &lt;http://example.org/timestamp&gt; "2021-01-08T14:30:00Z"^^&lt;http://www.w3.org/2001/XMLSchema#dateTime&gt; .
+&lt;http://example.org/s42&gt; &lt;http://example.org/symbol&gt;    "AAPL" .
+&lt;http://example.org/s42&gt; &lt;http://example.org/open&gt;      "134"^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt; .
+&lt;http://example.org/s42&gt; &lt;http://example.org/close&gt;     "138"^^&lt;http://www.w3.org/2001/XMLSchema#integer&gt; .</pre>
+
+      <div class="callout">
+        <p class="muted"><strong>Tip.</strong> Loading in time order (samples appended as time
+        advances) lets the merge retrieval run its fastest path. Out-of-order data still returns
+        correct results — the index simply repositions as needed.</p>
+      </div>
+
+      <h3>Load</h3>
+      <p>Load the file through the ordinary import path. Declared temporal predicates are indexed
+      automatically as the quads are written — no separate indexing step.</p>
+      <pre><span class="c">;; stream an N-Triples/N-Quads file into the repository</span>
+(<span class="k">import-nquads</span> "acme/ticks" #p"/data/ticks.nt")</pre>
+      <p>Declare the temporal predicate <em>before</em> loading so every quad is indexed as it
+      arrives. If you declare it after loading, reload to re-index the affected predicate.</p>
+    </div>
+  </section>
+
+  <!-- 04 QUERIES -->
+  <section id="s04" class="section heavy">
+    <div class="rail"><div class="numeral">04</div><div class="vlabel">the queries</div></div>
+    <div class="content">
+      <h2>Write the queries</h2>
+      <p>You write ordinary SPARQL. When a query constrains a declared temporal predicate’s object to a
+      range, the planner routes the scan through the time-ordered index for you.</p>
+
+      <h4>A time window</h4>
+      <pre><span class="k">PREFIX</span> ex:  &lt;http://example.org/&gt;
+<span class="k">PREFIX</span> xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+<span class="k">SELECT</span> ?s ?p ?o <span class="k">WHERE</span> {
+  ?s ?p ?o .
+  ?s ex:timestamp ?t .
+  <span class="k">FILTER</span>(?t &gt;= "2021-01-08T00:00:00Z"^^xsd:dateTime &amp;&amp;
+         ?t &lt;  "2021-01-24T00:00:00Z"^^xsd:dateTime)
+}</pre>
+
+      <h4>A collated star</h4>
+      <pre><span class="k">SELECT</span> ?s ?symbol ?open ?close ?t <span class="k">WHERE</span> {
+  ?s ex:symbol ?symbol ; ex:open ?open ; ex:close ?close ; ex:timestamp ?t .
+}</pre>
+
+      <h4>The combination — a window of whole samples</h4>
+      <pre><span class="k">SELECT</span> ?s ?symbol ?open ?close ?t <span class="k">WHERE</span> {
+  ?s ex:symbol ?symbol ; ex:open ?open ; ex:close ?close ; ex:timestamp ?t .
+  <span class="k">FILTER</span>(?t &gt;= "2021-01-08T00:00:00Z"^^xsd:dateTime &amp;&amp;
+         ?t &lt;  "2021-01-24T00:00:00Z"^^xsd:dateTime)
+}</pre>
+
+      <p>Bound the window with a typed <code>xsd:dateTime</code> on both sides
+      (<code>&gt;=</code> … <code>&amp;&amp;</code> … <code>&lt;</code>) so the planner can turn it
+      into an index range. An open-ended or untyped comparison cannot be turned into a range and will
+      fall back to a filter over the graph.</p>
+    </div>
+  </section>
+
+  <!-- 05 WORKED EXAMPLE -->
+  <section id="s05" class="section heavy">
+    <div class="rail"><div class="numeral">05</div><div class="vlabel">worked</div></div>
+    <div class="content">
+      <h2>A worked example — equity ticks</h2>
+      <p>An end-to-end pass: a repository of price ticks, one sample per tick, four properties each
+      (<code>symbol</code>, <code>open</code>, <code>close</code>, and a
+      <code>timestamp</code> valid-time value).</p>
+
+      <p class="step">1 · Create &amp; declare</p>
+      <pre>(<span class="k">create-repository</span> "acme/ticks" :class 'temporal-value-lmdb-repository)
+(<span class="k">declare-temporal-predicates</span> "acme/ticks" '("http://example.org/timestamp"))</pre>
+
+      <p class="step">2 · Load</p>
+      <pre>(<span class="k">import-nquads</span> "acme/ticks" #p"/data/ticks.nt")   <span class="c">; ticks in time order</span></pre>
+
+      <p class="step">3 · Ask — every whole tick in a two-week window</p>
+      <pre><span class="k">PREFIX</span> ex:  &lt;http://example.org/&gt;
+<span class="k">PREFIX</span> xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+<span class="k">SELECT</span> ?symbol ?open ?close ?t <span class="k">WHERE</span> {
+  ?s ex:symbol ?symbol ; ex:open ?open ; ex:close ?close ; ex:timestamp ?t .
+  <span class="k">FILTER</span>(?t &gt;= "2021-01-08T00:00:00Z"^^xsd:dateTime &amp;&amp;
+         ?t &lt;  "2021-01-24T00:00:00Z"^^xsd:dateTime)
+}</pre>
+
+      <p class="step">4 · Result</p>
+      <table class="data">
+        <thead><tr><th>symbol</th><th class="num">open</th><th class="num">close</th><th>t</th></tr></thead>
+        <tbody>
+          <tr><td>AAPL</td><td class="num">134</td><td class="num">138</td><td>2021-01-08T14:30:00Z</td></tr>
+          <tr><td>MSFT</td><td class="num">212</td><td class="num">215</td><td>2021-01-08T14:30:01Z</td></tr>
+          <tr><td>AAPL</td><td class="num">139</td><td class="num">137</td><td>2021-01-08T14:30:02Z</td></tr>
+          <tr><td colspan="4" class="muted">… the window, in time order, each sample already collated …</td></tr>
+        </tbody>
+      </table>
+
+      <p class="step">5 · Narrow it — one symbol in the window</p>
+      <pre><span class="k">SELECT</span> ?open ?close ?t <span class="k">WHERE</span> {
+  ?s ex:symbol "AAPL" ; ex:open ?open ; ex:close ?close ; ex:timestamp ?t .
+  <span class="k">FILTER</span>(?t &gt;= "2021-01-08T00:00:00Z"^^xsd:dateTime &amp;&amp;
+         ?t &lt;  "2021-01-24T00:00:00Z"^^xsd:dateTime)
+}</pre>
+      <p>With a single, selective constant (<code>"AAPL"</code>), the planner drives the query from
+      that constant instead of the window — the right choice when one symbol is far more selective
+      than the time range.</p>
+    </div>
+  </section>
+
+  <!-- 06 FAST PATH -->
+  <section id="s06" class="section">
+    <div class="rail"><div class="numeral">06</div><div class="vlabel">the fast path</div></div>
+    <div class="content">
+      <h2>Getting the fast path</h2>
+      <ul>
+        <li><strong>Declare before loading.</strong> The index is built as quads are written; a
+          predicate declared after the fact needs a reload to re-index.</li>
+        <li><strong>Type the time value.</strong> Only a typed <code>xsd:dateTime</code> object can be
+          decoded and ordered. Bound it on both ends to form a range.</li>
+        <li><strong>Load in time order</strong> where you can — it keeps the merge on its fastest,
+          reposition-free path. Out-of-order data is still correct, only a little slower to scan.</li>
+        <li><strong>Let selectivity choose the shape.</strong> A window over many samples is served
+          best by the time index. A <em>single</em> highly-selective constant (one symbol, one id) is
+          served best by driving from that constant. A set of several values (a disjunction) is
+          served best by the window scan — so prefer the time bound when you are matching more than
+          one value.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wm">dydra</div>
+    <div class="fl">User guide · temporal graphs &amp; collated retrieval<br>© 2026 Dydra</div>
+  </footer>
+
+</div>
+</body>
+</html>

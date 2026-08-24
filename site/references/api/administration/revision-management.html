@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Revision Management &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Quality of Service Provisioning" href="qos.html">
+    <link rel="prev" title="Index Management" href="resource-management/index-management.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Administration<br>Revision Management</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell on" href="index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="revision-management">
+<div class="rail"><div class="vlabel">administration</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Administrative Resources</p>
+<h1>Revision Management</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#get-revisions"><span class="tn">01</span> GET : revisions</a></li>
+<li><a href="#delete-all-revisions"><span class="tn">02</span> DELETE : all revisions</a></li>
+<li><a href="#delete-selected-history"><span class="tn">03</span> DELETE : selected history</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="get-revisions">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">get : revisions</div></div>
+<div class="content">
+<h2>GET : revisions</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account</span> <span class="pre">name&gt;/repositories/&lt;repository-name&gt;/revisions</span></code></p>
+</div></blockquote>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: text/plain</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="response">
+<h3>Response</h3>
+<p>Returns a list of the repository revisions.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="delete-all-revisions">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">delete : all revisions</div></div>
+<div class="content">
+<h2>DELETE : all revisions</h2>
+<p>In order to delete all revisions, that is, to clear a repository:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/revisions</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id1">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: text/turtle</div>
+</div>
+</div></blockquote>
+<p>or</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/n-quads</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id2">
+<h3>Response</h3>
+<p>Returns a graph describing the task solution field.</p>
+</div>
+</div>
+</section>
+<section class="section" id="delete-selected-history">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">delete : selected</div></div>
+<div class="content">
+<h2>DELETE : selected history</h2>
+<p>To not delete all revisions, but instead preserve the revisions
+starting at a boundary revision and trim the history to that boundary,
+one can specify this boundary revision with a HTTP parameter
+<cite>revision-id</cite> and specify a <cite>mode</cite> for the delete operation.
+This affects all revisions before the boundary.</p>
+<p>The boundary is to be specified as a
+<a class="reference external" href="../revisioning/protocol.html#revision-designator-specification">Revision Designator Specification</a>,
+usually a revision UUID, its ordinal, a timestamp, <cite>HEAD</cite>, or <cite>TAIL</cite>.
+If left out, the most recent revision is used, that is, the
+equivalent to <cite>HEAD</cite>.</p>
+<p>One can either set the mode to <cite>delete-history</cite>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/revisions?mode=delete-history&amp;revision-id=&lt;revision-designator&gt;</span></code></p>
+</div></blockquote>
+<p>This remove all revisions prior to the boundary with all their data,
+and results in a state that is equivalent to a new, empty repository
+into which all remaining revisions have been inserted.</p>
+<p>Alternatively, one can specify the mode as <cite>project-history</cite>:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/revisions?mode=project-history&amp;revision-id=&lt;revision-designator&gt;</span></code></p>
+</div></blockquote>
+<p>This also removes all revisions prior to the boundary but instead of
+just deleting them, it projects their state to the boundary, and thus
+causes the boundary revision to reflect all data through to that point.</p>
+<p>In other words, the mode <cite>delete-history</cite> will cause the specified
+boundary to be equivalent to a new, empty repository. While
+the mode <cite>project-history</cite> will cause the boundary to have all the
+content that the repository’s revision had prior to this operation
+but without its history. All data appears to have been inserted at that
+revision.</p>
+<p>If the <cite>mode</cite> is not sepecified, it defaults to <cite>all</cite>, which will
+clear the repository by deleting all revisions, see section
+<a class="reference external" href="#delete-all-revisions">DELETE all revisions</a>.</p>
+<div class="subsection" id="id4">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: text/plain</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id5">
+<h3>Response</h3>
+<p>Returns a list of the repository revisions that have been deleted,
+that is, all revisions prior to the specified <cite>revision-id</cite>.</p>
+<p>In case no revisions have been deleted, it returns a HTTP status
+response <cite>204 No Content</cite> with no content. For example, if <cite>revision-id</cite>
+referenced the first revision, which is valid but has no history to delete.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="resource-management/index-management.html"><span class="dir">Previous</span> Index Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Administrative Resources</a>
+    <span class="spacer"></span>
+    <a class="cell" href="qos.html"><span class="dir">Next</span> Quality of Service Provisioning</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

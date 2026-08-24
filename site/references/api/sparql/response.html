@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Sparql Response &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="SPARQL Request Forms" href="request-forms/index.html">
+    <link rel="prev" title="HTTP Request Parameters" href="request-parameters.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Sparql Response</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="sparql-response">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Sparql Response</h1>
+<p>The response to a SPARQL store request indicates the disposition and provides provenance metadata.
+If the operation fails due to content syntax or an invalid operation, then the HTTP response code is “Bad Request”.
+A successful operation will return “Success”.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#headers"><span class="tn">01</span> Headers</a></li>
+<li><a href="#content"><span class="tn">02</span> Content</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="headers">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">headers</div></div>
+<div class="content">
+<h2>Headers</h2>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Access-Control-Allow-Headers :
+“Accept, Accept-Asynchronous, Accept-Datetime, Asynchronous-Content-Type,
+ Asynchronous-Location, Asynchronous-Method, Authorization, Content-Encoding,
+ Content-Type, Graph, Introspection-Content-Type, Link, Location, Revision,
+ X-Requested-With”</div>
+<div class="line">Access-Control-Allow-Origin : “*” for anonymous request, otherwise the host name</div>
+<div class="line">Access-Control-Allow-Credentials : “true”</div>
+<div class="line">Access-Control-Max-Age: “86400”</div>
+<div class="line">Cache-Control : “public” iff the repository permits unauthenticated access; otherwise “private”</div>
+<div class="line">Client-Request-ID : returns the client request id if one was present</div>
+<div class="line">ETag: specifies the revision identifer for the target dataset repository state.
+Either this was specified in the request or it is the resolved
+<code class="docutils literal notranslate"><span class="pre">HEAD</span></code> revision at the point when the request transaction started.</div>
+<div class="line">Last-Modified : The RFC1123-encoded modification time of the target dataset revision</div>
+<div class="line">Location: specifies the repository resource identifier</div>
+<div class="line">Request-ID : returns the service request identifier.</div>
+<div class="line">Response-Vary : “Accept, Accept-Datetime, Accept-Encoding, Origin, Revision”</div>
+<div class="line">Strict-Transport-Security : “max-age=31536000”</div>
+</div>
+</div></blockquote>
+</div>
+</section>
+<section class="section" id="content">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">content</div></div>
+<div class="content">
+<h2>Content</h2>
+<p>The response to a <code class="docutils literal notranslate"><span class="pre">select</span></code>, <code class="docutils literal notranslate"><span class="pre">describe</span></code>.  or <code class="docutils literal notranslate"><span class="pre">ask</span></code> request conveys the query result.
+The response to an update request is not defined.</p>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="request-parameters.html"><span class="dir">Previous</span> HTTP Request Parameters</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="request-forms/index.html"><span class="dir">Next</span> SPARQL Request Forms</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

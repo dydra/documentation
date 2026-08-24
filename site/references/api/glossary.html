@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Glossary &#8212; Dydra API</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="prev" title="Quality of Service Provisioning" href="administration/qos.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="index.html">dydra</a></div>
+    </div>
+    <div class="meta">Reference<br>Glossary</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="graphstore/index.html">Graph store</a>
+    <a class="cell" href="sparql/index.html">SPARQL</a>
+    <a class="cell" href="sesame/index.html">Sesame</a>
+    <a class="cell" href="provenance/index.html">Provenance</a>
+    <a class="cell" href="revisioning/index.html">Revisioning</a>
+    <a class="cell" href="authorization/index.html">Authorization</a>
+    <a class="cell" href="services/index.html">Services</a>
+    <a class="cell" href="administration/index.html">Administration</a>
+    <a class="cell on" href="">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="genindex.html">Index</a>
+    <a class="cell" href="search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="glossary">
+<div class="rail"><div class="vlabel">reference</div></div>
+<div class="content">
+<p class="chapno">Dydra API</p>
+<h1>Glossary</h1>
+<p>The terms below name the request properties which govern query processing.
+Each is set in one or more of five places – the request protocol (a URL
+argument or an HTTP header), the request text (a SPARQL declaration), or the
+repository, account and system configuration.
+The values combine as described in <a class="reference internal" href="sparql/request-parameters.html"><span class="doc">HTTP Request Parameters</span></a>: a request
+value supercedes the query text, which supercedes configuration, and among
+configuration values repository supercedes account, which supercedes system.
+No more specific setting may raise a limit beyond that of a more general one.</p>
+<dl class="glossary">
+<dt id="term-api-key">API key</dt><dd><p>A token which authenticates the requesting agent in place of a user name
+and password. Presented in the request URL or an HTTP header as
+<code class="docutils literal notranslate"><span class="pre">authentication-key</span></code> or <code class="docutils literal notranslate"><span class="pre">api-key</span></code> (string). Token authentication is
+one of the identification methods described in
+<a class="reference internal" href="authorization/identification.html"><span class="doc">Entity Identification</span></a>.</p>
+</dd>
+<dt id="term-base-iri">base iri</dt><dd><p>The IRI against which relative IRIs in the query text are resolved. Set
+with <code class="docutils literal notranslate"><span class="pre">base-iri</span></code> (iri) in the request URL, with the <code class="docutils literal notranslate"><span class="pre">BASE</span></code> declaration
+in the query text, or in the system configuration. Any initial base iri
+expands qname terms as the query text is parsed, so it is compiled into a
+cached query and a subsequent request cannot change it.</p>
+</dd>
+<dt id="term-content-type">content type</dt><dd><p>The media type of the response document, requested with the <code class="docutils literal notranslate"><span class="pre">accept</span></code> or
+<code class="docutils literal notranslate"><span class="pre">response-content-type</span></code> HTTP header. The response headers which report
+the type and the encoding of a result are described in
+<a class="reference internal" href="sparql/response.html"><span class="doc">Sparql Response</span></a>.</p>
+</dd>
+<dt id="term-dataset">dataset</dt><dd><p>The graphs against which a query is evaluated. Named and default graphs
+are specified in the request URL with <code class="docutils literal notranslate"><span class="pre">named-graphs</span></code>,
+<code class="docutils literal notranslate"><span class="pre">named-graph-uri</span></code>, <code class="docutils literal notranslate"><span class="pre">default-graphs</span></code> and <code class="docutils literal notranslate"><span class="pre">default-graph-iri</span></code> (iri
+list), or in the query text with <code class="docutils literal notranslate"><span class="pre">FROM</span></code>, <code class="docutils literal notranslate"><span class="pre">FROM</span> <span class="pre">NAMED</span></code>, <code class="docutils literal notranslate"><span class="pre">WITH</span></code> and
+<code class="docutils literal notranslate"><span class="pre">WITH</span> <span class="pre">NAMED</span></code>. Two further terms fix what the unqualified references
+denote:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">default-context-term</span></code> (urn) : <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:all&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:default&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:named&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">named-contexts-term</span></code> (urn) : <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:all&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:default&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:named&gt;</span></code></p></li>
+</ul>
+<p>Where a query is cached and a dataset was specified, the respective
+complement may still be changed on re-execution.</p>
+</dd>
+<dt id="term-describe-form">describe form</dt><dd><p>The rule by which a <code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code> query expands a term into statements.
+<code class="docutils literal notranslate"><span class="pre">describe-form</span></code> (urn) selects the form, either
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:simple-concise-bounded-description&gt;</span></code> or
+<strong>&lt;urn:dydra:simple-symmetric-concise-bounded-description&gt;</strong>;
+<code class="docutils literal notranslate"><span class="pre">describe-subject-depth</span></code> and <code class="docutils literal notranslate"><span class="pre">describe-object-depth</span></code> (integer) bound
+the depth to which a term serves to match statement subjects and objects;
+<code class="docutils literal notranslate"><span class="pre">describe-properties</span></code> (<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:true&gt;</span></code> / <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:false&gt;</span></code>)
+extends a standard <a class="reference external" href="https://www.w3.org/Submission/CBD/">concise bounded description</a> to statements which
+share terms other than blank nodes. See <em>Describe Form</em> in
+<a class="reference internal" href="sparql/request-parameters.html"><span class="doc">HTTP Request Parameters</span></a>.</p>
+</dd>
+<dt id="term-dynamic-binding">dynamic binding</dt><dd><p>A value bound to a query variable for the duration of one execution –
+a binding with indefinite scope and dynamic extent. Written in the request
+URL as <code class="docutils literal notranslate"><span class="pre">$</span></code><em>variable</em><code class="docutils literal notranslate"><span class="pre">=</span></code><em>value</em>. View parameters establish
+dynamic bindings in the same way; see <a class="reference internal" href="sparql/views/requests.html"><span class="doc">View Requests</span></a>.</p>
+</dd>
+<dt id="term-entailment">entailment</dt><dd><p>The ruleset in effect when a basic graph pattern is interpreted, given as
+<code class="docutils literal notranslate"><span class="pre">entailment-ruleset</span></code> or <code class="docutils literal notranslate"><span class="pre">ruleset</span></code> (iri list) in the request URL, as a
+declaration in the query text, or in the repository, account or system
+configuration. Applicable rules are compiled into the bgp interpretation,
+so a cached query retains the ruleset which was in effect when it was
+compiled.</p>
+</dd>
+<dt id="term-federation">federation</dt><dd><p>Whether, and how, a query may draw on a repository other than its own.
+<code class="docutils literal notranslate"><span class="pre">federation</span></code> or <code class="docutils literal notranslate"><span class="pre">federation-mode</span></code> (urn) selects the mode:
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:internal&gt;</span></code> – the sub-query is executed as a subtask in the
+same processor; <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:external&gt;</span></code> – the sub-query is requested of
+a remote SPARQL endpoint; <strong>&lt;urn:dydra:none&gt;</strong>. Access in either
+direction must be authorized: <code class="docutils literal notranslate"><span class="pre">authorized-client-locations</span></code> and
+<code class="docutils literal notranslate"><span class="pre">authorized-service-locations</span></code> (iri, repository configuration only)
+record, as ACL entries, the originating repositories and request agents
+which a reference is permitted to come from. See <a class="reference internal" href="sparql/federation.html"><span class="doc">Federation</span></a>.</p>
+</dd>
+<dt id="term-index">index</dt><dd><p>An auxiliary index maintained for a repository and used by the query
+planner in place of a scan. <code class="docutils literal notranslate"><span class="pre">property-index</span></code> (list string iri) declares
+the indexed properties in the repository, account or system configuration;
+an index cannot be set by a request. Free text indices are created on
+demand when a query addresses them, and are refreshed by deletion; see
+<a class="reference internal" href="administration/resource-management/index-management.html"><span class="doc">Index Management</span></a>.</p>
+</dd>
+<dt id="term-processing-bounds">processing bounds</dt><dd><p>The resources one query execution may consume: <code class="docutils literal notranslate"><span class="pre">memory-limit</span></code>,
+<code class="docutils literal notranslate"><span class="pre">solution-limit</span></code> and <code class="docutils literal notranslate"><span class="pre">time-limit</span></code> (also <code class="docutils literal notranslate"><span class="pre">timeout</span></code>), all integers.
+Settable in the request URL, in the query text and in all three
+configurations, subject to the rule that a more specific setting may only
+lower a bound. Provisioning of resources by identity and class is a
+separate matter, described in <a class="reference internal" href="administration/qos.html"><span class="doc">Quality of Service Provisioning</span></a>.</p>
+</dd>
+<dt id="term-provenance-information">provenance information</dt><dd><p>The record of how a repository state came to be – data lineage,
+retrospective state, and responsibility for changes.
+<code class="docutils literal notranslate"><span class="pre">provenance-repository-id</span></code> (string) names the repository in which the
+records for an update request are saved. Lineage is first-order, at the
+level of graphs rather than individual statements. See
+<a class="reference internal" href="provenance/provenance.html"><span class="doc">Provenance</span></a>.</p>
+</dd>
+<dt id="term-query-text">query text</dt><dd><p>The SPARQL query itself, carried as the <code class="docutils literal notranslate"><span class="pre">query</span></code> (string) argument of the
+request URL or as an argument in a request form. See <em>Query Text</em> in
+<a class="reference internal" href="sparql/request-parameters.html"><span class="doc">HTTP Request Parameters</span></a>.</p>
+</dd>
+<dt id="term-repository">repository</dt><dd><p>The store a request applies to, and the unit which carries revisions,
+configuration and access control. Identified in the request URL by
+<code class="docutils literal notranslate"><span class="pre">repository-id</span></code> (string), and a particular state of it by
+<code class="docutils literal notranslate"><span class="pre">revision-uuid</span></code> (string). Its term and statement statistics affect
+pattern suppression, reordering and solution propagation, and are
+therefore compiled into a cached query. Administration of the resource is
+described in
+<a class="reference internal" href="administration/resource-management/repository-management.html"><span class="doc">Repository Management</span></a>.</p>
+</dd>
+<dt id="term-response-bounds">response bounds</dt><dd><p>The extent of the solution sequence returned: <code class="docutils literal notranslate"><span class="pre">limit</span></code> or
+<code class="docutils literal notranslate"><span class="pre">response-limit</span></code>, and <code class="docutils literal notranslate"><span class="pre">offset</span></code> or <code class="docutils literal notranslate"><span class="pre">response-offset</span></code> (integer).
+Settable in the request URL, in the query text and in all three
+configurations. As with any limit, a more specific setting may only lower
+the value.</p>
+</dd>
+<dt id="term-revision">revision</dt><dd><p>A committed state of a repository, identified by the type 1 <a class="reference external" href="http://www.ietf.org/rfc/rfc4122.txt">UUID</a> of the
+transaction which created it – so the identifier carries both the host on
+which the transaction originated and a time sequence value. Given in a
+request as <code class="docutils literal notranslate"><span class="pre">revision-uuid</span></code> (string). A request without one applies to
+the latest revision. See <a class="reference internal" href="revisioning/protocol.html#revisionidentifierspecification"><span class="std std-ref">Revision Designator Specification</span></a> and
+<a class="reference internal" href="revisioning/overview.html"><span class="doc">Repository Revision Metadata</span></a>.</p>
+</dd>
+<dt id="term-revision-windows">revision-windows</dt><dd><p>A temporal bound on the revisions a repetitive result is drawn from,
+supplied as the <code class="docutils literal notranslate"><span class="pre">revision-window</span></code> (string) HTTP header. Applies to
+streaming requests over MQTT. See <a class="reference internal" href="revisioning/protocol.html#windowspecification"><span class="std std-ref">Revision Window Specification</span></a> and
+<em>Revision Window Syntax</em> in <a class="reference internal" href="sparql/request-parameters.html"><span class="doc">HTTP Request Parameters</span></a>.</p>
+</dd>
+<dt id="term-skolemization-mode">skolemization mode</dt><dd><p>How blank nodes are replaced by IRIs. <code class="docutils literal notranslate"><span class="pre">skolemize</span></code> (urn) selects the
+mode: <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:skolemize&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:skolemize-export&gt;</span></code> or
+<strong>&lt;urn:dydra:skolemize-import&gt;</strong>; <code class="docutils literal notranslate"><span class="pre">skolemize-prefix</span></code> (string) supplies
+the prefix for the generated IRIs. Settable in the request URL, in the
+query text and in all three configurations.</p>
+</dd>
+<dt id="term-undefined-variable">undefined variable</dt><dd><p>What the processor does with a variable which the query text never binds.
+<code class="docutils literal notranslate"><span class="pre">undefined-variable-behavior</span></code> (urn) selects the behaviour:
+<strong>&lt;urn:dydra:error&gt;</strong>, <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:dynamic-binding&gt;</span></code> – the variable is
+taken to be a <a class="reference internal" href="#term-dynamic-binding"><span class="xref std std-term">dynamic binding</span></a> supplied by the request – or
+<code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:warning&gt;</span></code>. The mode determines the mechanism generated to
+interpret free variable references and is therefore compiled into a cached
+query.</p>
+</dd>
+<dt id="term-user-query-id">user query id</dt><dd><p>An identifier the client assigns to a request so that it can be
+correlated with the response and with service records. Presented as the
+<code class="docutils literal notranslate"><span class="pre">Client-Request-ID</span></code> HTTP header, or in the request URL as <code class="docutils literal notranslate"><span class="pre">user-id</span></code> or
+<code class="docutils literal notranslate"><span class="pre">user_id</span></code> (string). A request which carries one has it returned in the
+response <code class="docutils literal notranslate"><span class="pre">Client-Request-ID</span></code> header; see <a class="reference internal" href="sparql/response.html"><span class="doc">Sparql Response</span></a>.</p>
+</dd>
+<dt id="term-values-clauses">values clauses</dt><dd><p>Replacement text for the <code class="docutils literal notranslate"><span class="pre">VALUES</span></code> clauses of the query, supplied as the
+<code class="docutils literal notranslate"><span class="pre">values</span></code> (string) argument in the request URL or in a request form. The
+argument syntax follows the <a class="reference external" href="https://www.w3.org/TR/2013/REC-sparql11-query-20130321/#rDataBlock">datablock</a> production of the SPARQL query
+syntax, and an argument is matched to a clause by that clause’s projection
+variables. See <em>Values Clauses</em> in <a class="reference internal" href="sparql/request-parameters.html"><span class="doc">HTTP Request Parameters</span></a>.</p>
+</dd>
+<dt id="term-xslt">xslt</dt><dd><p>A style sheet to be applied to the response document, given as <code class="docutils literal notranslate"><span class="pre">xslt</span></code>
+(iri) in the request URL or in an HTTP header.</p>
+</dd>
+</dl>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="administration/qos.html"><span class="dir">Previous</span> Quality of Service Provisioning</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Dydra API</a>
+    <span class="spacer"></span>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

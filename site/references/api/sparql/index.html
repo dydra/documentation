@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>SPARQL 1.1 Protocol Interface &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="HTTP Request Parameters" href="request-parameters.html">
+    <link rel="prev" title="GSP Request Succession" href="../graphstore/successors.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>SPARQL 1.1 Protocol Interface</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="sparql-1-1-protocol-interface">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API</p>
+<h1>SPARQL 1.1 Protocol Interface</h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="request-parameters.html">HTTP Request Parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="request-parameters.html#revision-window-syntax">Revision Window Syntax</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-parameters.html#describe-form">Describe Form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-parameters.html#query-text">Query Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-parameters.html#values-clauses">Values Clauses</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="response.html">Sparql Response</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="response.html#headers">Headers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="response.html#content">Content</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="request-forms/index.html">SPARQL Request Forms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/json-ld.html">SPARQL JSON-LD Encoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/sparql-symbolic-expression.html">SPARQL Symbolic Expression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/sparql-algebra.html">SPARQL Query Algebra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/query-plan.html">SPARQL Query Plan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/query-execution.html">SPARQL Execution Record</a></li>
+<li class="toctree-l2"><a class="reference internal" href="request-forms/query-trace.html">SPARQL Execution Trace</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="federation.html">Federation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="federation.html#federation-request-modes">Federation Request Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="federation.html#federation-query-forms">Federation Query Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="federation.html#authorization">Authorization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="federation.html#examples">Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="asynchronous/index.html">Asynchronous SPARQL Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="asynchronous/mqtt.html">MQTT Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asynchronous/websocket.html">Websocket Streaming</a></li>
+<li class="toctree-l2"><a class="reference internal" href="asynchronous/views.html">Asynchronous View Processing</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="successors.html">SPARQL Request Succession</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html">Abstract Algebra Expressions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="algebra.html#spocq-sparql-algebra-operators-spocq-a-package-reference">SPOCQ SPARQL Algebra Operators — <cite>spocq.a</cite> package reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#xpath-xsd-date-component-functions">XPath / XSD date-component functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#statement-markers-used-inside-bgp-body">Statement markers (used inside <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#solution-field-producers">Solution-field producers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#solution-field-combinators">Solution-field combinators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#solution-field-transformers">Solution-field transformers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#aggregation">Aggregation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#graph-scope">Graph scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#dependent-join-sparql-1-2-lateral">Dependent join (SPARQL 1.2 LATERAL)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#top-level-query-forms">Top-level query forms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#sparql-update">SPARQL update</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#remote-query">Remote query</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#revision-spocq-temporal-extension">Revision / spocq temporal extension</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#arithmetic">Arithmetic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#predicates">Predicates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#term-constructors">Term constructors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#triple-term-accessors-sparql-1-2">Triple-term accessors (SPARQL 1.2)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#datatype">Datatype</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#language">Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#string-value">String value</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#hash">Hash</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algebra.html#function-call-dispatch">Function-call dispatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Library Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#boolean-expression"><code class="docutils literal notranslate"><span class="pre">boolean</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#date-expression"><code class="docutils literal notranslate"><span class="pre">date</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#datetime-expression"><code class="docutils literal notranslate"><span class="pre">dateTime</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#daytimeduration-expression"><code class="docutils literal notranslate"><span class="pre">dayTimeDuration</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#decimal-expression"><code class="docutils literal notranslate"><span class="pre">decimal</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#double-expression"><code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#duration-expression"><code class="docutils literal notranslate"><span class="pre">duration</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#float-expression"><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#gday-expression"><code class="docutils literal notranslate"><span class="pre">gDay</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#gmonth-expression"><code class="docutils literal notranslate"><span class="pre">gMonth</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#gmonthday-expression"><code class="docutils literal notranslate"><span class="pre">gMonthDay</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#gyear-expression"><code class="docutils literal notranslate"><span class="pre">gYear</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#gyearmonth-expression"><code class="docutils literal notranslate"><span class="pre">gYearMonth</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#integer-expression"><code class="docutils literal notranslate"><span class="pre">integer</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#string-expression"><code class="docutils literal notranslate"><span class="pre">string</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#time-expression"><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#yearmonthduration-expression"><code class="docutils literal notranslate"><span class="pre">yearMonthDuration</span> <span class="pre">(EXPRESSION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#abs-value"><code class="docutils literal notranslate"><span class="pre">abs</span> <span class="pre">(VALUE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#ceil-value"><code class="docutils literal notranslate"><span class="pre">ceil</span> <span class="pre">(VALUE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#compare-term1-term2-optional-collation"><code class="docutils literal notranslate"><span class="pre">compare</span> <span class="pre">(TERM1</span> <span class="pre">TERM2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#concat-rest-strings"><code class="docutils literal notranslate"><span class="pre">concat</span> <span class="pre">(&amp;REST</span> <span class="pre">STRINGS)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#contains-string1-string2-optional-collation"><code class="docutils literal notranslate"><span class="pre">contains</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#datetime-date-time"><code class="docutils literal notranslate"><span class="pre">dateTime</span> <span class="pre">(DATE</span> <span class="pre">TIME)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#day-from-date-term"><code class="docutils literal notranslate"><span class="pre">day-from-date</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#day-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">day-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#days-from-duration-term"><code class="docutils literal notranslate"><span class="pre">days-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#ends-with-string1-string2-optional-collation"><code class="docutils literal notranslate"><span class="pre">ends-with</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#floor-value"><code class="docutils literal notranslate"><span class="pre">floor</span> <span class="pre">(VALUE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#format-date-value-picture-optional-language-calendar-place"><code class="docutils literal notranslate"><span class="pre">format-date</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#format-datetime-value-picture-optional-language-calendar-place"><code class="docutils literal notranslate"><span class="pre">format-dateTime</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#format-duration-value-picture-optional-language-calendar-place"><code class="docutils literal notranslate"><span class="pre">format-duration</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#hours-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">hours-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#hours-from-duration-term"><code class="docutils literal notranslate"><span class="pre">hours-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#hours-from-time-term"><code class="docutils literal notranslate"><span class="pre">hours-from-time</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#lower-case-string"><code class="docutils literal notranslate"><span class="pre">lower-case</span> <span class="pre">(STRING)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#matches-text-pattern-optional-flags-nil"><code class="docutils literal notranslate"><span class="pre">matches</span> <span class="pre">(TEXT</span> <span class="pre">PATTERN</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">(FLAGS</span> <span class="pre">NIL))</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#minutes-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">minutes-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#minutes-from-duration-term"><code class="docutils literal notranslate"><span class="pre">minutes-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#minutes-from-time-term"><code class="docutils literal notranslate"><span class="pre">minutes-from-time</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#month-from-date-term"><code class="docutils literal notranslate"><span class="pre">month-from-date</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#month-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">month-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#months-from-duration-term"><code class="docutils literal notranslate"><span class="pre">months-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#not-value"><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">(VALUE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#replace-input-pattern-replacement-optional-flags-nil"><code class="docutils literal notranslate"><span class="pre">replace</span> <span class="pre">(INPUT</span> <span class="pre">PATTERN</span> <span class="pre">REPLACEMENT</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">(FLAGS</span> <span class="pre">NIL))</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#round-value"><code class="docutils literal notranslate"><span class="pre">round</span> <span class="pre">(VALUE)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#seconds-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">seconds-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#seconds-from-duration-term"><code class="docutils literal notranslate"><span class="pre">seconds-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#seconds-from-time-term"><code class="docutils literal notranslate"><span class="pre">seconds-from-time</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#starts-with-string1-string2-optional-collation"><code class="docutils literal notranslate"><span class="pre">starts-with</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#string-length-string"><code class="docutils literal notranslate"><span class="pre">string-length</span> <span class="pre">(STRING)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#substring-value-start-optional-length"><code class="docutils literal notranslate"><span class="pre">substring</span> <span class="pre">(VALUE</span> <span class="pre">START</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LENGTH)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#substring-after-string-substring-optional-collation"><code class="docutils literal notranslate"><span class="pre">substring-after</span> <span class="pre">(STRING</span> <span class="pre">SUBSTRING</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#substring-before-string-substring-optional-collation"><code class="docutils literal notranslate"><span class="pre">substring-before</span> <span class="pre">(STRING</span> <span class="pre">SUBSTRING</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#timezone-from-date-term"><code class="docutils literal notranslate"><span class="pre">timezone-from-date</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#timezone-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">timezone-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#timezone-from-time-term"><code class="docutils literal notranslate"><span class="pre">timezone-from-time</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#upper-case-string"><code class="docutils literal notranslate"><span class="pre">upper-case</span> <span class="pre">(STRING)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#year-from-date-term"><code class="docutils literal notranslate"><span class="pre">year-from-date</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#year-from-datetime-term"><code class="docutils literal notranslate"><span class="pre">year-from-dateTime</span> <span class="pre">(TERM)</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#years-from-duration-term"><code class="docutils literal notranslate"><span class="pre">years-from-duration</span> <span class="pre">(TERM)</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html#extension-functions">Extension Functions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-account-name"><code class="docutils literal notranslate"><span class="pre">dydra:account-name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-agent-id"><code class="docutils literal notranslate"><span class="pre">dydra:agent-id()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-agent-location"><code class="docutils literal notranslate"><span class="pre">dydra:agent-location()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-query-uri"><code class="docutils literal notranslate"><span class="pre">dydra:query-uri()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-repository-name"><code class="docutils literal notranslate"><span class="pre">dydra:repository-name()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-repository-url"><code class="docutils literal notranslate"><span class="pre">dydra:repository-url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-revision-uri"><code class="docutils literal notranslate"><span class="pre">dydra:revision-uri()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-repository-revision-url"><code class="docutils literal notranslate"><span class="pre">dydra:repository-revision-url()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-revision-parent-uri"><code class="docutils literal notranslate"><span class="pre">dydra:revision-parent-uri()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-transaction-signature"><code class="docutils literal notranslate"><span class="pre">dydra:transaction-signature()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-transaction-uri"><code class="docutils literal notranslate"><span class="pre">dydra:transaction-uri()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-user-tag"><code class="docutils literal notranslate"><span class="pre">dydra:user-tag()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#rdf-seq"><code class="docutils literal notranslate"><span class="pre">rdf:Seq()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="functions.html#dydra-term-number"><code class="docutils literal notranslate"><span class="pre">dydra:term-number()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="views/index.html">SPARQL Views</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="views/requests.html">View Requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views/materialization.html">View Materialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views/management.html">View Management</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="text-operators.html">Text Matching</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="../graphstore/successors.html"><span class="dir">Previous</span> GSP Request Succession</a>
+    <a class="cell" href="../index.html"><span class="dir">Up</span> Dydra API</a>
+    <span class="spacer"></span>
+    <a class="cell" href="request-parameters.html"><span class="dir">Next</span> HTTP Request Parameters</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

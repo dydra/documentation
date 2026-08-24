@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Asynchronous View Processing &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="SPARQL Request Succession" href="../successors.html">
+    <link rel="prev" title="Websocket Streaming" href="websocket.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Asynchronous View Processing</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="asynchronous-view-processing">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; Asynchronous SPARQL Processing</p>
+<h1>Asynchronous View Processing</h1>
+<p>Asynchronous processing for SPARQL requests make it possible
+to arrange for  long-running requests without time-outs and without
+interfering with other request activity.
+It also enables result dispatch to remote locations, such as Amazon S3 storage
+or subsequent processing in Athena (<a class="reference external" href="https://aws.amazon.com/athena/">https://aws.amazon.com/athena/</a>).
+The immediate response is just an acceptance code.</p>
+<p>The request header <code class="docutils literal notranslate"><span class="pre">Accept-Asynchronous</span></code> governs this execution mode.
+If the value is not specified, the default is <code class="docutils literal notranslate"><span class="pre">execute</span></code>.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 77%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>mode</p></th>
+<th class="head"><p>effect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">notify</span></code></p></td>
+<td><p>The  request is executed asynchronously
+returning a 204 status, the task identifier
+and any user id</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execute</span></code></p></td>
+<td><p>The request is handled as a standard SPARQL
+protocol request. It is executed immediately
+with the status and the result returned as
+response.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#asynchronous-request-form"><span class="tn">01</span> Asynchronous Request Form</a></li>
+<li><a href="#asynchronous-notification"><span class="tn">02</span> Asynchronous Notification</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="asynchronous-request-form">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">asynchronous request</div></div>
+<div class="content">
+<span id="asynchronousviewprocessing"></span><h2>Asynchronous Request Form</h2>
+<p>The asynchronous request is recorded in the form of an HTTP request object
+which captures the terms of the original request as several request headers.
+This includes the minimal authentication information and does not carry any client location information.</p>
+<p>The request shouldbe a GET or a POST.
+For the first method the query can be suppied in-line or specified as a named view.</p>
+<div class="subsection" id="asynchronous-authorization">
+<h3>Asynchronous-Authorization</h3>
+<p>The authentication header for the notification request.
+If none is provided the authentication header from the original request is used.</p>
+</div>
+<div class="subsection" id="asynchronous-content-type">
+<h3>Asynchronous-Content-Type</h3>
+<p>The content type for the query response in the notification request</p>
+</div>
+<div class="subsection" id="asynchronous-content-encoding">
+<h3>Asynchronous-Content-Encoding</h3>
+<p>The query response in the notification request can compressed by specifying GZIP as the content encoding.
+Note that, in this mode, the content is binary and the asynchronous location must accept binary content.</p>
+</div>
+<div class="subsection" id="asynchronous-location">
+<h3>Asynchronous-Location</h3>
+<p>The HTTP URL for the notification request</p>
+</div>
+<div class="subsection" id="asynchronous-method">
+<h3>Asynchronous-Method</h3>
+<p>The HTTP method for the notification request</p>
+</div>
+<div class="subsection" id="authorization">
+<h3>Authorization</h3>
+<p>The initial request authentication information.</p>
+</div>
+<div class="subsection" id="client-request-id">
+<h3>Client-Request-ID</h3>
+<p>The client request id to be reported with the notification request.</p>
+</div>
+<div class="subsection" id="content-type">
+<h3>Content-Type</h3>
+<p>The content type to be used to execute the asynchronous import.</p>
+</div>
+<div class="subsection" id="request-id">
+<h3>Request-ID</h3>
+<p>The task id from the initial request to be used to track the asynchronous execution.</p>
+</div>
+</div>
+</section>
+<section class="section" id="asynchronous-notification">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">asynchronous</div></div>
+<div class="content">
+<h2>Asynchronous Notification</h2>
+<p>The asynchronous notification take the form of an HTTP request to an external location
+as specified with the <code class="docutils literal notranslate"><span class="pre">Asynchronous-*</span></code> header values.</p>
+<p>The method should be PUT or POST.</p>
+<p>The content body is the query result.</p>
+<blockquote>
+<div><p>clearpage</p>
+</div></blockquote>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="websocket.html"><span class="dir">Previous</span> Websocket Streaming</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Asynchronous SPARQL Processing</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../successors.html"><span class="dir">Next</span> SPARQL Request Succession</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

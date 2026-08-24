@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Asynchronous SPARQL Processing &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="MQTT Streaming" href="mqtt.html">
+    <link rel="prev" title="Federation" href="../federation.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Asynchronous SPARQL Processing</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="asynchronous-sparql-processing">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Asynchronous SPARQL Processing</h1>
+<p>Asynchronous SPARQL requests establish persistent connection to a client,
+execute a query repeatedly and yield a sequence of responses over time.
+In contract to asynchronous graph store protocol requests, they are
+executed in the foreground.
+This capability is realized directly via MQTT and by switching an HTTP request to
+Websocket interaction.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="mqtt.html">MQTT Streaming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mqtt.html#post">POST</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mqtt.html#headers">Headers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mqtt.html#query-arguments">Query Arguments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="websocket.html">Websocket Streaming</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="websocket.html#websocket-request-form">Websocket Request Form</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#authorization">Authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#client-request-id">Client-Request-ID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#content-disposition">Content-Disposition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#context">Context</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#location">Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#request-id">Request-ID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="websocket.html#revision-windows">Revision-Windows</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Asynchronous View Processing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="views.html#asynchronous-request-form">Asynchronous Request Form</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="views.html#asynchronous-authorization">Asynchronous-Authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#asynchronous-content-type">Asynchronous-Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#asynchronous-content-encoding">Asynchronous-Content-Encoding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#asynchronous-location">Asynchronous-Location</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#asynchronous-method">Asynchronous-Method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#authorization">Authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#client-request-id">Client-Request-ID</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#content-type">Content-Type</a></li>
+<li class="toctree-l3"><a class="reference internal" href="views.html#request-id">Request-ID</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="views.html#asynchronous-notification">Asynchronous Notification</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="../federation.html"><span class="dir">Previous</span> Federation</a>
+    <a class="cell" href="../index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="mqtt.html"><span class="dir">Next</span> MQTT Streaming</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

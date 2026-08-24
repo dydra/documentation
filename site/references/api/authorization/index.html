@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Service Access Authorization &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Introduction" href="introduction.html">
+    <link rel="prev" title="SPARQL Revision Metadata" href="../revisioning/sparql.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Service Access Authorization</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="service-access-authorization">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API</p>
+<h1>Service Access Authorization</h1>
+<p>This discussion is for technical and security professionals who need to understand how
+to implement, manage, maintain, and audit desired organizational permissions and
+authorizations utilizing the Dydra service.
+It provides the vocabulary for technical teams to define identity graphs, related accounts/groups, and authorization lists for use of the Dydra service.  Some familiarity with graph and security concepts is assumed.</p>
+<p>Dydra manages data security by constraining the operations which a given
+request can perform. It applies these constraints as direct restrictions on the operations which a
+specific request agent may perform on specific service entities.
+These constraints are derived from a W3C <a class="reference external" href="https://www.w3.org/wiki/WebAccessControl">ACL</a> “access control graph”
+which expresses relations among resource, resource classes, and permitted operations.
+The service applies SPARQL queries to analyse that relation graph
+and compile a <a class="reference internal" href="access-control-graph.html#capability"><span class="std std-ref">capability</span></a> list
+for each agent on demand.</p>
+<p>In the text which follows, the examples combine accounts with names <code class="docutils literal notranslate"><span class="pre">Account1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Account2</span></code>, etc
+with repository names of a similar pattern, <code class="docutils literal notranslate"><span class="pre">Repository1</span></code>, <code class="docutils literal notranslate"><span class="pre">Repository2</span></code>, etc
+and user names of a similar form as <code class="docutils literal notranslate"><span class="pre">User</span></code></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#definitions">Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#dydra-identity-management-and-access-control-model">Dydra Identity Management and Access Control Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#dydra-graph-based-access-control-acg">Dydra Graph Based Access Control (ACG)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#dydra-gbac-vs-rbac">Dydra GBAC vs RBAC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html#dydra-security-relations-model">Dydra Security Relations Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#authorization-status">Authorization Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="introduction.html#default-authorization-status-for-views-and-repositories">Default Authorization Status for Views and Repositories</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#view-authorization">View Authorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="introduction.html#repository-authorization">Repository Authorization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="identification.html">Entity Identification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="identification.html#entity-classes">Entity Classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#accounts">Accounts</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#agents">Agents</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#repositories">Repositories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#users">Users</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#views">Views</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="identification.html#entity-identification-methods">Entity Identification Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#http-basic-authentication">HTTP Basic Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#static-token-authentication">Static Token Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#sso-authentication">SSO Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#location-ip-number-authentication">Location (IP-Number) Authentication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="identification.html#session-authentication">Session Authentication</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="operations.html">Operation Access Modes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#acl-read">acl:Read</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#acl-write">acl:Write</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#acl-control">acl:Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operations.html#acl-execute">acl:Execute</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="access-control-graph.html">Access Control Graphs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="access-control-graph.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access-control-graph.html#abstract-types">Abstract Types</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access-control-graph.html#request-processing">Request Processing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="access-control-graph.html#direct-relationships">Direct Relationships</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="access-control-graph.html#inferred-relationships-groups">Inferred Relationships &amp; Groups</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="access-control-graph.html#target-entity-composition">Target Entity Composition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="access-control-graph.html#agent-type">Agent Type</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="administration.html">Administration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="administration.html#defining-access-control-graphs">Defining Access Control Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="administration.html#capability-determination">Capability Determination</a></li>
+<li class="toctree-l2"><a class="reference internal" href="administration.html#authentication-templates-use-cases">Authentication Templates / Use Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#authenticated-user">Authenticated User</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#anonymous-user">Anonymous User</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#controlled-view">Controlled View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#collaborators">Collaborators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#project-manager">Project Manager</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#external-federation">External Federation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="administration.html#other-roles">Other Roles</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="../revisioning/sparql.html"><span class="dir">Previous</span> SPARQL Revision Metadata</a>
+    <a class="cell" href="../index.html"><span class="dir">Up</span> Dydra API</a>
+    <span class="spacer"></span>
+    <a class="cell" href="introduction.html"><span class="dir">Next</span> Introduction</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

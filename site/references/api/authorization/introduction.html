@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Introduction &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Entity Identification" href="identification.html">
+    <link rel="prev" title="Service Access Authorization" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Introduction</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="introduction">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Service Access Authorization</p>
+<h1>Introduction</h1>
+<p>This section introduces the vocabulary for technical teams to define
+identity graphs, related accounts/groups, and access authorization lists.
+It assumes familiarity with graph and security
+concepts.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#definitions"><span class="tn">01</span> Definitions</a></li>
+<li><a href="#dydra-identity-management-and-access-control-model"><span class="tn">02</span> Dydra Identity Management and Access Control Model</a></li>
+<li><a href="#dydra-security-relations-model"><span class="tn">03</span> Dydra Security Relations Model</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="definitions">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">definitions</div></div>
+<div class="content">
+<h2>Definitions</h2>
+<p><strong>Authorization Context (AC) -</strong> The process vector comprises account,
+agent, repository and view.</p>
+<p><strong>Identity Graph (IG)</strong> - The Dydra Identity Graph (DIG) maintains the
+list of identities qualified for access to the Dydra service.</p>
+<p><strong>Agent</strong> - The authenticated agent is an abstracted individual
+(identity) which allows for either native identities, or for externally
+provided identities from third party identity providers e.g. SSO. None
+for anonymous access.</p>
+<p><strong>Account</strong> - The account for which an agent is authenticated. For each
+account dydra maintains a repository with the authorization declarations
+for all of the resources in that account. The account provides the
+context for relations. This value is derived during the authentication
+process and remains unchanged. None for anonymous access.</p>
+<p><strong>Access Control Graph (ACG)</strong> - Each account ACG defines the authorized
+access to each resource owned by the account. This includes the account
+itself, its repositories, and the views defined for the repositories.
+This graph provides the <em>capabilities</em> available to the account.</p>
+<p><strong>Group</strong> - An arbitrary set of entities - agents, repositores, views or
+other groups, with which access rights may be associated.</p>
+<p><strong>Repository</strong> - A resource, the repository e.g. data, is the target
+of a given query. It exists for the duration of that clause.</p>
+<p><strong>View</strong> - A resource, specifically a program or query. The view is
+initially determined from the request. If the request resource
+designates a view, that is the initial value. Otherwise the inline
+content serves as an anonymous view.</p>
+<p><strong>Request/Response Content</strong> - A SPARQL request body contains a query
+(an “inline view”) while a Graph Store request contains a graph. The
+response body contains the query solutions and the target graph,
+respectively.</p>
+<p><strong>Resource</strong> - Dydra system entities/objects:</p>
+<ul class="simple">
+<li><p>Accounts</p></li>
+<li><p>Agents</p></li>
+<li><p>Users</p></li>
+<li><p>Repositories</p></li>
+<li><p>Views</p></li>
+</ul>
+<p>Not all Dydra resources are “target entities”.
+Specifically, the external interface exposes no operations on agents and
+the model does not support constraints on individual graphs in a repository.
+Operations on agents are performed through the web user interface and command-line
+programs only.
+Rather than encumber query processing with graph-level constraints, controls are
+applied on inter-repository federation.</p>
+<p><strong>Mode</strong> - the operations available to an agent:</p>
+<ul class="simple">
+<li><p>Read</p></li>
+<li><p>Write</p></li>
+<li><p>Execute</p></li>
+<li><p>Control</p></li>
+</ul>
+<p><strong>Search for Authorization -</strong> The ACL for a session governed by the
+relation between the <strong>agent</strong>, the target <strong>resource</strong>, and the
+<strong>modes(s)</strong></p>
+</div>
+</section>
+<section class="section heavy" id="dydra-identity-management-and-access-control-model">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">dydra identity</div></div>
+<div class="content">
+<h2>Dydra Identity Management and Access Control Model</h2>
+<div class="subsection" id="dydra-graph-based-access-control-acg">
+<h3>Dydra Graph Based Access Control (ACG)</h3>
+<p>Dydra stores and manages identity, role, and permission information
+information as semantic graphs which allow for use of standard Graph
+Store and SPARQL operations to specify agents and their access rights to
+system resources.</p>
+<p>Each registered user/identity creates a new resource in the Dydra
+Identity Graph (DIG). The DIG is only accessed indirectly
+through system operations only, due to cyber security considerations.</p>
+<p>Each account maintains its own Access Control Graph (ACG) to allow for
+the definition and application of modes (permissions) to resources
+(repositories, views, users, accounts, agents). Each ACG can be viewed,
+browsed and edited by the account owner, like any other repository.</p>
+<p>The Dydra model supports controls such as those defined in role based
+access control (RBAC) systems. The two key differences are:</p>
+<ul class="simple">
+<li><p>the GBAC uses a structured and formal query language e.g. SPARQL to
+derive access controls rather than depend on their enumeration.</p></li>
+<li><p>the Dydra model identifies its terms with IRI</p></li>
+</ul>
+<p>An overview of the terms and their relations is visible in the “GBAC model” diagram:</p>
+<div class="figure align-default" id="id1">
+<img alt="../_images/relations_model.svg" src="../_images/relations_model.svg" /><p class="caption"><span class="caption-text">The Dydra GBAC model</span></p>
+</div>
+</div>
+<div class="subsection" id="dydra-gbac-vs-rbac">
+<h3>Dydra GBAC vs RBAC</h3>
+<p>RBAC is used by many security professionals who may not be familiar with
+set theory or expressing relations in semantic web or graph data ways.
+Organizations and professionals familiar with RBAC can use the Dydra
+security framework to define RBAC models. The issue is often one of
+mapping terms. The below table maps terms from Dydra graph concepts to
+those most often used when discussing RBAC.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Dydra Term</strong></p></th>
+<th class="head"><p><strong>RBAC Term</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>account</p></td>
+<td><p>user</p></td>
+</tr>
+<tr class="row-odd"><td><p>user</p></td>
+<td><p>user</p></td>
+</tr>
+<tr class="row-even"><td><p>agent</p></td>
+<td><p>role</p></td>
+</tr>
+<tr class="row-odd"><td><p>type</p></td>
+<td><p>role (hierarchy)</p></td>
+</tr>
+<tr class="row-even"><td><p>mode</p></td>
+<td><p>permission</p></td>
+</tr>
+<tr class="row-odd"><td><p>resource</p></td>
+<td><p>object</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A RBAC mechanism uses <em>roles (R)</em> to organize users (<em>U</em>) and
+permissions (P), where roles represent organizational responsibilities
+of the users of the information system.</p>
+<p>Using this system, an organization can:</p>
+<ul class="simple">
+<li><p>assign users to roles</p></li>
+<li><p>assign permissions to roles</p></li>
+<li><p>and assign roles to roles to define a role hierarchy</p></li>
+</ul>
+<p>The below table illustrates the relation between RBAC and Dydra terms.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Dydra Term</strong></p></th>
+<th class="head"><p><strong>RBAC Term</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>agent assignment <em>AA</em></p>
+<p>The set of all pairs accounts <em>A</em>
+x users <em>U</em></p>
+<p><img class="math" src="../_images/math/08d420f83814a90ff8a456730e17dc971205abb5.svg" alt="\text{AA} \subseteq A
+\times U"/></p>
+</td>
+<td><p>User Assignment <em>UA</em></p>
+<p>The set of all pairs users U x
+roles R</p>
+<p><img class="math" src="../_images/math/264fffa3d3a4d58d66fabaf5e81a84c551f2509e.svg" alt="\text{UA} \subseteq \text{
+\ U} \times R"/></p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>mode assignment <em>MA</em></p>
+<p>The set of all pairs modes <em>M</em> to
+agents <em>G</em></p>
+<p><img class="math" src="../_images/math/3a8c76353a5ca0b724498e1475a16e03195688d4.svg" alt="\text{MA} \subseteq M
+\times G"/></p>
+</td>
+<td><p>Role Assignment <em>RA</em></p>
+<p>The set of all pairs of
+role and permission</p>
+<p><img class="math" src="../_images/math/3c8e77ad10bb33678326dcaae1a5802c1459b932.svg" alt="\text{RA} \subseteq R
+\times P"/></p>
+</td>
+</tr>
+<tr class="row-even"><td><p>type assignment <em>TA</em></p>
+<p>The set of all pairs entity
+<em>(E+T)</em> and type <em>T</em>
+asserts direct membership and
+permits to infer indirect
+assertions
+<img class="math" src="../_images/math/facff78dc6345a5ef6fb2bf1c0d75260d832a8f1.svg" alt="\text{TA} \subseteq (E + T)
+\times \text{T}"/></p>
+</td>
+<td><p>Role Hierarchy RH</p>
+<p>The set of all pairs of roles r1
+to roles r2 only if all
+permissions of r2 are also
+permission of r1, and all users
+of r1 are also users of r2</p>
+<p><img class="math" src="../_images/math/8d61e9ed6535e8545e6747ee7d2307a609b6a99d.svg" alt="\text{RH} \subseteq R
+\times R"/></p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Rather than articulating “role” as a specific relation between two
+entity types, Dydra applies the more general “type” to
+to any resource, and provides flexibility beyond the use of “role”
+in RBAC models. For example, in RBAC the term “role” would be applied to
+a “user” and “capability” to an object. In Dydra, both can be expressed
+as types e.g. agent to type <img class="math" src="../_images/math/404d163f72eb630f2abbdd4c419caabee8c52b1b.svg" alt="G \rightarrow T"/>or resource to type
+<img class="math" src="../_images/math/2aa1d34fb4e0142e4f0f14de2a2cf81895f1b025.svg" alt="R \rightarrow T"/>.</p>
+</div>
+</div>
+</section>
+<section class="section" id="dydra-security-relations-model">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">dydra security</div></div>
+<div class="content">
+<h2>Dydra Security Relations Model</h2>
+<div class="subsection" id="authorization-status">
+<h3>Authorization Status</h3>
+<p>Dydra records authorization status as a relation between the
+<em>agents</em>, the <em>target resources</em>, and access <em>modes</em> in the
+context of a request. Particular elements of this relation, i.e.
+an agent’s <em>state</em>, constitutes
+the agent’s <em>capabilities</em> or the sum of all authorized operations for
+an agent against resources. The initial state comprises the agent,
+account, and mode for a given request. This is transformed as a
+request is processed to include additional resources e.g.
+repository, view, stream. The search for authorization is governed by
+this eventual, current state.</p>
+<p>The defined set of relations constitutes the Dydra capability model,
+allowing for entity resources to serve as <em>capability containers</em> and
+therefore behave in a similar manner to <em>roles</em>. Dydra constructs this
+capability list from the <em>agent</em> to the <em>modes</em> to the <em>resource</em> and
+stores it as part of each accounts ACG.</p>
+</div>
+<div class="subsection" id="default-authorization-status-for-views-and-repositories">
+<h3>Default Authorization Status for Views and Repositories</h3>
+<p>The Dydra API supports two aspects to authorize:</p>
+<ul class="simple">
+<li><p>for access to a view</p></li>
+<li><p>for access to repository data</p></li>
+</ul>
+<div class="subsection" id="view-authorization">
+<h4>View Authorization</h4>
+<p>Dydra views, (e.g. queries or programs) can be inline, or saved and
+versioned as resources. They are applied to a target resource, a
+repository, or the “data”. The default rules for running, or executing a
+query (creating a view) are:</p>
+<ul class="simple">
+<li><p>an authenticated <strong>agent</strong> has execute access to all views defined in
+the <strong>account</strong> for which the agent is authenticated.</p></li>
+<li><p>an <strong>agent</strong> has execute access to the request <strong>inline view</strong>.</p></li>
+</ul>
+<p>Anonymous access to saved views must be authorized.
+As a matter of site configuration, authorization can be
+required for anonymous access to inline views.</p>
+</div>
+<div class="subsection" id="repository-authorization">
+<h4>Repository Authorization</h4>
+<p>Dydra does not define default access rules for repositories. Any direct
+access to a repository must be authorized.</p>
+<p>For federated queries, access requires that one of the following be true:</p>
+<ul class="simple">
+<li><p>the Agent has access</p></li>
+<li><p>the active View has access</p></li>
+<li><p>the active Account has access</p></li>
+<li><p>the origin Repository has access to the target</p></li>
+</ul>
+<p>The HTTP request resource designates the initial repository.
+A federation operation establishes the service clause location
+as a replacement value.</p>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> Service Access Authorization</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Service Access Authorization</a>
+    <span class="spacer"></span>
+    <a class="cell" href="identification.html"><span class="dir">Next</span> Entity Identification</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

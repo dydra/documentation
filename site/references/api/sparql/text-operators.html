@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Text Matching &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Sesame 2.x HTTP Protocol Interface" href="../sesame/index.html">
+    <link rel="prev" title="View Management" href="views/management.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Text Matching</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="text-matching">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Text Matching</h1>
+<p>In addition to the standard SPARQL <code class="docutils literal notranslate"><span class="pre">sameTerm</span></code> rules which govern statement pattern unification
+and the regular expression support which is standard in the language,
+Dydra provides a mechanism for multi-valued predicate patterns
+to provide a text matching API.</p>
+<p>The syntax follows the precedent establish by Jena ARQ.
+It employs a predicate adopted from that namespace.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>prefix</p></th>
+<th class="head"><p>IRI</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>arq</p></td>
+<td><p>&lt;<a class="reference external" href="http://jena.hpl.hp.com/ARQ">http://jena.hpl.hp.com/ARQ</a>/property#&gt;</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Where the predicate <code class="docutils literal notranslate"><span class="pre">arq:textMatch</span></code> appears in a basic graph pattern, it permits
+four parameters and two result bindings.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">(?matchedText</span> <span class="pre">?score)</span> <span class="pre">arq:textMatch</span> <span class="pre">(pattern</span> <span class="pre">langTag</span> <span class="pre">offset</span> <span class="pre">limit)</span> <span class="pre">}</span></code></p>
+</div></blockquote>
+<p>The result elements are positional: the matched text result is required, while the score is optional.
+In a similar manner, the pattern is required while the language and slice constraints are optional.
+Language is significant only where the index is  configured for language-specific stemming.
+In the current implementation, that is not supported and “simple” stemming applies.</p>
+<p>This permits SPARQL expression variants as follows:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?matchedText</span> <span class="k">WHERE</span> <span class="p">{</span>
+    <span class="p">(</span> <span class="nv">?matchedText</span> <span class="p">)</span>
+    <span class="nl">&lt;http://jena.hpl.hp.com/ARQ/property#textMatch&gt;</span>
+    <span class="p">(</span><span class="s">&#39;printer:*&#39;</span><span class="p">)</span> <span class="p">.</span>
+<span class="p">}</span>
+
+<span class="k">SELECT</span> <span class="nv">?matchedText</span> <span class="k">WHERE</span> <span class="p">{</span>
+    <span class="p">(</span> <span class="nv">?matchedText</span> <span class="nv">?score</span> <span class="p">)</span>
+    <span class="nl">&lt;http://jena.hpl.hp.com/ARQ/property#textMatch&gt;</span>
+    <span class="p">(</span><span class="s">&#39;printer:*&#39;</span> <span class="s">&#39;EN&#39;</span><span class="p">)</span> <span class="p">.</span>
+<span class="p">}</span>
+
+<span class="k">SELECT</span> <span class="nv">?matchedText</span> <span class="k">WHERE</span> <span class="p">{</span>
+    <span class="p">(</span> <span class="nv">?matchedText</span> <span class="nv">?score</span> <span class="p">)</span>
+    <span class="nl">&lt;http://jena.hpl.hp.com/ARQ/property#textMatch&gt;</span>
+    <span class="p">(</span><span class="s">&#39;printer:*&#39;</span> <span class="s">&#39;EN&#39;</span> <span class="mi">0</span> <span class="mi">10</span><span class="p">)</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The pattern syntax follows the PostgreSQL pattern syntax.</p>
+<p>Where a query applied to a repository includes the text index predicate</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">&lt;http://jena.hpl.hp.com/ARQ/property#textMatch&gt;</span></code></p>
+</div></blockquote>
+<p>a simple text index is generated for the repository.
+This index relies on PostgreSQL free text support with simple stemming.
+While that is not as sophisticated as other methods, it makes pattern matches more predictable.</p>
+<p>An example index table is</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 14%" />
+<col style="width: 8%" />
+<col style="width: 7%" />
+<col style="width: 56%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Column</p></td>
+<td><p>Type</p></td>
+<td><p>Collation</p></td>
+<td><p>Nullable</p></td>
+<td><p>Default</p></td>
+</tr>
+<tr class="row-even"><td><p>term_identifier</p></td>
+<td><p>integer</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>term_string</p></td>
+<td><p>character varying</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>term_language</p></td>
+<td><p>regconfig</p></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>term_string_vector</p></td>
+<td><p>tsvector</p></td>
+<td></td>
+<td></td>
+<td><p>generated always as (to_tsvector(term_language, term_string::text)) stored</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For which a text stem index is created.</p>
+<blockquote>
+<div><p>“test__test__text_index” gin (term_string_vector)</p>
+</div></blockquote>
+<p>This index table is static once created.
+In order to recreate it, delete it with a request to the related repository resource</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/text-index</span></code></p>
+</div></blockquote>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="views/management.html"><span class="dir">Previous</span> View Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../sesame/index.html"><span class="dir">Next</span> Sesame 2.x HTTP Protocol Interface</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

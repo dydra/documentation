@@ -1,0 +1,208 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Administration &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="References" href="references.html">
+    <link rel="prev" title="Access Control Graphs" href="access-control-graph.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Administration</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="administration">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Service Access Authorization</p>
+<h1>Administration</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#defining-access-control-graphs"><span class="tn">01</span> Defining Access Control Graphs</a></li>
+<li><a href="#capability-determination"><span class="tn">02</span> Capability Determination</a></li>
+<li><a href="#authentication-templates-use-cases"><span class="tn">03</span> Authentication Templates / Use Cases</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="defining-access-control-graphs">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">defining access</div></div>
+<div class="content">
+<h2>Defining Access Control Graphs</h2>
+<p>Authorization lists are maintained in the form of W3C <a class="reference external" href="https://www.w3.org/wiki/WebAccessControl">ACL</a> “access control graphs” in
+the respective <code class="docutils literal notranslate"><span class="pre">system</span></code> repository of a request repository’s account.
+This graph is modified through standard graph store operations, whereby
+the account owner always retains write access to the repository,
+independent of its actual content.
+For example for the account <code class="docutils literal notranslate"><span class="pre">Account1</span></code>, the respository <code class="docutils literal notranslate"><span class="pre">system</span></code> contains
+the access control graph and is available as the resource</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="k">system</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Capability lists are not managed - they are constructed dynamically as the respective
+entities are referenced.
+The only administration permitted is to clear the cached list, with a DELETE
+request to respective user resource</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">User1</span><span class="o">/</span><span class="n">capabilities</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The user resource permits also a GET request, to determine the current status.</p>
+</div>
+</section>
+<section class="section heavy" id="capability-determination">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">capability</div></div>
+<div class="content">
+<h2>Capability Determination</h2>
+<p>The service determines the direct authorization for a specific</p>
+<blockquote>
+<div><p>(agent x resource x operation)</p>
+</div></blockquote>
+<p>combination by applying a SPARQL query to the accounts system repository.
+If that repository includes a view named <code class="docutils literal notranslate"><span class="pre">direct-authorization</span></code> that query is applied.</p>
+</div>
+</section>
+<section class="section" id="authentication-templates-use-cases">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">authentication</div></div>
+<div class="content">
+<h2>Authentication Templates / Use Cases</h2>
+<div class="subsection" id="authenticated-user">
+<h3>Authenticated User</h3>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">User1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">Account2</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="anonymous-user">
+<h3>Anonymous User</h3>
+<p>Anonymous read access to a repository is declared in the respective request <code class="docutils literal notranslate"><span class="pre">system</span></code> repository as</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">Agent</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="controlled-view">
+<h3>Controlled View</h3>
+<p>An anonymous controlled view is declared in the respective request <code class="docutils literal notranslate"><span class="pre">system</span></code> repository as</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">/</span><span class="n">View1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Execute</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">Agent</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+<span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">/</span><span class="n">View1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="collaborators">
+<h3>Collaborators</h3>
+<p>A collaborative role for a user is declared in the respective request <code class="docutils literal notranslate"><span class="pre">system</span></code> repository as</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">users</span><span class="o">/</span><span class="n">User2</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="project-manager">
+<h3>Project Manager</h3>
+<p>Where a user is to exercise control over another account, the respective authenticated account
+must have execute access to the other account, by virtue of a membership relation.
+The following assertions declare this access:</p>
+<p>in system/system</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">project</span><span class="o">-</span><span class="n">account</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdf</span><span class="p">:</span><span class="k">type</span><span class="w"> </span><span class="n">sioc</span><span class="p">:</span><span class="n">UserAccount</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">dev</span><span class="o">-</span><span class="n">account</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdf</span><span class="p">:</span><span class="k">type</span><span class="w"> </span><span class="n">sioc</span><span class="p">:</span><span class="n">UserAccount</span><span class="w"> </span><span class="p">.</span>
+</pre></div>
+</div>
+<p>in project-account/system</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">project</span><span class="o">-</span><span class="n">account</span><span class="o">&gt;</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">Mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Execute</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">?</span><span class="n">manager</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+<p>in <code class="docutils literal notranslate"><span class="pre">dev-account/system</span></code></p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">project</span><span class="o">-</span><span class="n">account</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prov</span><span class="p">:</span><span class="n">hadMember</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">account</span><span class="o">/</span><span class="n">dev</span><span class="o">-</span><span class="n">account</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span>
+</pre></div>
+</div>
+<p>The consequence is that for any operation for which the dev-account had access, the same access
+is to be allowed to the project account.</p>
+</div>
+<div class="subsection" id="external-federation">
+<h3>External Federation</h3>
+<p>Each external federation service location</p>
+<p>For a location such as <code class="docutils literal notranslate"><span class="pre">http://dbpedia.org/sparql</span></code>, to permit authenticated users
+to execute service requests agains it,
+the assertion in the <code class="docutils literal notranslate"><span class="pre">dbpedia.org/system</span></code>
+repository should be</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="n">accessTo</span><span class="w"> </span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dbpedia</span><span class="p">.</span><span class="n">org</span><span class="o">/&gt;</span><span class="w">  </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="k">mode</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="p">;</span>
+<span class="w">  </span><span class="n">acl</span><span class="p">:</span><span class="n">agent</span><span class="w"> </span><span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="k">User</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span><span class="w"> </span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="other-roles">
+<h3>Other Roles</h3>
+<p>Additional roles are to be defined.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="access-control-graph.html"><span class="dir">Previous</span> Access Control Graphs</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Service Access Authorization</a>
+    <span class="spacer"></span>
+    <a class="cell" href="references.html"><span class="dir">Next</span> References</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

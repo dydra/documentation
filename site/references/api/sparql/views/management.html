@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>View Management &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="Text Matching" href="../text-operators.html">
+    <link rel="prev" title="View Materialization" href="materialization.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>View Management</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="view-management">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; SPARQL Views</p>
+<h1>View Management</h1>
+<p>Dydra extends the W3C SPARQL HTTP Protocol to include two resources ancillary to
+each SPARQL endpoint to manage the endpoint’s views.
+For an endpoint,</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/sparql</span></code></p>
+</div></blockquote>
+<p>resources are available to return the query text and metadata as well as a list of
+defined views.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#single-view-operations"><span class="tn">01</span> Single View Operations</a></li>
+<li><a href="#index-operations"><span class="tn">02</span> Index Operations</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="single-view-operations">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">single view operations</div></div>
+<div class="content">
+<h2>Single View Operations</h2>
+<div class="subsection" id="get">
+<h3>GET</h3>
+<p>A GET request to the view management location retrieves the view expression
+with its metadata.
+This request form specifies the view metadata location :</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/system/accounts/&lt;account-name&gt;/repositories/&lt;repository-name&gt;/views/&lt;view&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="headers">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the response document media type.</div>
+<div class="line-block">
+<div class="line">application/sparql-results : results variants yield the full metadata including the text</div>
+<div class="line">application/sparql-query : returns just the query text</div>
+</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="put">
+<h3>PUT</h3>
+<p>A PUT request to the view management location sets the view expression.
+This request form specifies the view metadata location :</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/system/accounts/&lt;account-name&gt;/repositories/&lt;repository-name&gt;/views/&lt;view&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id1">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the response document media type.</div>
+<div class="line-block">
+<div class="line">application/sparql-results : results variants yield the full metadata</div>
+</div>
+<div class="line">Content-Type: specifies the query encoding in the request body</div>
+<div class="line-block">
+<div class="line">application/sparql-query</div>
+</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="index-operations">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">index operations</div></div>
+<div class="content">
+<h2>Index Operations</h2>
+<div class="subsection" id="id2">
+<h3>GET</h3>
+<p>A GET request to the view index location retrieves a list of views.
+This request form specifies the view index location :</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/system/accounts/&lt;account-name&gt;/repositories/&lt;repository-name&gt;/views</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id3">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the response document media type.</div>
+<div class="line-block">
+<div class="line">application/sparql-results : results variants yields the full metadata including the text</div>
+</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="materialization.html"><span class="dir">Previous</span> View Materialization</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL Views</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../text-operators.html"><span class="dir">Next</span> Text Matching</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

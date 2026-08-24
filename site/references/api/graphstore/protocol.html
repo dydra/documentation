@@ -1,0 +1,285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>SPARQL 1.1 Graph Store HTTP Protocol &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Asynchronous Processing" href="asynchronous.html">
+    <link rel="prev" title="SPARQL 1.1 Graph Store HTTP Protocol Interface" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Graph store<br>SPARQL 1.1 Graph Store HTTP Protocol</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell on" href="index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="sparql-1-1-graph-store-http-protocol">
+<div class="rail"><div class="vlabel">graph store</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Graph Store HTTP Protocol Interface</p>
+<h1>SPARQL 1.1 Graph Store HTTP Protocol</h1>
+<p>The “SPARQL Graph Store Protocol”
+as described in detail in the W3C
+<a class="reference external" href="http://www.w3.org/TR/sparql11-http-rdf-update/">documentation</a>,
+comprises operations on Dydra repositories:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>upload for import</dt><dd><ul>
+<li><p>replacement (PUT)</p></li>
+<li><p>addition (POST)</p></li>
+<li><p>modification (PATCH)</p></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p>clearing (DELETE)</p></li>
+<li><p>download for export (GET)</p></li>
+</ul>
+<p>Upload content is limited to 128 MB. For synchronous requests, this applies to the compressed size, however for
+asynchronous requests, this applies to the actual content.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#graph-store-requests"><span class="tn">01</span> Graph Store Requests</a></li>
+<li><a href="#tarql-requests"><span class="tn">02</span> TARQL Requests</a></li>
+<li><a href="#graph-store-response"><span class="tn">03</span> Graph Store Response</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="graph-store-requests">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">graph store requests</div></div>
+<div class="content">
+<h2>Graph Store Requests</h2>
+<p>Standard graph store requests are addressed to the <code class="docutils literal notranslate"><span class="pre">service</span></code> graph store end point</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/service</span></code></p>
+</div></blockquote>
+<p>Any graph may be specified indirectly with a <code class="docutils literal notranslate"><span class="pre">graph=</span></code> or <code class="docutils literal notranslate"><span class="pre">default</span></code> query argument.
+Alternatively, a <code class="docutils literal notranslate"><span class="pre">graph</span></code> HTTP header may apply.
+A GET request may be targeted to a retrospective or prospective dataset by including a
+<code class="docutils literal notranslate"><span class="pre">revision-id</span></code> or a <code class="docutils literal notranslate"><span class="pre">revision-windows</span></code> argument.
+(See <a class="reference internal" href="../revisioning/protocol.html#revisionidentifierspecification"><span class="std std-ref">Revision Designator Specification</span></a> and <a class="reference internal" href="../revisioning/protocol.html#windowspecification"><span class="std std-ref">Revision Window Specification</span></a> .)</p>
+<div class="subsection" id="head">
+<h3>HEAD</h3>
+<p>A HEAD request returns HTTP headers which comprise metadata about the repository.</p>
+<div class="subsection" id="headers">
+<h4>Headers</h4>
+</div>
+</div>
+<div class="subsection" id="delete">
+<h3>DELETE</h3>
+<p>A DELETE request removes statements from the repository from the specified graph.
+If no graph is specified, the operation applies to the entire repository content.</p>
+<div class="subsection" id="id2">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="get">
+<h3>GET</h3>
+<p>A GET request returns the repository content.
+If a revision is specified, the response contains those statements present as of that revision.
+A request without a revision operates on the latest revision.</p>
+<div class="subsection" id="id3">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="put">
+<h3>PUT</h3>
+<p>A PUT request clears the repository and inserts the request content.</p>
+<div class="subsection" id="id4">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Client-Request-ID: specifies an id to be included in the response.</div>
+<div class="line">Content-Encoding: <code class="docutils literal notranslate"><span class="pre">gzip</span></code>, specifies content compression.</div>
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+<div class="line">Location: specifies a content source alternative to the request body as an URL.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="post">
+<h3>POST</h3>
+<p>A POST request appends the content to the repository.</p>
+<div class="subsection" id="id5">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Client-Request-ID: specifies an id to be included in the response.</div>
+<div class="line">Content-Encoding: <code class="docutils literal notranslate"><span class="pre">gzip</span></code>, specifies content compression.</div>
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+<div class="line">Location: specifies a content source alternative to the request body as an URL.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="patch">
+<h3>PATCH</h3>
+<p>A PATCH encodes changes to the repository as per the request content.
+The modification mode depends on the content type.</p>
+<div class="subsection" id="id6">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Client-Request-ID: specifies an id to be included in the response.</div>
+<div class="line">Content-Encoding: <code class="docutils literal notranslate"><span class="pre">gzip</span></code>, specifies content compression.</div>
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">The allowed media tpes are</div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">application/n-quads</span></code></div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">application/n-triples</span></code></div>
+<div class="line">- <code class="docutils literal notranslate"><span class="pre">multipart/related</span></code></div>
+<div class="line">A <code class="docutils literal notranslate"><span class="pre">multipart/related</span></code> media type permits a <code class="docutils literal notranslate"><span class="pre">boundary</span></code> parameter.</div>
+<div class="line">(see the <a class="reference external" href="https://github.com/dydra/http-api-tests/blob/master/sparql-graph-store-http-protocol/PATCH-multipart.sh">PATCH-multipart</a> test.)</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+</div>
+</div></blockquote>
+<p>If the content media type is <code class="docutils literal notranslate"><span class="pre">application/n-quads</span></code> the request content denotes one
+or more named graphs.
+The request first removes the specified graph or graphs from the repository,
+after which the request content n-quads statements are inserted into their respective graphs
+and n-triples statements are inserted into the graph specified at the protocol level.</p>
+<p>If the content media type is <code class="docutils literal notranslate"><span class="pre">application/n-triples</span></code> the request content denotes a single graph.
+First, those statements which
+are identified by the subjects which are present in the input are first deleted
+and then, the content is inserted are inserted into the graph specified at the protocol level.</p>
+<p>If the content media type is <code class="docutils literal notranslate"><span class="pre">multipart/related</span></code>, then each request part
+modifies the repository as per the respective X-HTTP-Method-Override header by
+inserting or removing those statements in the respective section.</p>
+</div>
+<div class="subsection" id="part-headers">
+<h4>Part Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF part document media type.</div>
+<div class="line">Graph: specifies the part statement context uri.</div>
+<div class="line">X-HTTP-Method-Override: specifies the operation (PUT, POST, PATCH, or DELETE) to apply to the part content.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="tarql-requests">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">tarql requests</div></div>
+<div class="content">
+<h2>TARQL Requests</h2>
+<p>TARQL defines an interpretation for SPARQL construct queries which allows
+to apply them to CSV and JSON data to produce n-quads or n-triples data to import into a repository.
+A TARQL request incorporates a SPARQL view in the graph store end point location.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/&lt;tarql-view&gt;</span></code></p>
+</div></blockquote>
+<p>When a request to a location of this form appears in combination with <code class="docutils literal notranslate"><span class="pre">text/csv</span></code>
+or <code class="docutils literal notranslate"><span class="pre">application/json</span></code> content,
+the processor arranges to treat the content as the intermediate match results from
+empty BGP forms and applies the algebra to the data to generate a graph, which is then imported.</p>
+</div>
+</section>
+<section class="section" id="graph-store-response">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">graph store response</div></div>
+<div class="content">
+<h2>Graph Store Response</h2>
+<p>The response to a graph store request indicates the disposition and provides provenance metadata.
+If the import fails due to content syntax or due to overlapping update requests,
+then the HTTP response code is “Bad Request”.
+A successful operation will return “Created” or “Success” depending on whether the operation adds a new
+graph or modifies an existing graph.</p>
+<div class="subsection" id="id7">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF response document media type.</div>
+<div class="line">ETag: specifies the revision identifier for the result repository state.</div>
+<div class="line">Location: specifies the repository resource identifier</div>
+<div class="line">Client-Request-ID : returns the client request id if one was present</div>
+<div class="line">Request-ID : returns the service request identifier.</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="content">
+<h3>Content</h3>
+<p>The content constitutes an activity stream entry and involves terms from two namespaces:
+<code class="docutils literal notranslate"><span class="pre">&lt;http://www.w3.org/ns/activitystreams#&gt;</span></code> (as), and <code class="docutils literal notranslate"><span class="pre">&lt;http://www.w3.org/ns/prov#&gt;</span></code> (prov).</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">as:actor : the name of the task’s authenticated agent</div>
+<div class="line">as:id : the service request identifier</div>
+<div class="line">as:inReplyTo :  the client request id if one was present</div>
+<div class="line">as:object :  the repository resource identifier</div>
+<div class="line">prov:startedATime : the xsd:dateTime encoding of the ZULU time at which the request began</div>
+<div class="line">prov:endedATime : the xsd:dateTime encoding of the ZULU time at which the request completed</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="asynchronous.html"><span class="dir">Next</span> Asynchronous Processing</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

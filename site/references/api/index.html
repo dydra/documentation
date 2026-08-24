@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Dydra Application Programming Interface (API) &#8212; Dydra API</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html">
+    <link rel="search" title="Search" href="search.html">
+    <link rel="next" title="SPARQL 1.1 Graph Store HTTP Protocol Interface" href="graphstore/index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="#">dydra</a></div>
+    </div>
+    <div class="meta">Reference<br>Dydra Application Programming Interface (API)</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="graphstore/index.html">Graph store</a>
+    <a class="cell" href="sparql/index.html">SPARQL</a>
+    <a class="cell" href="sesame/index.html">Sesame</a>
+    <a class="cell" href="provenance/index.html">Provenance</a>
+    <a class="cell" href="revisioning/index.html">Revisioning</a>
+    <a class="cell" href="authorization/index.html">Authorization</a>
+    <a class="cell" href="services/index.html">Services</a>
+    <a class="cell" href="administration/index.html">Administration</a>
+    <a class="cell" href="glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="genindex.html">Index</a>
+    <a class="cell" href="search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="dydra-application-programming-interface-api">
+<div class="rail"><div class="vlabel">reference</div></div>
+<div class="content">
+<h1>Dydra Application Programming Interface (API)</h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="graphstore/index.html">SPARQL 1.1 Graph Store HTTP Protocol Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphstore/protocol.html">SPARQL 1.1 Graph Store HTTP Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphstore/asynchronous.html">Asynchronous Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphstore/replication.html">Graph Store Replication HTTP Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphstore/materialization.html">Graph Store View Materialization HTTP Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphstore/successors.html">GSP Request Succession</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sparql/index.html">SPARQL 1.1 Protocol Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sparql/request-parameters.html">HTTP Request Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/response.html">Sparql Response</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/request-forms/index.html">SPARQL Request Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/federation.html">Federation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/asynchronous/index.html">Asynchronous SPARQL Processing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/successors.html">SPARQL Request Succession</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html">Abstract Algebra Expressions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#xpath-xsd-date-component-functions">XPath / XSD date-component functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#statement-markers-used-inside-bgp-body">Statement markers (used inside <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#solution-field-producers">Solution-field producers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#solution-field-combinators">Solution-field combinators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#solution-field-transformers">Solution-field transformers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#aggregation">Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#graph-scope">Graph scope</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#dependent-join-sparql-1-2-lateral">Dependent join (SPARQL 1.2 LATERAL)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#top-level-query-forms">Top-level query forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#sparql-update">SPARQL update</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#remote-query">Remote query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#revision-spocq-temporal-extension">Revision / spocq temporal extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#arithmetic">Arithmetic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#predicates">Predicates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#term-constructors">Term constructors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#triple-term-accessors-sparql-1-2">Triple-term accessors (SPARQL 1.2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#datatype">Datatype</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#language">Language</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#string-value">String value</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#hash">Hash</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/algebra.html#function-call-dispatch">Function-call dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/functions.html">Library Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/functions.html#extension-functions">Extension Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/views/index.html">SPARQL Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparql/text-operators.html">Text Matching</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sesame/index.html">Sesame 2.x HTTP Protocol Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sesame/index.html#repository-administration">repository administration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sesame/index.html#id1">content management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sesame/index.html#id2">repository queries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sesame/index.html#id3">graph store requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="provenance/index.html">Provenance Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="provenance/provenance.html">Provenance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="revisioning/index.html">Revisioning Interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="revisioning/overview.html">Repository Revision Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="revisioning/protocol.html">Protocol Revision Metadata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="revisioning/sparql.html">SPARQL Revision Metadata</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="authorization/index.html">Service Access Authorization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="authorization/introduction.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/introduction.html#dydra-identity-management-and-access-control-model">Dydra Identity Management and Access Control Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/introduction.html#dydra-security-relations-model">Dydra Security Relations Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/identification.html">Entity Identification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/operations.html">Operation Access Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/access-control-graph.html">Access Control Graphs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/administration.html">Administration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="authorization/references.html">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="services/index.html">Service Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="administration/index.html">Administrative Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="administration/monitoring.html">System Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="administration/resource-management/index.html">Resource Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="administration/revision-management.html">Revision Management</a></li>
+<li class="toctree-l2"><a class="reference internal" href="administration/qos.html">Quality of Service Provisioning</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glossary.html">Glossary</a></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="section" id="indices-and-tables">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">indices and tables</div></div>
+<div class="content">
+<h2>Indices and tables</h2>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <span class="spacer"></span>
+    <a class="cell" href="graphstore/index.html"><span class="dir">Next</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="#">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

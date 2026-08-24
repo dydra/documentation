@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Graph Store Replication HTTP Protocol &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Graph Store View Materialization HTTP Protocol" href="materialization.html">
+    <link rel="prev" title="Asynchronous Processing" href="asynchronous.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Graph store<br>Graph Store Replication HTTP Protocol</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell on" href="index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="graph-store-replication-http-protocol">
+<div class="rail"><div class="vlabel">graph store</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Graph Store HTTP Protocol Interface</p>
+<h1>Graph Store Replication HTTP Protocol</h1>
+<p>The “Graph Replication Protocol”
+extends the W3C “SPARQL Graph Store HTTP Protocol”
+to combine distributed repositories instances into a replicated store.
+A replicated repository differs from a standard (revisioned) repository in that
+each statement history records those respective insertion/deletion revision identifiers
+specific to that statement.
+These histories are propagated and merged into each replica.
+Each history provides an unambiguous record of the statement’s presence at each point in time.
+Once their state of all replicas converges, all histories are identical.</p>
+</div>
+</section>
+<section class="section" id="replication-requests">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">replication requests</div></div>
+<div class="content">
+<h2>replication requests</h2>
+<p>Replication requests are addressed to the graph store replication end point</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/replication</span></code></p>
+</div></blockquote>
+<p>Any graph may be specified indirectly.
+The operations are analogous to those of the graph store protocol:</p>
+<ul class="simple">
+<li><p>upload for import</p>
+<ul>
+<li><p>replacement (PUT)</p></li>
+<li><p>addition (POST)</p></li>
+<li><p>modification (PATCH)</p></li>
+</ul>
+</li>
+<li><p>clearing (DELETE)</p></li>
+<li><p>download for export (GET)</p></li>
+</ul>
+<p>Once an operation completes, it is propagated to all known replicas.
+The propagated requests supply a transaction identifier along with the content for merging.
+If the client request includes an identifier, it is a remote request and the identifier is retained.
+Local requests include no identifier and the respective local transaction identifier is used.</p>
+<p>No SPARQL support is present.</p>
+<div class="subsection" id="head">
+<h3>HEAD</h3>
+<p>A HEAD request registers the client as a replication peer.
+All subsequent replication operations are then passed to the client at the specified location.</p>
+<div class="subsection" id="headers">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Location: URL target for replication requests</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="delete">
+<h3>DELETE</h3>
+<p>A DELETE request removes the content statements from the repository.</p>
+<div class="subsection" id="id1">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+<div class="line">Revision: Identifies the Universal Revision ID to associate with the new content</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="get">
+<h3>GET</h3>
+<p>A GET request returns the repository content.
+If a revision is specified, the response contains those present as of that revision.
+A request without a revision operates on the latest revision.</p>
+<div class="subsection" id="id2">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Graph: specifies the context constraint.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="put">
+<h3>PUT</h3>
+<p>A PUT request clears the repository and inserts the request content.</p>
+<div class="subsection" id="id3">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Revision: Identifies the Universal Revision ID to associate with the new content</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="post">
+<h3>POST</h3>
+<p>A POST request appends the content to the repository.</p>
+<div class="subsection" id="id4">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Revision: Identifies the Universal Revision ID to associate with the new content</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="subsection" id="patch">
+<h3>PATCH</h3>
+<p>A PATCH encodes changes to the repository as a multipart/related mime message.
+Each request part modifies the repository as per the respective X-HTTP-Method-Override header</p>
+<div class="subsection" id="id5">
+<h4>Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF content document media type.</div>
+<div class="line">Graph: specifies the statement context uri.</div>
+<div class="line">Revision: Identifies the Universal Revision ID to associate with the new content</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="part-headers">
+<h4>Part Headers</h4>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: specifies the RDF part document media type.</div>
+<div class="line">Graph: specifies the part statement context uri.</div>
+<div class="line">X-HTTP-Method-Override: specifies the operation (PUT, POST, PATCH, or DELETE) to apply to the part content.</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="asynchronous.html"><span class="dir">Previous</span> Asynchronous Processing</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="materialization.html"><span class="dir">Next</span> Graph Store View Materialization HTTP Protocol</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

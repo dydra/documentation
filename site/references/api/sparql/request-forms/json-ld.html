@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>SPARQL JSON-LD Encoding &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="SPARQL Symbolic Expression" href="sparql-symbolic-expression.html">
+    <link rel="prev" title="SPARQL Request Forms" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>SPARQL JSON-LD Encoding</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="sparql-json-ld-encoding">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; SPARQL Request Forms</p>
+<h1>SPARQL JSON-LD Encoding</h1>
+<p>A JSON-LD response is requested by specifying the media type
+<code class="docutils literal notranslate"><span class="pre">application/ld+json</span></code>
+as the <code class="docutils literal notranslate"><span class="pre">Accept</span></code>
+header value along with optional arguments to indicate the context and the
+expansion form.</p>
+<p>The encoding is controlled by the optionally supplied context.
+If no context is specified the elements of a default,
+single-level context are generated on-demand, as term definitions
+which incorporate as member names the IRI <cite>local part</cite> for
+<code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> and <code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code> graph results
+or the dimension names for <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> solution fields.</p>
+<p>Accept</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">application/ld+json</span></code> : indicates that the response should be
+encoded as JSON-LD, as controlled by an accompanying framing
+context. the media type permits a <code class="docutils literal notranslate"><span class="pre">profile</span></code> argument to control the
+JSON-LD encoding form. it is allowed to have one of the following values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">http://www.w3.org/ns/json-ld#expanded</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://www.w3.org/ns/json-ld#compacted</span></code> (the default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">http://www.w3.org/ns/json-ld#flattened</span></code> (not the default)</p></li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p>Content-Type</p>
+<blockquote>
+<div><p>The request body content type may indicate either a query or an update expression.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">application/sparql-query</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">application/sparql-update</span></code></p></li>
+</ul>
+</div></blockquote>
+<p>Link</p>
+<blockquote>
+<div><p>A link with the relation type <code class="docutils literal notranslate"><span class="pre">http://www.w3.org/ns/json-ld#context</span></code> specifies the
+location of the context which is to govern the response encoding.
+A request to this location must permit <code class="docutils literal notranslate"><span class="pre">application/ld+json</span></code> as the <code class="docutils literal notranslate"><span class="pre">Accept</span></code> specification
+and must respond with a JSON-LD document which contains the context and
+and any framing information.
+In no contet link is supplied, the requisite field definitions are generated
+on-demand.
+For example</p>
+<blockquote>
+<div><p>Link: &lt;<a class="reference external" href="http://json-ld.org/contexts/person.jsonld">http://json-ld.org/contexts/person.jsonld</a>&gt;; rel=”<a class="reference external" href="http://www.w3.org/ns/json-ld#context">http://www.w3.org/ns/json-ld#context</a>”; type=”application/ld+json”</p>
+</div></blockquote>
+</div></blockquote>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> SPARQL Request Forms</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL Request Forms</a>
+    <span class="spacer"></span>
+    <a class="cell" href="sparql-symbolic-expression.html"><span class="dir">Next</span> SPARQL Symbolic Expression</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

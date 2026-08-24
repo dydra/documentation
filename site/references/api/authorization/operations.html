@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Operation Access Modes &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Access Control Graphs" href="access-control-graph.html">
+    <link rel="prev" title="Entity Identification" href="identification.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Operation Access Modes</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="operation-access-modes">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Service Access Authorization</p>
+<h1>Operation Access Modes</h1>
+<p>Dydra recognizes the following operations in access control lists (ACLs).</p>
+<ul class="simple">
+<li><p>acl:Read</p></li>
+<li><p>acl:Write</p></li>
+<li><p>acl:Control</p></li>
+<li><p>acl:Execute</p></li>
+</ul>
+<p>The meaning depends on whether the target entity as an account, repository, or view.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#acl-read"><span class="tn">01</span> acl:Read</a></li>
+<li><a href="#acl-write"><span class="tn">02</span> acl:Write</a></li>
+<li><a href="#acl-control"><span class="tn">03</span> acl:Control</a></li>
+<li><a href="#acl-execute"><span class="tn">04</span> acl:Execute</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="acl-read">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">acl:read</div></div>
+<div class="content">
+<h2>acl:Read</h2>
+<p>Read access permits the agent to execute an request which reads data from the repository.</p>
+</div>
+</section>
+<section class="section heavy" id="acl-write">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">acl:write</div></div>
+<div class="content">
+<h2>acl:Write</h2>
+<p>Write accss permits the agent to execute an request which writes data to the repository.</p>
+</div>
+</section>
+<section class="section heavy" id="acl-control">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">acl:control</div></div>
+<div class="content">
+<h2>acl:Control</h2>
+<p>Control acces permits the agent to execute a request which modifies the entity properties.</p>
+</div>
+</section>
+<section class="section" id="acl-execute">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">acl:execute</div></div>
+<div class="content">
+<h2>acl:Execute</h2>
+<p>With respect to an account, execute access governs whether an agent gains the
+permissions of the ACL of the account, which is not that of the authenticated account of the
+request session.
+With respect to a repository, governs whether a query which targets
+the repository may include federation clauses.
+With respect to a view, governs whether a session is permitted to
+execute the view.</p>
+<p>The implicit ACL for an authenticate agent includes</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">requestContent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Execute</span><span class="w"> </span><span class="k">true</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="identification.html"><span class="dir">Previous</span> Entity Identification</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Service Access Authorization</a>
+    <span class="spacer"></span>
+    <a class="cell" href="access-control-graph.html"><span class="dir">Next</span> Access Control Graphs</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

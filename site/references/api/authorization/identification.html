@@ -1,0 +1,216 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Entity Identification &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Operation Access Modes" href="operations.html">
+    <link rel="prev" title="Introduction" href="introduction.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Entity Identification</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="entity-identification">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Service Access Authorization</p>
+<h1>Entity Identification</h1>
+<p>The Dydra service processing model comprises several elementary entity classes</p>
+<ul class="simple">
+<li><p>Accounts</p></li>
+<li><p>Agents</p></li>
+<li><p>Repositories</p></li>
+<li><p>Users</p></li>
+<li><p>Views</p></li>
+</ul>
+<p>Each request involves an initial step to identify an agent.
+This process follows several authentication methods:</p>
+<ul class="simple">
+<li><p>user name and password (http basic)</p></li>
+<li><p>token</p>
+<ul>
+<li><p>static</p></li>
+<li><p>sso</p></li>
+</ul>
+</li>
+<li><p>location (ip number)</p></li>
+<li><p>session</p></li>
+</ul>
+<p>The model covers their characteristics, their naming and which authentication
+methods are available to translate a request’s terms into concrete service entities.
+Service data security resolves ultimately to constraints on which operations
+one given entity may perform on some other entity.
+The most primitive relations are directly between agents and repositories, while the other
+relation forms afford an agent indirect access.
+Within controlled access pattterns, each access request is checked aginst known constraints.
+Whether direct or indirect, known combinations are reduced to a direct element in
+the relation between an agent an the target entity and is recorded in
+the agent’s capability list.</p>
+<p>A minimal capability list is predefined as static program logic.
+The consequences of configured rules are computed on demand by applying <a class="reference internal" href="access-control-graph.html#sparql"><span class="std std-ref">SPARQL</span></a>
+queries
+to the authorization graph.
+The results are then cached as <cite>true</cite> or <cite>false</cite> determinations in the agent’s
+capability list.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#entity-classes"><span class="tn">01</span> Entity Classes</a></li>
+<li><a href="#entity-identification-methods"><span class="tn">02</span> Entity Identification Methods</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="entity-classes">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">entity classes</div></div>
+<div class="content">
+<h2>Entity Classes</h2>
+<div class="subsection" id="accounts">
+<h3>Accounts</h3>
+<p>The built-in model uses just one account class,  <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:Account&gt;</span></code>, which is a
+subclass of <code class="docutils literal notranslate"><span class="pre">&lt;sioc:UserAccount&gt;</span></code>.</p>
+</div>
+<div class="subsection" id="agents">
+<h3>Agents</h3>
+<p>The class of agents comprises several specific entity specializations:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">foaf:Agent</span></code> : an agent without authentication</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">acl:AuthenticatedAgent</span></code> : an agent which has been authenticated by name/password combination or
+by token.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:User&gt;</span></code> : an authenticated agent which corresponds to a <code class="docutils literal notranslate"><span class="pre">foaf:Person</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:LocatedAgent&gt;</span></code> : an agent for which the client IP address is known, but the
+identity is not.</p></li>
+</ul>
+<p>An agent is identified with a URL of the form <code class="docutils literal notranslate"><span class="pre">&lt;http://dydra.com/users/agent1&gt;</span></code></p>
+</div>
+<div class="subsection" id="repositories">
+<h3>Repositories</h3>
+<p>The built-in model uses just one repository class, <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:Repository&gt;</span></code>, which is a
+subclass of <code class="docutils literal notranslate"><span class="pre">&lt;http://purl.org/dc/terms/Dataset&gt;</span></code></p>
+</div>
+<div class="subsection" id="users">
+<h3>Users</h3>
+<p>A user is an authenticated agent.</p>
+</div>
+<div class="subsection" id="views">
+<h3>Views</h3>
+<p>Each request to the SPARQL endpoint includes a query.
+The query is either sent in-line - whether as the <code class="docutils literal notranslate"><span class="pre">query</span></code> argument in the request URL,
+as the content of a POST request, or as the <code class="docutils literal notranslate"><span class="pre">query</span></code> argument of a request form,
+or it is incorporated by reference - whether as the third component of the request URL path,
+or as the <code class="docutils literal notranslate"><span class="pre">view</span></code> argument of a request form.</p>
+</div>
+</div>
+</section>
+<section class="section" id="entity-identification-methods">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">entity identification</div></div>
+<div class="content">
+<h2>Entity Identification Methods</h2>
+<div class="subsection" id="http-basic-authentication">
+<h3>HTTP Basic Authentication</h3>
+<p>The HTTP <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header carries user name and password information.
+These specifiy a user in the identity model.
+That user and their respective account combine to constitute the request agent.</p>
+</div>
+<div class="subsection" id="static-token-authentication">
+<h3>Static Token Authentication</h3>
+<p>A token can be supplied in one of three ways:</p>
+<ul class="simple">
+<li><p>as a password without a user name in the HTTP authorization header</p></li>
+<li><p>as a bearer token value in the HTTP authorization header (see RFC <a class="reference external" href="https://datatracker.ietf.org/doc/html/rfc6750">6750</a>)</p></li>
+<li><p>as the value of the <code class="docutils literal notranslate"><span class="pre">auth_token</span></code> URL query parameter</p></li>
+</ul>
+<p>In either case, it specifies a user and, optionally a distinct account.
+That user and account combine to constitute the request agent.</p>
+<p>In cases where the authentication affords access to sensitive data, the recommended practice is
+supply the token in a header.</p>
+</div>
+<div class="subsection" id="sso-authentication">
+<h3>SSO Authentication</h3>
+<p>SSO authorization involves interaction with an identity authority.
+When the authentication process succeeds, the authority supplies a collection of
+identifying attributes which are interpreted to determine an account and, optionally,
+a distinct user identity.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Group</span></code> : If a group is present and it identifies an account, choose the account.
+If a name is also present choose that as the user.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Email</span></code> : If an e-mail address is present and belongs to an account, choose that account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NameID</span></code> : If a name is present and identifies an account, choose that account.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PersonImmutableID</span></code> : If the value corresponds to an account authentication token, choose that account.</p></li>
+</ul>
+<p>The chosen account and user combine to constitute the request agent.
+If the attributes do not describe a known account,
+or the account’s e-mail address is not within the service domain,
+then a default account is elected, as per the service configuration.</p>
+<p>Once the account is confirmed, a session token is generated and returned to the user agent to
+be supplied as the authentication cookie for subsequent requests.</p>
+</div>
+<div class="subsection" id="location-ip-number-authentication">
+<h3>Location (IP-Number) Authentication</h3>
+<p>If no other authentication information is provided, the request client location
+is attached to a <cite>located</cite> request agent.</p>
+</div>
+<div class="subsection" id="session-authentication">
+<h3>Session Authentication</h3>
+<p>As a consequence of a basic or SSO authentication interaction, the service generates a
+session identifier which it furnishes to the user agent as a component of an HTTP cookie.
+This identifer is used to authenticate subsequent requests from interactive user agents
+and can be used as well for programmatic access.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="introduction.html"><span class="dir">Previous</span> Introduction</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Service Access Authorization</a>
+    <span class="spacer"></span>
+    <a class="cell" href="operations.html"><span class="dir">Next</span> Operation Access Modes</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

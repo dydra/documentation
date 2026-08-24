@@ -1,0 +1,856 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Abstract Algebra Expressions &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Library Functions" href="functions.html">
+    <link rel="prev" title="SPARQL Request Succession" href="successors.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Abstract Algebra Expressions</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="abstract-algebra-expressions">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Abstract Algebra Expressions</h1>
+<p>Dydra accepts query requests in the form of abstract algebra expressions
+in addition to SPARQL texts.
+These express each operation as an s-expression, in which the operator is present
+in the first position and any arguments occupy successive positions.</p>
+<p>In the case of a simple query such as</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?s</span> <span class="nv">?p</span> <span class="nv">?o</span> <span class="k">WHERE</span> <span class="p">{</span> <span class="nv">?s</span> <span class="nv">?p</span> <span class="nv">?o</span> <span class="p">}</span>
+</pre></div>
+</div>
+<p>the equivalent algebra expression would be</p>
+<div class="highlight-lisp notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nv">select</span>
+<span class="w">   </span><span class="p">(</span><span class="nv">bgp</span>
+<span class="w">     </span><span class="p">(</span><span class="nv">triple</span><span class="w"> </span><span class="nv">?:s</span><span class="w"> </span><span class="nv">?:p</span><span class="w"> </span><span class="nv">?:o</span><span class="p">))</span>
+<span class="w">   </span><span class="p">(</span><span class="nv">?:s</span><span class="w"> </span><span class="nv">?:p</span><span class="w"> </span><span class="nv">?:o</span><span class="p">))</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#spocq-sparql-algebra-operators-spocq-a-package-reference"><span class="tn">01</span> SPOCQ SPARQL Algebra Operators — spocq.a package reference</a></li>
+<li><a href="#xpath-xsd-date-component-functions"><span class="tn">02</span> XPath / XSD date-component functions</a></li>
+<li><a href="#statement-markers-used-inside-bgp-body"><span class="tn">03</span> Statement markers (used inside bgp body)</a></li>
+<li><a href="#solution-field-producers"><span class="tn">04</span> Solution-field producers</a></li>
+<li><a href="#solution-field-combinators"><span class="tn">05</span> Solution-field combinators</a></li>
+<li><a href="#solution-field-transformers"><span class="tn">06</span> Solution-field transformers</a></li>
+<li><a href="#aggregation"><span class="tn">07</span> Aggregation</a></li>
+<li><a href="#graph-scope"><span class="tn">08</span> Graph scope</a></li>
+<li><a href="#dependent-join-sparql-1-2-lateral"><span class="tn">09</span> Dependent join (SPARQL 1.2 LATERAL)</a></li>
+<li><a href="#top-level-query-forms"><span class="tn">10</span> Top-level query forms</a></li>
+<li><a href="#sparql-update"><span class="tn">11</span> SPARQL update</a></li>
+<li><a href="#remote-query"><span class="tn">12</span> Remote query</a></li>
+<li><a href="#revision-spocq-temporal-extension"><span class="tn">13</span> Revision / spocq temporal extension</a></li>
+<li><a href="#arithmetic"><span class="tn">14</span> Arithmetic</a></li>
+<li><a href="#predicates"><span class="tn">15</span> Predicates</a></li>
+<li><a href="#term-constructors"><span class="tn">16</span> Term constructors</a></li>
+<li><a href="#triple-term-accessors-sparql-1-2"><span class="tn">17</span> Triple-term accessors (SPARQL 1.2)</a></li>
+<li><a href="#datatype"><span class="tn">18</span> Datatype</a></li>
+<li><a href="#language"><span class="tn">19</span> Language</a></li>
+<li><a href="#string-value"><span class="tn">20</span> String value</a></li>
+<li><a href="#hash"><span class="tn">21</span> Hash</a></li>
+<li><a href="#function-call-dispatch"><span class="tn">22</span> Function-call dispatch</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="spocq-sparql-algebra-operators-spocq-a-package-reference">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">spocq sparql algebra</div></div>
+<div class="content">
+<h2>SPOCQ SPARQL Algebra Operators — <cite>spocq.a</cite> package reference</h2>
+<p>This document catalogs every macro exported from the
+<code class="docutils literal notranslate"><span class="pre">org.datagraph.spocq.algebra</span></code> (nicknamed <code class="docutils literal notranslate"><span class="pre">spocq.a</span></code>) package, plus a
+handful of supporting functions accessed from algebra expressions.  The
+macros constitute the symbolic SPARQL expression (SSE) algebra that the
+SPARQL parser emits and the query compiler consumes; each macro
+corresponds to one SSE form and one or more SPARQL grammar productions.</p>
+<p>Per-entry headings carry the macro’s external name (the bar-quoted
+symbol-name) and its lambda list.  The line under each heading marks
+the entry as MACRO or FUNCTION and, for the predicate / value
+operators, gives a prose pseudo-type-signature in the SPARQL/XPath
+operator-mapping notation:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">(</span> <span class="pre">(</span> <span class="pre">arg-type</span> <span class="pre">...</span> <span class="pre">)</span> <span class="pre">return-type</span> <span class="pre">)</span></code></p>
+</div></blockquote>
+<p>Where two spellings exist — a SPARQL-spec strict case (e.g.
+<code class="docutils literal notranslate"><span class="pre">isBlank</span></code>) plus a lower-case alias (<code class="docutils literal notranslate"><span class="pre">isblank</span></code>) — both are listed
+alongside.</p>
+<p>SPARQL 1.2 additions are grouped together at the end of each affected
+category (triple-term constructor / accessors / predicate, language
+direction).</p>
+<div class="contents topic" id="catalogue">
+<p class="topic-title first">Catalogue</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#abstract-algebra-expressions" id="id1">Abstract Algebra Expressions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#spocq-sparql-algebra-operators-spocq-a-package-reference" id="id2">SPOCQ SPARQL Algebra Operators — <cite>spocq.a</cite> package reference</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#xpath-xsd-date-component-functions" id="id3">XPath / XSD date-component functions</a></p></li>
+<li><p><a class="reference internal" href="#statement-markers-used-inside-bgp-body" id="id4">Statement markers (used inside <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body)</a></p></li>
+<li><p><a class="reference internal" href="#solution-field-producers" id="id5">Solution-field producers</a></p></li>
+<li><p><a class="reference internal" href="#solution-field-combinators" id="id6">Solution-field combinators</a></p></li>
+<li><p><a class="reference internal" href="#solution-field-transformers" id="id7">Solution-field transformers</a></p></li>
+<li><p><a class="reference internal" href="#aggregation" id="id8">Aggregation</a></p></li>
+<li><p><a class="reference internal" href="#graph-scope" id="id9">Graph scope</a></p></li>
+<li><p><a class="reference internal" href="#dependent-join-sparql-1-2-lateral" id="id10">Dependent join (SPARQL 1.2 LATERAL)</a></p></li>
+<li><p><a class="reference internal" href="#top-level-query-forms" id="id11">Top-level query forms</a></p></li>
+<li><p><a class="reference internal" href="#sparql-update" id="id12">SPARQL update</a></p></li>
+<li><p><a class="reference internal" href="#remote-query" id="id13">Remote query</a></p></li>
+<li><p><a class="reference internal" href="#revision-spocq-temporal-extension" id="id14">Revision / spocq temporal extension</a></p></li>
+<li><p><a class="reference internal" href="#arithmetic" id="id15">Arithmetic</a></p></li>
+<li><p><a class="reference internal" href="#predicates" id="id16">Predicates</a></p></li>
+<li><p><a class="reference internal" href="#term-constructors" id="id17">Term constructors</a></p></li>
+<li><p><a class="reference internal" href="#triple-term-accessors-sparql-1-2" id="id18">Triple-term accessors (SPARQL 1.2)</a></p></li>
+<li><p><a class="reference internal" href="#datatype" id="id19">Datatype</a></p></li>
+<li><p><a class="reference internal" href="#language" id="id20">Language</a></p></li>
+<li><p><a class="reference internal" href="#string-value" id="id21">String value</a></p></li>
+<li><p><a class="reference internal" href="#hash" id="id22">Hash</a></p></li>
+<li><p><a class="reference internal" href="#function-call-dispatch" id="id23">Function-call dispatch</a></p></li>
+</ul>
+</div>
+</div>
+</section>
+<section class="section heavy" id="xpath-xsd-date-component-functions">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">xpath / xsd</div></div>
+<div class="content">
+<h2>XPath / XSD date-component functions</h2>
+<p>These are functions (not macros) accessed from the algebra; they
+correspond to <code class="docutils literal notranslate"><span class="pre">fn:*-from-dateTime</span></code> and apply to xsd:date /
+xsd:dateTime / xsd:duration / xsd:gYear / … values.</p>
+<p>FUNCTION ( (or DATE DATE-TIME DAY-TIME-DURATION G-DAY G-MONTH-DAY) ) T</p>
+<p>The function DAY returns the day part of arg as an integer.
+Corresponds to fn:day-from-dateTime and its variations.</p>
+<p>FUNCTION ( (or DATE-TIME DAY-TIME-DURATION TIME) ) T</p>
+<p>The function HOURS returns the hours part of arg as an integer.
+The value is as given in the lexical form of the XSD dateTime.
+Corresponds to fn:hours-from-dateTime.</p>
+<p>FUNCTION ( (or DATE-TIME DAY-TIME-DURATION TIME) ) T</p>
+<p>The function MINUTES returns the minutes part of the lexical form of arg.
+Corresponds to fn:minutes-from-dateTime.</p>
+<p>FUNCTION ( (or DATE DATE-TIME YEAR-MONTH-DURATION G-MONTH G-MONTH-DAY G-YEAR-MONTH) ) T</p>
+<p>The function MONTH returns the month part of arg as an integer.
+Corresponds to fn:month-from-dateTime.</p>
+<p>FUNCTION ( ( DATE-TIME DAY-TIME-DURATION TIME ) T )</p>
+<p>The function SECONDS returns the seconds part of the lexical form of arg.
+Corresponds to fn:seconds-from-datetime.</p>
+<p>FUNCTION ( ( xsd:dateTime ) simpleLiteral )</p>
+<p>The function TZ returns the timezone part of arg as an xsd:dayTimeDuration.
+Raises an error if there is no timezone.
+Corresponds to fn:timezone-from-dateTime except for the treatment of literals with no
+timezone.  As all times are recorded as Zulu, the function constantly returns <code class="docutils literal notranslate"><span class="pre">'Z'</span></code>.</p>
+<p>FUNCTION ( (or DATE DATE-TIME YEAR-MONTH-DURATION G-YEAR G-YEAR-MONTH) ) T</p>
+<p>The function YEAR returns the year part of arg as an integer.
+Corresponds to fn:year-from-dateTime.</p>
+</div>
+</section>
+<section class="section heavy" id="statement-markers-used-inside-bgp-body">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">statement markers</div></div>
+<div class="content">
+<h2>Statement markers (used inside <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body)</h2>
+<p>These macros never appear at the top of an algebra form; they tag the
+constituent triple / quad patterns inside a <code class="docutils literal notranslate"><span class="pre">bgp</span></code>.</p>
+<p>MACRO</p>
+<p>The asserted-triple statement marker used inside a <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body to denote an (S P O)
+match.  Trailing REST captures SPARQL 1.2 reifier / annotation keyword tails:
+<code class="docutils literal notranslate"><span class="pre">:reifier</span> <span class="pre">r</span></code> (produces a reified statement carrying the reifier identity) and
+<code class="docutils literal notranslate"><span class="pre">:annotation</span> <span class="pre">records</span></code> (produces additional asserted triples on the reifier).</p>
+<p>MACRO</p>
+<p>The asserted-quad statement marker used inside a <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body to denote an explicitly-
+graphed match (S P O G).</p>
+<p>MACRO</p>
+<p>Construct a literal list value within the algebra.  Used by the parser to carry SPARQL
+property-path / IN argument sequences as constant data.</p>
+</div>
+</section>
+<section class="section heavy" id="solution-field-producers">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">solution-field</div></div>
+<div class="content">
+<h2>Solution-field producers</h2>
+<p>Forms that introduce a solution field, either from the dataset (<code class="docutils literal notranslate"><span class="pre">bgp</span></code>) or
+from a constant / external source (<code class="docutils literal notranslate"><span class="pre">bindings</span></code>, <code class="docutils literal notranslate"><span class="pre">csv-bindings</span></code>,
+<code class="docutils literal notranslate"><span class="pre">json-bindings</span></code>, <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">null</span></code>).  <code class="docutils literal notranslate"><span class="pre">ask</span></code> reduces a solution field
+to a single boolean.</p>
+<p>MACRO ( ( solutionField ) xsd:boolean )</p>
+<p>The ASK form yields true iff the solution field is not empty.  No information is
+returned about the possible query solutions, just whether or not a solution exists.</p>
+<p>MACRO</p>
+<p>Basic graph pattern.  BODY is a list of statements (<code class="docutils literal notranslate"><span class="pre">triple</span></code>, <code class="docutils literal notranslate"><span class="pre">quad</span></code>, or nested
+algebra forms such as <code class="docutils literal notranslate"><span class="pre">graph</span></code>, <code class="docutils literal notranslate"><span class="pre">filter</span></code>, <code class="docutils literal notranslate"><span class="pre">optional</span></code>, <code class="docutils literal notranslate"><span class="pre">union</span></code>, etc.) that
+collectively constrain the dataset to a single solution stream.  The macro lowers BODY
+through a fixed sequence of pattern-rewrite phases — statement combination, filter
+pushdown, sip-source promotion, service-join expansion, and so on — and finishes with
+the storage layer’s match-field operators.</p>
+<p>MACRO ( ( solutionSequence variable* ) solutionField )</p>
+<p>A BINDINGS form combines a sequence of solutions with variables as dimensions to
+produce an unordered solution field, which can serve as an argument to other query
+forms.  The solution sequence may comprise constant values only.  This implements the
+SPARQL VALUES expression.</p>
+<p>MACRO</p>
+<p>Construct a <code class="docutils literal notranslate"><span class="pre">bindings</span></code>-style solution field from a CSV document SOURCE (string or
+pathname).  When VARIABLES is supplied, the result is projected to those columns by
+name; otherwise all columns named in the CSV header become dimensions.</p>
+<p>MACRO</p>
+<p>Construct a <code class="docutils literal notranslate"><span class="pre">bindings</span></code>-style solution field from a SPARQL Results JSON document
+SOURCE (string or pathname).  When VARIABLES is supplied, the result is projected to
+those columns by name; otherwise the result’s head <code class="docutils literal notranslate"><span class="pre">vars</span></code> list becomes the
+dimensions.</p>
+<p>MACRO ( ( variable*? ) solutionField )</p>
+<p>A NULL form produces an empty solution field of the given dimensionality.</p>
+<p>MACRO ( ( variable*? ) solutionField )</p>
+<p>A TABLE form produces a zero-dimension solution field with a single solution.  If in
+the scope of a <code class="docutils literal notranslate"><span class="pre">graph</span></code> form, a constant graph name will reduce the result to a null
+field if the graph does not exist.</p>
+<p>Per <code class="docutils literal notranslate"><span class="pre">rec-sparql</span></code> [1], the ‘unit’ table is “one solution that does not bind any
+variables.”</p>
+<p>[1] <a class="reference external" href="http://www.w3.org/TR/rdf-sparql-query/#emptyGroupPattern">http://www.w3.org/TR/rdf-sparql-query/#emptyGroupPattern</a></p>
+</div>
+</section>
+<section class="section heavy" id="solution-field-combinators">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">solution-field</div></div>
+<div class="content">
+<h2>Solution-field combinators</h2>
+<p>Two-field operators producing a third field by some combination rule.</p>
+<p>MACRO ( ( solutionField solutionField ) solutionField )</p>
+<p>A DIFF form combines two solution fields with an optional predicate to be applied to
+each compatible, merged solution.  The result is those solutions from the first field
+which are either incompatible with all solutions in the second field, or fail the
+predicate when combined with compatible solutions.</p>
+<p>MACRO ( ( solutionField solutionField (function (solution) xsd:boolean)? ) solutionField )</p>
+<p>A JOIN form combines two solution fields and yields a new field in which each solution
+is either a merge of two compatible solutions from the constituent fields, in the case
+where a natural join is possible, or an element of the cross join of the two fields,
+in the case where no dimension agrees.  Where a test predicate is given, all result
+solutions satisfy it.</p>
+<p>MACRO ( ( solutionField solutionField (function (solution) xsd:boolean)? ) solutionField )</p>
+<p>A LEFTJOIN form combines two solution fields and yields a new field in which each
+solution is either a merge of two compatible solutions from the constituent fields, or
+a solution from the first field, in the case where a natural join is possible, or an
+element of the cross join of the two fields, in the case where no dimension agrees.
+Where a test predicate is given, all result solutions satisfy it.</p>
+<p>MACRO</p>
+<p>Internal variant of <code class="docutils literal notranslate"><span class="pre">leftjoin</span></code> whose first argument is already in evaluated form
+(used by the compiler’s lowering passes for nested OPTIONAL).</p>
+<p>MACRO ( ( solutionField solutionField ) solutionField )</p>
+<p>A MINUS form combines two solution fields to produce a result field which contains all
+solutions from the first field for which no compatible solution is present in the
+second field.</p>
+<p>MACRO ( ( solutionField solutionField ) solutionField )</p>
+<p>A UNION form combines two solution fields to produce a result field which contains all
+solutions from the first field followed by those in the second.</p>
+</div>
+</section>
+<section class="section heavy" id="solution-field-transformers">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">solution-field</div></div>
+<div class="content">
+<h2>Solution-field transformers</h2>
+<p>Single-field operators producing a transformed field by extending, filtering,
+projecting, ordering, or slicing the input.</p>
+<p>MACRO ( ( solutionField ) solutionField )</p>
+<p>A DISTINCT form accepts a single solution field and yields an analogous field which
+removes duplicate solutions.</p>
+<p>MACRO</p>
+<p>Wrap a sequence of FILTER-clause expressions; equivalent to their conjunction under
+<code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>.  Used by the parser when a FILTER clause produces multiple sub-expressions.</p>
+<p>MACRO ( ( solutionField variable RDFTerm ) solutionField )</p>
+<p>An EXTEND form extends each solution in its solution-field argument with an additional
+dimension in which the given variable is bound to the respective result of evaluating
+the given expression for each solution.  If the evaluation fails, the variable remains
+unbound.</p>
+<p>MACRO</p>
+<p>Variant of <code class="docutils literal notranslate"><span class="pre">extend</span></code> whose tail ARGS may contain further (variable expression)
+bindings which the parser emits when several BIND clauses appear in sequence; the
+expansion rewrites them into nested <code class="docutils literal notranslate"><span class="pre">extend</span></code> forms, evaluated left-to-right.</p>
+<p>MACRO ( ( solutionField (function (solution) xsd:boolean) ) solutionField )</p>
+<p>A FILTER form applies a predicate function to each solution in a given field to
+generate a new solution field which includes only those input solutions which satisfy
+the predicate.</p>
+<p>Where possible, the evaluation process folds any constant values into the argument
+patterns and pushes the predicate to limit the matching and combination processing in
+the constituent solution field.</p>
+<p>MACRO ( ( solutionField (function (solution solution) xsd:boolean) ) solutionField )</p>
+<p>An ORDER form applies an ordering predicate to a given solution field to produce a
+result field in which each successive solution pair satisfies the given predicate.</p>
+<p>MACRO ( ( solutionField ) solutionField )</p>
+<p>A PROJECT form produces a new solution field in which each solution comprises just
+the specified elements.  Each element can be either a variable, or a
+<code class="docutils literal notranslate"><span class="pre">(variable</span> <span class="pre">expression)</span></code> binding.  In the first case, any supplied argument value is
+included in the result solution.  In the second, the respective expression is
+evaluated for each solution to produce the respective result.  If the variable is not
+bound in the original solution, no value appears in the result.</p>
+<p>MACRO ( ( solutionField ) solutionField )</p>
+<p>A REDUCED form accepts a single solution field and yields an analogous field which
+removes the duplicate solutions.  Unlike <code class="docutils literal notranslate"><span class="pre">distinct</span></code>, an implementation is permitted
+to retain or remove duplicates (best-effort).</p>
+<p>MACRO ( ( solutionField ) solutionField )</p>
+<p>A SLICE form reduces a given solution field to produce a result field which includes
+only those solutions within the specified <code class="docutils literal notranslate"><span class="pre">[offset</span> <span class="pre">end)</span></code> interval.</p>
+</div>
+</section>
+<section class="section heavy" id="aggregation">
+<div class="rail"><div class="numeral">07</div><div class="vlabel">aggregation</div></div>
+<div class="content">
+<h2>Aggregation</h2>
+<p>MACRO</p>
+<p>Compute the aggregations specified by BINDINGS over the input SOLUTION-FIELD grouped
+on KEY-BINDINGS.  Each BINDING is a (variable aggregate-form) pair; each KEY-BINDING
+is a (variable expression) pair as in <code class="docutils literal notranslate"><span class="pre">group</span></code>.  The remaining keys
+(COUNT / END / LIMIT / OFFSET / START) govern slicing applied to the resulting
+aggregated rows.</p>
+<p>MACRO ( ( solutionField ( variable (function (solution) RDFTerm) )* ) ( RDFTerm solutionField )* )</p>
+<p>A GROUP form extends a given solution field with keys composed of a set of computed
+bindings and then segments the field according to those keys.  Each KEY-BINDING is a
+(variable expression) pair; the expression is evaluated for each input solution to
+compute the variable’s value, and those variables become the partitioning keys.</p>
+<p>MACRO</p>
+<p>Determine the aggregation variant and expand accordingly.  <code class="docutils literal notranslate"><span class="pre">segment</span></code> is the algebra
+form that the parser emits for a SELECT with GROUP BY / aggregation expressions; the
+macroexpansion routes to the most efficient of <code class="docutils literal notranslate"><span class="pre">aggregate</span></code>, <code class="docutils literal notranslate"><span class="pre">project</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">group</span></code>-and-fold for the specific request.  MODIFIERS captures the SOLUTION
+MODIFIER clauses (HAVING / ORDER BY / LIMIT / OFFSET) that must be applied around the
+aggregation result.</p>
+</div>
+</section>
+<section class="section heavy" id="graph-scope">
+<div class="rail"><div class="numeral">08</div><div class="vlabel">graph scope</div></div>
+<div class="content">
+<h2>Graph scope</h2>
+<p>MACRO ( ( (or anyURI variable) graphPattern ) solutionField )</p>
+<p>A GRAPH form modifies the application of a basic group graph pattern to either:</p>
+<ul class="simple">
+<li><p>constrain its extent to the specific graph named by the constant IRI, or</p></li>
+<li><p>limit its domain to those named graphs enumerated in the dataset definition, or</p></li>
+<li><p>permit it to range over all named graphs.</p></li>
+</ul>
+<p>In the latter two cases, the result solution field will include a binding for the
+respective graph in each solution.</p>
+</div>
+</section>
+<section class="section heavy" id="dependent-join-sparql-1-2-lateral">
+<div class="rail"><div class="numeral">09</div><div class="vlabel">dependent join (sparql</div></div>
+<div class="content">
+<h2>Dependent join (SPARQL 1.2 LATERAL)</h2>
+<p>MACRO</p>
+<p>Employ the first solution field to establish the dynamic evaluation environment for
+the second field.  Implements the SPARQL 1.2 LATERAL semantics (one-sided correlated
+join) reducing to <code class="docutils literal notranslate"><span class="pre">join</span></code>.</p>
+<p>MACRO</p>
+<p>Like <code class="docutils literal notranslate"><span class="pre">dependent</span></code> but reduces to <code class="docutils literal notranslate"><span class="pre">leftjoin</span></code> for the OPTIONAL-style variant;
+solutions in the first field are preserved when the second yields nothing.</p>
+</div>
+</section>
+<section class="section heavy" id="top-level-query-forms">
+<div class="rail"><div class="numeral">10</div><div class="vlabel">top-level query forms</div></div>
+<div class="content">
+<h2>Top-level query forms</h2>
+<p>MACRO ( ( solutionField pattern ) RDFSolutionField )</p>
+<p>A CONSTRUCT form applies the given graph-pattern template to each solution of the
+given solution-field to produce a field which denotes the projected RDF graph.</p>
+<p>MACRO ( ( solutionField anyURI* ) RDFSolutionField )</p>
+<p>A DESCRIBE form merges all resource IRIs from the given solution-field and subject
+resource list, performs iterative queries to produce the bounded descriptions for
+those resources, and yields an RDF graph which enumerates their relations in the
+store.</p>
+<p>The extent is governed by configuration parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:describeForm&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:describeSubjectDepth&gt;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:describeObjectDepth&gt;</span></code></p></li>
+</ul>
+<p>MACRO</p>
+<p>Top-level SELECT form.  EXPRESSION is the WHERE-clause’s algebra;
+SELECTION-SPECIFICATION is the projection list — variable names, or
+<code class="docutils literal notranslate"><span class="pre">(variable</span> <span class="pre">expression)</span></code> bindings, possibly preceded by the modifier keywords
+:distinct, :reduced, :group-by, :having, :order-by — and the remaining keys describe
+pagination.</p>
+</div>
+</section>
+<section class="section heavy" id="sparql-update">
+<div class="rail"><div class="numeral">11</div><div class="vlabel">sparql update</div></div>
+<div class="content">
+<h2>SPARQL update</h2>
+<p>MACRO</p>
+<p>Add the contents of FROM-GRAPH of the current task’s repository to its TO-GRAPH.
+Each may be an IRI or the keyword <code class="docutils literal notranslate"><span class="pre">:default</span></code>.</p>
+<p>MACRO</p>
+<p>Clear the content of the given graph in the current task’s repository.  GRAPH may be
+an IRI or one of the keywords:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">:default</span></code> — clear the repository’s default graph</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">:all</span></code> — clear all of the repository’s graphs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">:named</span></code> — clear all of the repository’s named graphs</p></li>
+</ul>
+<p>MACRO</p>
+<p>spocq SPARQL-update extension: execute QUERY only when the CONTINGENCY guard
+expression resolves to a non-empty / truthy solution.  LOCATION may name a stored
+view to load the conditional query from instead of QUERY; MEDIA-TYPE selects the
+parser for that view.</p>
+<p>MACRO</p>
+<p>Copy the contents of FROM-GRAPH to TO-GRAPH, replacing any existing contents of
+TO-GRAPH.</p>
+<p>MACRO</p>
+<p>Create the named graph GRAPH within the current task’s repository.</p>
+<p>MACRO</p>
+<p>Delete a constant set of triples / quads.  Companion to <code class="docutils literal notranslate"><span class="pre">insertData</span></code>; the argument
+is intended to be a constant data form, validated at macroexpansion time.</p>
+<p>MACRO</p>
+<p>Given a list of quad patterns, use them both to match against the store and to
+construct the statements to be deleted.</p>
+<p>MACRO</p>
+<p>Drop a graph: delete its content and remove its name from the dataset.  GRAPH may be
+an IRI or one of <code class="docutils literal notranslate"><span class="pre">:default</span></code>, <code class="docutils literal notranslate"><span class="pre">:all</span></code>, <code class="docutils literal notranslate"><span class="pre">:named</span></code>.</p>
+<p>MACRO</p>
+<p>Insert a constant set of triples / quads.  Companion to <code class="docutils literal notranslate"><span class="pre">deleteData</span></code>; the argument
+is intended to be a constant data form, validated at macroexpansion time.</p>
+<p>MACRO</p>
+<p>Fetch the RDF document at FROM-LOCATION and load it into the named graph identified
+by GRAPH-DESIGNATOR.</p>
+<p>MACRO</p>
+<p>SPARQL update DELETE / INSERT / WHERE / WITH compound form.</p>
+<ul class="simple">
+<li><p>WITH selects an active graph for FIELD-EXPRESSION.</p></li>
+<li><p>GRAPHS / NAMED-GRAPHS specifies USING / USING NAMED clauses.</p></li>
+<li><p>DELETE / INSERT carry the respective templates that the macro applies to each
+solution of FIELD-EXPRESSION.</p></li>
+</ul>
+<p>MACRO</p>
+<p>Move FROM-GRAPH’s content to TO-GRAPH, leaving FROM-GRAPH empty.</p>
+<p>MACRO</p>
+<p>Top-level wrapper for one or more update OPERATIONS (each one of <code class="docutils literal notranslate"><span class="pre">insertData</span></code>,
+<code class="docutils literal notranslate"><span class="pre">deleteData</span></code>, <code class="docutils literal notranslate"><span class="pre">modify</span></code>, <code class="docutils literal notranslate"><span class="pre">load</span></code>, <code class="docutils literal notranslate"><span class="pre">clear</span></code>, <code class="docutils literal notranslate"><span class="pre">drop</span></code>, <code class="docutils literal notranslate"><span class="pre">create</span></code>, <code class="docutils literal notranslate"><span class="pre">add</span></code>,
+<code class="docutils literal notranslate"><span class="pre">copy</span></code>, <code class="docutils literal notranslate"><span class="pre">move</span></code>, or <code class="docutils literal notranslate"><span class="pre">conditional</span></code>).  Operations execute in sequence within the
+surrounding transaction.</p>
+</div>
+</section>
+<section class="section heavy" id="remote-query">
+<div class="rail"><div class="numeral">12</div><div class="vlabel">remote query</div></div>
+<div class="content">
+<h2>Remote query</h2>
+<p>MACRO</p>
+<p>Perform a remote SPARQL query against the endpoint at IRI and return the result
+field.  <code class="docutils literal notranslate"><span class="pre">:silent</span> <span class="pre">t</span></code> suppresses endpoint errors; <code class="docutils literal notranslate"><span class="pre">:query-text</span> <span class="pre">&quot;...&quot;</span></code> overrides the
+serialised sub-query text.</p>
+<p>MACRO</p>
+<p>Perform a remote query and natural-join it with SIP-SOURCE.  The base field is
+SIP-SOURCE (sideways-information-passing source); compiles into a single round-trip
+per chunk of the sip-source.</p>
+<p>MACRO</p>
+<p>Perform a remote query and left-join it with SIP-SOURCE.  Note: the argument order is
+opposite that of <code class="docutils literal notranslate"><span class="pre">leftjoin</span></code> — the SIP-SOURCE (third argument) is the base field.</p>
+</div>
+</section>
+<section class="section heavy" id="revision-spocq-temporal-extension">
+<div class="rail"><div class="numeral">13</div><div class="vlabel">revision / spocq</div></div>
+<div class="content">
+<h2>Revision / spocq temporal extension</h2>
+<p>MACRO</p>
+<p>spocq temporal extension: perform the sub-query at the given revision and return the
+result field.  REVISION-DESIGNATOR is a revision IRI, a relative offset (e.g. -1),
+or a literal datetime; GROUP-GRAPH-PATTERN is the algebra form to evaluate against
+the resolved revision.</p>
+<p>MACRO</p>
+<p>spocq temporal extension.  Return the dateTime associated with the currently-active
+revision of <code class="docutils literal notranslate"><span class="pre">*repository*</span></code> — i.e. the moment a <code class="docutils literal notranslate"><span class="pre">revision</span></code> sub-query is evaluated
+‘as of’.  Useful in WHERE clauses that need to reason about revision time
+independently of <code class="docutils literal notranslate"><span class="pre">now</span></code>.</p>
+<p>MACRO ( () xsd:dateTime )</p>
+<p>The function NOW returns an XSD dateTime value for the current query execution.  All
+calls to this function in any one query execution must return the same value.  The
+moment is that recorded when the query process was created.</p>
+<p>MACRO ( ( xsd:dateTime ) xsd:dayTimeDuration )</p>
+<p>The function TIMEZONE returns the timezone part of arg as an xsd:dayTimeDuration.
+Raises an error if there is no timezone.  This function corresponds to
+fn:timezone-from-dateTime except for the treatment of literals with no timezone.</p>
+<p>As all values are represented as Zulu times, the function constantly returns
+<code class="docutils literal notranslate"><span class="pre">'PT0S'^^xsd:dayTimeDuration</span></code>.</p>
+</div>
+</section>
+<section class="section heavy" id="arithmetic">
+<div class="rail"><div class="numeral">14</div><div class="vlabel">arithmetic</div></div>
+<div class="content">
+<h2>Arithmetic</h2>
+<p>MACRO ( ( numeric numeric? ) numeric )</p>
+<p>MACRO ( ( numeric numeric? ) numeric )</p>
+<p>MACRO ( ( numeric numeric ) numeric )</p>
+<p>MACRO ( ( numeric numeric ) numeric )</p>
+<p>MACRO ( ( numeric ) numeric )</p>
+<p>The function ABS returns the absolute value of arg.  An error is raised if arg is not
+a numeric value.  This function is the same as fn:numeric-abs for terms with a
+datatype from XDM.</p>
+<p>MACRO ( ( numeric ) numeric )</p>
+<p>The function CEIL returns the smallest (closest to negative infinity) number with no
+fractional part that is not less than the value of arg.  Errors on non-numeric.
+Equivalent to fn:numeric-ceil for terms with a datatype from XDM.</p>
+<p>MACRO ( ( numeric ) numeric )</p>
+<p>The function FLOOR returns the largest (closest to positive infinity) number with no
+fractional part that is not greater than the value of arg.  Errors on non-numeric.
+Equivalent to fn:numeric-floor for terms with a datatype from XDM.</p>
+<p>MACRO ( ( numeric ) numeric )</p>
+<p>The function ROUND returns the number with no fractional part that is closest to the
+argument.  If there are two such numbers, the one that is closest to positive
+infinity is returned.  Errors on non-numeric.  Equivalent to fn:numeric-round for
+terms with a datatype from XDM.</p>
+<p>MACRO ( ( numeric numeric ) numeric )</p>
+<p>Two-argument maximum (the operator-mapping form).  Aggregate MAX is built from
+<code class="docutils literal notranslate"><span class="pre">aggregate</span></code>.</p>
+<p>MACRO ( ( numeric numeric ) numeric )</p>
+<p>Two-argument minimum (the operator-mapping form).  Aggregate MIN is built from
+<code class="docutils literal notranslate"><span class="pre">aggregate</span></code>.</p>
+<p>MACRO ( () xsd:double )</p>
+<p>The function RAND returns a pseudo-random number between 0 (inclusive) and 1.0e0
+(exclusive).  Different numbers can be produced every time this function is invoked.
+Numbers should be produced with approximately equal probability.</p>
+</div>
+</section>
+<section class="section heavy" id="predicates">
+<div class="rail"><div class="numeral">15</div><div class="vlabel">predicates</div></div>
+<div class="content">
+<h2>Predicates</h2>
+<p>Operators that yield <code class="docutils literal notranslate"><span class="pre">xsd:boolean</span></code>, designed to be composed inside FILTER
+and IF tests.  The three sub-categories — comparison, boolean / logical,
+and type predicates — together cover all the SPARQL value predicates.</p>
+<p>MACRO ( xsd:boolean )</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">=</span></code> operator returns TRUE if term1 and term2 are the same RDF term as defined
+in Resource Description Framework (RDF): Concepts and Abstract Syntax [CONCEPTS];
+produces a type error if the arguments are both literal but are not the same RDF
+term; returns FALSE otherwise.  term1 and term2 are the same if any of the following
+is true:</p>
+<ul class="simple">
+<li><p>term1 and term2 are equivalent IRIs as defined in 6.4 RDF URI References of [CONCEPTS].</p></li>
+<li><p>term1 and term2 are equivalent literals as defined in 6.5.1 Literal Equality of [CONCEPTS].</p></li>
+<li><p>term1 and term2 are the same blank node as described in 6.6 Blank Nodes of [CONCEPTS].</p></li>
+</ul>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>Inequality predicate.  Returns the boolean negation of <code class="docutils literal notranslate"><span class="pre">=</span></code> over the same domain.</p>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">&lt;</span></code> compares the two arguments and returns true iff arg1 is strictly
+less than arg2.  Where it can be determined that both arguments are constants — in
+particular, strings with language tags — delegate to the store’s collation-sequence-
+dependent ordering operator.  In other cases, retrieve the terms and continue with
+those values as arguments.</p>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">&lt;=</span></code> compares the two arguments and returns true iff arg1 is less than
+or equal to arg2.  Same dispatch as <code class="docutils literal notranslate"><span class="pre">&lt;</span></code>.</p>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>MACRO ( ( rdfTerm rdfTerm ) xsd:boolean )</p>
+<p>The function SAMETERM returns TRUE if term1 and term2 are the same RDF term as defined
+in [CONCEPTS]; returns FALSE otherwise.  Differs from <code class="docutils literal notranslate"><span class="pre">=</span></code> in that it never raises a
+type error and never folds value-equivalent literals of distinct datatypes.</p>
+<p>MACRO ( xsd:boolean )</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code> operator returns a logical AND of left and right.  Note that logical-and
+operates on the effective boolean value of its arguments.</p>
+<p>XQuery defines that an IF form need not evaluate an unselected alternative.  It says
+nothing about the semantics for logical operators.  This implementation handles the
+two expressions the same.</p>
+<p>With respect to errors: a logical-and that encounters an error on only one branch
+returns an error if the other branch is TRUE, and FALSE if the other branch is FALSE.
+A logical-or / logical-and that encounters errors on both branches will produce
+either of the errors.</p>
+<p>MACRO ( xsd:boolean )</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">||</span></code> operator returns a logical OR of left and right.  Same EBV / error rules
+as <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>.</p>
+<p>MACRO ( xsd:boolean )</p>
+<p>Logical negation; returns the boolean negation of EXPRESSION’s effective boolean
+value.</p>
+<p>MACRO ( rdfTerm )</p>
+<p>The COALESCE function returns the value of the first expression which evaluates
+without an error.  In SPARQL, evaluating an unbound variable raises an error.  If
+none of the arguments evaluates to an RDF term, an error is raised.  If no
+expressions are evaluated without error, an error is raised.</p>
+<p>When an expression is a variable, the macro prefaces evaluation with a test for
+unbound to skip error handling.</p>
+<p>MACRO ( ( graphPattern ) xsd:boolean )</p>
+<p>The filter operator EXISTS takes a graph pattern and returns true / false depending on
+whether the pattern matches the dataset given the bindings in the current group graph
+pattern, the dataset and the active graph at this point in the query evaluation.  No
+additional binding of variables occurs.  Although it accepts a graph pattern rather
+than a value expression, the result is an <code class="docutils literal notranslate"><span class="pre">xsd:boolean</span></code> and EXISTS appears only in
+positions that consume one — chiefly FILTER and IF tests.</p>
+<p><code class="docutils literal notranslate"><span class="pre">NOT</span> <span class="pre">EXISTS</span></code> translates into <code class="docutils literal notranslate"><span class="pre">fn:not(EXISTS{...})</span></code>.</p>
+<p>MACRO ( rdfTerm )</p>
+<p>The IF form evaluates the first argument, interprets it as an effective boolean
+value, then returns the value of consequent if the EBV is true, otherwise it returns
+the value of alternative.  Only one of consequent and alternative is evaluated.</p>
+<p>If evaluating the predicate expression raises an error, then an error is raised for
+the evaluation of the IF expression.</p>
+<p>MACRO ( ( rdfTerm . rdfTerm* ) xsd:boolean )</p>
+<p>The IN operator tests whether the RDF term on the left-hand side is found in the
+values of the list of expressions on the right-hand side.  The test is done with the
+<code class="docutils literal notranslate"><span class="pre">=</span></code> operator.</p>
+<p>A list of zero terms on the right-hand side is legal (with result false).  Errors in
+comparisons cause the IN expression to raise an error if the RDF term being tested is
+not found elsewhere in the list of terms.</p>
+<p>The IN operator is equivalent to the SPARQL expression
+<code class="docutils literal notranslate"><span class="pre">(lhs</span> <span class="pre">=</span> <span class="pre">expression1)</span> <span class="pre">||</span> <span class="pre">(lhs</span> <span class="pre">=</span> <span class="pre">expression2)</span> <span class="pre">||</span> <span class="pre">...</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">NOT</span> <span class="pre">IN</span> <span class="pre">(...)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">!(IN</span> <span class="pre">(...))</span></code>.</p>
+<p>MACRO ( ( rdfTerm . rdfTerm* ) xsd:boolean )</p>
+<p><code class="docutils literal notranslate"><span class="pre">NOT</span> <span class="pre">IN</span> <span class="pre">(...)</span></code> is equivalent to <code class="docutils literal notranslate"><span class="pre">!(IN</span> <span class="pre">(...))</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>The function BOUND returns true if var is bound to a value.  Returns false otherwise.
+Variables with the value NaN or INF are considered bound.  If there is no lexical
+definition, the result is constantly false.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>Returns true if expression yields a blank node.  Returns false otherwise.
+Lowercase alias: <code class="docutils literal notranslate"><span class="pre">isblank</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>Returns true if term is an IRI.  Returns false otherwise.  Lowercase alias: <code class="docutils literal notranslate"><span class="pre">isiri</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>Returns true if expression yields a literal.  Returns false otherwise.  Lowercase
+alias: <code class="docutils literal notranslate"><span class="pre">isliteral</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>Returns true if term is a numeric value.  Returns false otherwise.  term is numeric
+if it has an appropriate datatype (see the section “Operand Data Types”) and has a
+valid lexical form, making it a valid argument to functions and operators taking
+numeric arguments.  Lowercase alias: <code class="docutils literal notranslate"><span class="pre">isnumeric</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>isURI is an alternate spelling for the isIRI operator.  Lowercase alias: <code class="docutils literal notranslate"><span class="pre">isuri</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">isTriple</span></code> function returns true iff the argument is an RDF triple term,
+otherwise false.  SPARQL 1.2.</p>
+<p>MACRO ( xsd:boolean )</p>
+<p>Return true iff the type of the given term is the given type.  Where constants are
+involved, implement as a term-number comparison for the IRI and the term type.</p>
+</div>
+</section>
+<section class="section heavy" id="term-constructors">
+<div class="rail"><div class="numeral">16</div><div class="vlabel">term constructors</div></div>
+<div class="content">
+<h2>Term constructors</h2>
+<p>MACRO ( ( literal? ) blankNode )</p>
+<p>The BNODE function constructs a blank node that is distinct from all blank nodes in
+the dataset being queried and distinct from all blank nodes created by calls to this
+constructor for other query solutions.</p>
+<p>If the no-argument form is used, every call results in a distinct blank node.  If the
+form with a simple literal is used, every call results in distinct blank nodes for
+different simple literals, and the same blank node for calls with the same simple
+literal within expressions for one solution mapping.</p>
+<p>MACRO ( ( RDFTerm ) iri )</p>
+<p>The IRI function constructs an IRI by resolving the string argument (see RFC 3986 and
+RFC 3987 or any later RFC that supersedes them).  The IRI is resolved against the
+base IRI of the query and must result in an absolute IRI.</p>
+<p>The URI function is a synonym for IRI.  If the function is passed an IRI, it returns
+the IRI unchanged.  Passing any RDF term other than a simple literal, xsd:string, or
+an IRI is an error.  An implementation may normalize the IRI.</p>
+<p>MACRO ( ( RDFTerm ) iri )</p>
+<p>Synonym for <code class="docutils literal notranslate"><span class="pre">iri</span></code>.</p>
+<p>MACRO ( ( simpleLiteral IRI ) literal )</p>
+<p>The STRDT function constructs a literal with lexical form and type as specified by
+the arguments.</p>
+<p>MACRO ( ( simpleLiteral simpleLiteral ) literal )</p>
+<p>The STRLANG function constructs a literal with lexical form and language tag as
+specified by the arguments.</p>
+<p>MACRO ( ( xsd:string xsd:string xsd:string ) plainLiteral )</p>
+<p>Construct a plain literal whose stored language string is the concatenation
+<code class="docutils literal notranslate"><span class="pre">lang--dir</span></code> of the lang and dir arguments.  SPARQL 1.2.</p>
+<p>MACRO ( () simpleLiteral )</p>
+<p>Return a string that is the scheme-specific part of a UUID — the result of generating
+a UUID, converting to a simple literal and removing the initial <code class="docutils literal notranslate"><span class="pre">urn:uuid:</span></code>.</p>
+<p>MACRO ( () iri )</p>
+<p>The UUID function returns a fresh IRI from the UUID URN scheme.  Each call of UUID()
+returns a different UUID.</p>
+<p>MACRO ( ( RDFTerm RDFTerm RDFTerm ) triple-term )</p>
+<p>The TRIPLE function constructs a triple-term value from three RDF terms.
+Constructing a triple-term where any argument is unbound is an error.</p>
+<p>The PascalCase name distinguishes the value-form expression from the lowercase
+<code class="docutils literal notranslate"><span class="pre">triple</span></code> statement marker used inside a <code class="docutils literal notranslate"><span class="pre">bgp</span></code> body.  SPARQL 1.2.</p>
+</div>
+</section>
+<section class="section heavy" id="triple-term-accessors-sparql-1-2">
+<div class="rail"><div class="numeral">17</div><div class="vlabel">triple-term accessors</div></div>
+<div class="content">
+<h2>Triple-term accessors (SPARQL 1.2)</h2>
+<p>MACRO ( ( triple-term ) RDFTerm )</p>
+<p>The SUBJECT function returns the subject of its triple-term argument.  Argument types
+other than triple-term raise an evaluation error.  SPARQL 1.2.</p>
+<p>MACRO ( ( triple-term ) RDFTerm )</p>
+<p>The PREDICATE function returns the predicate of its triple-term argument.  Argument
+types other than triple-term raise an evaluation error.  SPARQL 1.2.</p>
+<p>MACRO ( ( triple-term ) RDFTerm )</p>
+<p>The OBJECT function returns the object of its triple-term argument.  Argument types
+other than triple-term raise an evaluation error.  SPARQL 1.2.</p>
+</div>
+</section>
+<section class="section heavy" id="datatype">
+<div class="rail"><div class="numeral">18</div><div class="vlabel">datatype</div></div>
+<div class="content">
+<h2>Datatype</h2>
+<p>MACRO ( ( literal ) iri )</p>
+<p>Returns the datatype IRI of a literal:</p>
+<ul class="simple">
+<li><p>If the literal is a typed literal, return the datatype IRI.</p></li>
+<li><p>If the literal is a simple literal, return xsd:string.</p></li>
+<li><p>If the literal is a literal with a language tag, return rdf:langString.</p></li>
+</ul>
+</div>
+</section>
+<section class="section heavy" id="language">
+<div class="rail"><div class="numeral">19</div><div class="vlabel">language</div></div>
+<div class="content">
+<h2>Language</h2>
+<p>MACRO ( ( literal ) simpleLiteral )</p>
+<p>Returns the language tag of literal, if it has one.  Returns <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> if the literal
+has no language tag.  Note that the RDF data model does not include literals with an
+empty language tag.</p>
+<p>MACRO ( ( simpleLiteral simpleLiteral ) xsd:boolean )</p>
+<p>The function LANGMATCHES returns true if language-tag (first argument) matches
+language-range (second argument) per the basic filtering scheme defined in [RFC4647]
+section 3.3.1.  language-range is a basic language range per Matching of Language
+Tags [RFC4647] section 2.1.  A language-range of <code class="docutils literal notranslate"><span class="pre">*</span></code> matches any non-empty
+language-tag.  Lowercase alias: <code class="docutils literal notranslate"><span class="pre">langmatches</span></code>.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>True iff the argument is a plain literal with a language tag.  SPARQL 1.2.</p>
+<p>MACRO ( ( RDFTerm ) xsd:boolean )</p>
+<p>True iff the argument is a plain literal whose language tag carries a direction
+suffix (<code class="docutils literal notranslate"><span class="pre">&#64;lang--dir</span></code>).  SPARQL 1.2.</p>
+<p>MACRO ( ( plainLiteral ) xsd:string )</p>
+<p>Return the direction substring of a plain literal’s language tag.  Returns the empty
+string when no <code class="docutils literal notranslate"><span class="pre">--dir</span></code> suffix is present.  Argument types other than plain-literal
+raise an error.  SPARQL 1.2.</p>
+</div>
+</section>
+<section class="section heavy" id="string-value">
+<div class="rail"><div class="numeral">20</div><div class="vlabel">string value</div></div>
+<div class="content">
+<h2>String value</h2>
+<p>MACRO ( ( stringLiteral* ) stringLiteral )</p>
+<p>The CONCAT function corresponds to the XPath fn:concat function.  The function
+accepts string literals as arguments.</p>
+<p>The lexical form of the returned literal is obtained by concatenating the lexical
+forms of its inputs.  If all input literals are typed literals of type xsd:string,
+then the returned literal is also of type xsd:string; if all input literals are plain
+literals with identical language tag, then the returned literal is a plain literal
+with the same language tag; in all other cases, the returned literal is a simple
+literal.</p>
+<p>MACRO ( ( stringLiteral stringLiteral ) xsd:boolean )</p>
+<p>True iff arg1 contains arg2 as a substring.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>Percent-encode LITERAL per the URI / IRI encoding rules.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>Lower-case the lexical form of STR; preserve language tag / datatype.</p>
+<p>MACRO ( ( stringLiteral simpleLiteral simpleLiteral? ) xsd:boolean )</p>
+<p>The REGEX function invokes the XPath fn:matches function to match text against a
+regular expression pattern.  The regular expression language is defined in XQuery 1.0
+and XPath 2.0 Functions and Operators section 7.6.1 Regular Expression Syntax.</p>
+<p>If the pattern is a constant, precompile it at macroexpansion time.</p>
+<p>MACRO ( ( stringLiteral simpleLiteral simpleLiteral simpleLiteral? ) stringLiteral )</p>
+<p>The REPLACE function corresponds to the XPath fn:replace function.  It replaces each
+non-overlapping occurrence of the regular expression pattern with the replacement
+string.  Regular-expression matching may involve modifier flags (see REGEX).</p>
+<p>MACRO ( ( RDFTerm ) xsd:string )</p>
+<p>Convert any RDF term to its lexical-form string representation.</p>
+<p>MACRO ( ( stringLiteral stringLiteral ) stringLiteral )</p>
+<p>Substring of ARG1 following the first occurrence of ARG2; empty literal if ARG2 not
+present.</p>
+<p>MACRO ( ( stringLiteral stringLiteral ) stringLiteral )</p>
+<p>Substring of ARG1 preceding the first occurrence of ARG2; empty literal if ARG2 not
+present.</p>
+<p>MACRO ( ( stringLiteral stringLiteral ) xsd:boolean )</p>
+<p>True iff the lexical form of ARG1 ends with ARG2.</p>
+<p>MACRO ( ( stringLiteral ) xsd:integer )</p>
+<p>Length of the lexical form of TERM in code points.</p>
+<p>MACRO ( ( stringLiteral stringLiteral ) xsd:boolean )</p>
+<p>True iff the lexical form of ARG1 starts with ARG2.</p>
+<p>MACRO ( ( stringLiteral xsd:integer ) stringLiteral )</p>
+<p>The SUBSTR function corresponds to the XPath fn:substring function and returns a
+literal of the same kind (simple literal, literal with language tag, xsd:string
+typed literal) as the source input parameter but with a lexical form formed from
+the substring of the lexical form of the source.</p>
+<p>The arguments startingLoc and length may be derived types of xsd:integer.  The index
+of the first character in a string is 1.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>Upper-case the lexical form of STR; preserve language tag / datatype.</p>
+</div>
+</section>
+<section class="section heavy" id="hash">
+<div class="rail"><div class="numeral">21</div><div class="vlabel">hash</div></div>
+<div class="content">
+<h2>Hash</h2>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>Return the MD5 hex digest of the lexical form of arg.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>SHA-1 hex digest.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>SHA-224 hex digest.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>SHA-256 hex digest.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>SHA-384 hex digest.</p>
+<p>MACRO ( ( stringLiteral ) stringLiteral )</p>
+<p>SHA-512 hex digest.</p>
+</div>
+</section>
+<section class="section" id="function-call-dispatch">
+<div class="rail"><div class="numeral">22</div><div class="vlabel">function-call dispatch</div></div>
+<div class="content">
+<h2>Function-call dispatch</h2>
+<p>MACRO</p>
+<p>Dispatch a SPARQL extension function by IRI, with ARGS as the operand list.  Used by
+the parser’s fallback when a built-in does not match.</p>
+<p>MACRO</p>
+<p>spocq extension (distinct from the SPARQL aggregate <code class="docutils literal notranslate"><span class="pre">COUNT()</span></code>).  Aggregate count of
+statements matching the given (S P O G) pattern.  Wildcards may appear in any
+position.</p>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="successors.html"><span class="dir">Previous</span> SPARQL Request Succession</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="functions.html"><span class="dir">Next</span> Library Functions</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

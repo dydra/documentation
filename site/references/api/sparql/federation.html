@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Federation &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Asynchronous SPARQL Processing" href="asynchronous/index.html">
+    <link rel="prev" title="SPARQL Execution Trace" href="request-forms/query-trace.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Federation</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="federation">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Federation</h1>
+<p><a class="reference internal" href="#federation">Federation</a> concerns ways for a query to draw upon diverse data sources and
+processing capacity in addition to the immediate dataset and query processor.
+The <a class="reference external" href="http://www.w3.org/TR/sparql11-overview/">SPARQL 1.1</a> recommendation
+include provisions for expressing federated queries in SPARQL.</p>
+<p>For Dydra, its various forms involve an initial, base query, which is processed by a
+first host against an initial repository and a sub-query, which is processed by
+a second host against some other repository, with the solutions incorporated by
+the first host into the base query evaluation algebra. The distinct forms arise due
+to variations in which hosts play which of the two roles, which query forms
+initiate federated processing, and which data sources are involved.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#federation-request-modes"><span class="tn">01</span> Federation Request Modes</a></li>
+<li><a href="#federation-query-forms"><span class="tn">02</span> Federation Query Forms</a></li>
+<li><a href="#authorization"><span class="tn">03</span> Authorization</a></li>
+<li><a href="#examples"><span class="tn">04</span> Examples</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="federation-request-modes">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">federation request</div></div>
+<div class="content">
+<h2>Federation Request Modes</h2>
+<p>Dydra supports internal and external federation. Internal federation pertains
+when the same query processor hosts both the repository to which a sub-query is
+applied and the repository for the base query. In this case, the
+query if executed as a subtask within the initial host query processor subject
+to intra-host access and authorization. External federation pertains when a
+sub-query is performed upon request by a remote host processor. In this case,
+for each such location, the first processor determines a sparql endpoint, a
+query request is made of that endpoint host, and the processor receives the results are
+integrates into its algebra data-flow. The federation mode none
+suppresses federation processing.</p>
+<p>The default mode for a query is specified in the initial system configuration.
+Each individual query may specify its own mode, subject to constraints</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>mode</p></th>
+<th class="head"><p>effect</p></th>
+<th class="head"><p>permitted variations</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:none&gt;</span></code></p></td>
+<td><p>federation is disabled:
+<code class="docutils literal notranslate"><span class="pre">GRAPH</span></code> forms apply to
+a repository’s named
+graphs only and any
+<code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> cause an
+error.</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:internal&gt;</span></code></p></td>
+<td><p>federation is enabled for
+references local to the
+host</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:none&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:external&gt;</span></code></p></td>
+<td><p>federation is enabled for
+both local and remote
+references.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:none&gt;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">#&lt;urn:dydra:internal&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="section heavy" id="federation-query-forms">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">federation query forms</div></div>
+<div class="content">
+<h2>Federation Query Forms</h2>
+<p>The <a class="reference external" href="http://www.w3.org/TR/sparql11-federated-query/">SPARQL 1.1 Federated Query</a>
+specification includes the <code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> form, with which a query
+indicates that a component is to be executed by an alternative processor. This
+is explicit federation. SPARQL 1.0, on the other hand, introduced the
+possibility to indicate diverse datasets through <code class="docutils literal notranslate"><span class="pre">GRAPH</span></code> forms, but the
+<a class="reference external" href="http://www.w3.org/TR/rdf-sparql-query/#specifyingDataset">specification</a> indicates that, if an IRI is specified in a dataset
+description, “attempts are made to obtain an RDF graph associated with the
+IRI.” In other words, it allows just that the first processor obtain the
+designated graph and incorporate it into the local dataset to which it then
+applies the query.
+The Dydra SPARQL processor performs explicit federation only
+and any graphs must already be present in the repository when it initiates the request.</p>
+</div>
+</section>
+<section class="section heavy" id="authorization">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">authorization</div></div>
+<div class="content">
+<h2>Authorization</h2>
+<p>When a query specifies either an internal reference to a local repository
+or a remote repository location, the access must be authorized.
+Authorization has two aspects: from the client perspective and from the service
+perspective. Each repository allows to freely specify
+authorized locations in the form ACL entries which specify
+either originating repository or a request agent.
+A reference from a query is permitted when the query’s initial
+repository matches an entry from the service location’s
+authorized clients or the request agent satisfies an analogous constraint.
+The respective <a href="#id1"><span class="problematic" id="id2">``</span></a>system``repository contains these permissionsas ACL entries..</p>
+</div>
+</section>
+<section class="section" id="examples">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">examples</div></div>
+<div class="content">
+<h2>Examples</h2>
+<div class="subsection" id="internal-federation">
+<h3>Internal Federation</h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> form which either specifies a constant IRI term or
+which specifies a variable location in tur bound to an IRI term, which is local to
+the query processor host, is executed as a <code class="docutils literal notranslate"><span class="pre">SubSelect</span></code> within the same
+query processor.
+References to repositories within the same account are always
+permitted, but references to any other repository require authorization.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> PREFIX federation_mode: &lt;urn:dydra:internal&gt;  # or external
+select *
+where { ?s ?p ?o .
+ service &lt;http://localhost/jhacker/foaf&gt; {
+  ?s &lt;http://xmlns.com/foaf/0.1/mbox&gt; ?mbox .
+ }
+}
+</pre></div>
+</div>
+<p>A local host is indicate by the following authorities
+- local
+- 127.0.0.1
+- dydra.com
+- the exact hostname returned by the <code class="docutils literal notranslate"><span class="pre">hostname</span></code> function.</p>
+</div>
+<div class="subsection" id="external-federation">
+<h3>External Federation</h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> form which specifies a location IRI, which is external
+to the query processor host, is executed as a SPARQL request to the
+remote processor.
+All external requests require authorization to access the respective service.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PREFIX federation_mode: &lt;urn:dydra:external&gt;
+select *
+where { ?s ?p ?o .
+ service &lt;http://w3.org/tbl/foaf.nt&gt; {
+  ?s &lt;http://xmlns.com/foaf/0.1/mbox&gt; ?mbox .
+ }
+}
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="internal-federation-with-virtual-sources">
+<h3>Internal Federation with Virtual Sources</h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> local federation location may designate data sources in addition to concrete repositories.
+Stored views may be identified with their external resource identifier.
+Alternative backends are identifed according to their declare repository alias.</p>
+<div class="subsection" id="view-federation">
+<h4>View Federation</h4>
+<p>Where the location IRI includes a view suffix, that view is executed and the results are incorporated
+according to its dimensionality. A <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> query expression yields a result field with the
+select form projsction dimensions.
+A <code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> or <code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code> expression always yields a result field with the dimensions <code class="docutils literal notranslate"><span class="pre">?s</span></code>, <code class="docutils literal notranslate"><span class="pre">?p</span></code>, <code class="docutils literal notranslate"><span class="pre">?o</span></code>.</p>
+<p>A view location is any IRI which follows the pattern for internal federation, above.</p>
+</div>
+<div class="subsection" id="relational-federation">
+<h4>Relational Federation</h4>
+<p>PSQL views are declared in the store configuration (<code class="docutils literal notranslate"><span class="pre">/srv/dydra/config/server.conf</span></code>) to
+define an arbitrary mapping from Postgres view to RDF field,
+where the columns of each view become dimensions of the solution field.
+For example, given the declaration</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pgsql {
+  tr_crop_plots_seed_start {
+    storage pgsql
+    pgsql-table public.tr_crop_plots_seed_start
+  }
+  tr_crop_plots_seed_end {
+    storage pgsql
+    pgsql-table public.tr_crop_plots_seed_end
+  }
+  tr_crop_plots_seed {
+    storage pgsql
+    pgsql-table public.tr_crop_plots_seed
+  }
+}
+</pre></div>
+</div>
+<p>and the Postgres views defined as</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>         View &quot;marti.tr_crop_plots_seed&quot;
+Column | Type | Modifiers | Storage  | Description
+--------+------+-----------+----------+-------------
+ s      | text |           | extended |
+ p      | text |           | extended |
+ o      | text |           | extended |
+View definition:
+ SELECT concat(&#39;http://example.org/plot/&#39;, tr_crop_plots.crop_plot) AS s,
+    &#39;http://example.org/seed&#39;::text AS p,
+    tr_crop_plots.seed AS o
+   FROM tr_crop_plots;
+
+          View &quot;marti.tr_crop_plots_seed_end&quot;
+ Column |  Type   | Modifiers | Storage  | Description
+--------+---------+-----------+----------+-------------
+ s      | text    |           | extended |
+ p      | unknown |           | plain    |
+ o      | date    |           | plain    |
+View definition:
+ SELECT concat(&#39;http://example.org/plot/&#39;, tr_crop_plots.crop_plot) AS s,
+    &#39;http://example.org/end_date&#39; AS p,
+    tr_crop_plots.end_date AS o
+   FROM tr_crop_plots;
+
+         View &quot;marti.tr_crop_plots_seed_start&quot;
+ Column |  Type   | Modifiers | Storage  | Description
+--------+---------+-----------+----------+-------------
+ s      | text    |           | extended |
+ p      | unknown |           | plain    |
+ o      | date    |           | plain    |
+View definition:
+ SELECT concat(&#39;http://example.org/plot/&#39;, tr_crop_plots.crop_plot) AS s,
+    &#39;http://example.org/start_date&#39; AS p,
+    tr_crop_plots.start_date AS o
+   FROM tr_crop_plots;
+</pre></div>
+</div>
+<p>a federation operation could take the form</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>select ?field ?start ?end ?amount
+where {
+ ?field &lt;http://example.org/harvest&gt; ?amount .
+ { service &lt;http://localhost/pgsql/tr_crop_plots_seed&gt; { ?field &lt;http://example.org/seed&gt; ?seed } }
+ { service &lt;http://localhost/pgsql/tr_crop_plots_seed_start&gt; { ?field &lt;http://example.org/start_date&gt; ?start } }
+ { service &lt;http://localhost/pgsql/tr_crop_plots_seed_end&gt; { ?field &lt;http://example.org/end_date&gt; ?end } }
+}&quot; :repository-id &quot;my/field-harvest&quot;)
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="request-forms/query-trace.html"><span class="dir">Previous</span> SPARQL Execution Trace</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="asynchronous/index.html"><span class="dir">Next</span> Asynchronous SPARQL Processing</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

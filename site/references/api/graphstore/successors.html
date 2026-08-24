@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>GSP Request Succession &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="SPARQL 1.1 Protocol Interface" href="../sparql/index.html">
+    <link rel="prev" title="Graph Store View Materialization HTTP Protocol" href="materialization.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Graph store<br>GSP Request Succession</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell on" href="index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="gsp-request-succession">
+<div class="rail"><div class="vlabel">graph store</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Graph Store HTTP Protocol Interface</p>
+<h1>GSP Request Succession</h1>
+<p>A GSP request can specify that its successful completion should be succeeded by further requests
+by including a <code class="docutils literal notranslate"><span class="pre">Successor-Location</span></code> header which locates their query texts.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#successor-request-form"><span class="tn">01</span> Successor Request Form</a></li>
+<li><a href="#example"><span class="tn">02</span> Example</a></li>
+<li><a href="#discussion"><span class="tn">03</span> Discussion</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="successor-request-form">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">successor request form</div></div>
+<div class="content">
+<h2>Successor Request Form</h2>
+<p>The successor SPARQL request is recorded in the form of an HTTP asynchronous request
+which captures the SPARQL expression and execution arguments.
+This includes the same headers as for an asynchronous GSP request and adds
+several headers specific to successor requests.
+(See <a class="reference internal" href="asynchronous.html#asynchronousprocessing"><span class="std std-ref">Asynchronous Request Form</span></a> .)</p>
+<div class="subsection" id="successor-content-type">
+<h3>Successor-Content-Type</h3>
+<p>Provides the media type for the query expression.
+The default is <code class="docutils literal notranslate"><span class="pre">application/sparql-query</span></code>.</p>
+</div>
+<div class="subsection" id="successor-location">
+<h3>Successor-Location</h3>
+<p>A space delimited list of  HTTP URL values which locate the query text(s).
+Each can be a local view identifier or that of a remote source.</p>
+</div>
+<div class="subsection" id="successor-revision-id">
+<h3>Successor-Revision-ID</h3>
+<p>Identifies the repository revision which the successor request is to target.
+If none is supplied, the successor request targets the revision upon completion of the initial request.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="example">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">example</div></div>
+<div class="content">
+<h2>Example</h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>curl_graph_store_update -X PUT -o /dev/null \
+   -H &quot;Content-Type: application/rdf+json&quot; \
+   -H &quot;Successor-Location: https://localhost/${STORE_ACCOUNT}/${STORE_REPOSITORY}-write/count-all&quot; \
+   -H &quot;Successor-Content-Type: application/sparql-query&quot; \
+   -H &quot;Asynchronous-Content-Type: application/n-quads&quot; \
+   -H &quot;Asynchronous-Location: https://localhost/${STORE_ACCOUNT}/${STORE_REPOSITORY}-write/service&quot; \
+   -H &quot;Asynchronous-Method: POST&quot; \
+   --repository &quot;${STORE_REPOSITORY}-write&quot; &lt;&lt;EOF
+{ &quot;http://example.com/default-subject&quot; : {
+  &quot;http://example.com/default-predicate&quot; : [ { &quot;value&quot; : &quot;default object PUT-successor&quot;,
+                                               &quot;type&quot; : &quot;literal&quot; } ]
+  }
+}
+EOF
+</pre></div>
+</div>
+<p>If the location header specifies multiple URLs, each serves to locate the content of a successor asynchronous request.
+They must share the same media type and revision id.</p>
+<p>For more extensive examples, refer to the <a class="reference external" href="https://github.com/dydra/http-api-tests/sparql-graph-store-http-protocol/successor/">HTTP API tests</a>.</p>
+</div>
+</section>
+<section class="section" id="discussion">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">discussion</div></div>
+<div class="content">
+<h2>Discussion</h2>
+<p>A successor request content is taken from the given location.
+This can be a local view url, in which case the view provides the SPARQL expression.
+It can also be an arbitrary remote location, in which an HTTP request retrieves
+the SPARQL text and relevant values are adopted from the response headers.</p>
+<p>A revision id UUID value is specified for the successor request to cause it to target a specific repository revision,
+for example ‘HEAD’.
+If none is specified, that revision which was current at the conclusion of the
+original request is adopted and supplied to the successor.
+For a graph store update request or a sparql update request, this is the id of the respective write transaction.</p>
+<p>In order to make the repository state and any response headers consistent,
+the ETag response header for a SPARQL update and GSP update now reflect this same logic: the same UUID value appears in both
+response ETag header of the initial request and in the Revision-Id header of the successor
+request.</p>
+<p>For GSP update requests, this is taken from the revision record which is produced by
+the import process.
+That record’s UUID is used for the ETag, which makes it available when constructing
+the headers to be used be the successor event.</p>
+<p>For a SPARQL update requests, the id is the transaction identifier of the request itself.</p>
+<p>Note that the request succession is just in terms of control-flow.
+The result data-flow follows that of the asynchronous extensions to the HTTP protocol.
+The request data-flow adds just the  logic associated with the <cite>Successor-Location</cite>.
+### internal operators</p>
+<p>Any remote query text is retrieved with the <code class="docutils literal notranslate"><span class="pre">call-with-http-response-stream</span></code>
+operator from the HTTP server library.</p>
+<div class="subsection" id="alternatives">
+<h3>Alternatives</h3>
+<p>One requirement which led to this approach is the desire to minimize the client implementation.
+This requiremnt is satisified in that the approach combines just three additional HTTP request headers
+with the asynchronous processing pattern.</p>
+<p>One principal alternative is to extend a client implementation with a means to declare compound requests and to interpret their results.
+Many variations exist.</p>
+<ul class="simple">
+<li><p>Microsoft’s <a class="reference external" href="https://docs.microsoft.com/en-us/graph/json-batching">json batching</a> relies on client logic to generate compound
+requests as json documents and to destructure responses.</p></li>
+<li><p>Insomnia’s <a class="reference external" href="https://support.insomnia.rest/article/175-chaining-requests">chaining</a>
+includes that ability to use the output of an initial request as the content for a successor
+as well as to incorporate response header values in the successor request.</p></li>
+<li><p><a class="reference external" href="https://blog.postman.com/extracting-data-from-responses-and-chaining-requests/">Postman</a>
+includes a similar capability for constructing tests as request chains in its request script facility.</p></li>
+<li><p>NGINX provides in intermediate approach in the form of a JavaScript module which can be used to execute
+<a class="reference external" href="https://www.nginx.com/blog/batching-api-requests-nginx-plus-javascript-module/">batched sub-requests</a></p></li>
+<li><p>JavaScript itself allows to chain <cite>fetch</cite> invocations in order to coordinate requests and
+frameworks  provide more abstract orchestration methods,
+such as Angular’s <a class="reference external" href="https://blog.angular-university.io/rxjs-higher-order-mapping">mergeMap</a> operator.</p></li>
+<li><p>Facebook’s <a class="reference external" href="https://developers.facebook.com/docs/graph-api/batch-requests/">Graph API</a>  provides the means to
+“pass instructions for several operations in a single HTTP request.”
+The response is a collation of the respective responses.</p></li>
+<li><p>iOS Swift includes the constrol structure operator <a class="reference external" href="https://learnappmaking.com/combining-network-requests-with-combine-and-swift/">Combine</a>
+which can be used to orchestrate HTTP requests and responses.</p></li>
+</ul>
+<p>Another alternative would to collect the requests into a <code class="docutils literal notranslate"><span class="pre">multipart/related</span></code> document and provide similar means to propagate state from an
+initial request to its successors.</p>
+<p>Within a SPARQL processor, <a class="reference external" href="https://www.w3.org/TR/2013/REC-sparql11-query-20130321/#rUpdate">UPDATE forms</a> do allow an operation sequence,
+but are limited to modifications, which elliminates arbitrary query results.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="materialization.html"><span class="dir">Previous</span> Graph Store View Materialization HTTP Protocol</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Graph Store HTTP Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../sparql/index.html"><span class="dir">Next</span> SPARQL 1.1 Protocol Interface</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

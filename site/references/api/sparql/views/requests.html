@@ -1,0 +1,118 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>View Requests &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="View Materialization" href="materialization.html">
+    <link rel="prev" title="SPARQL Views" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>View Requests</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="../index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell" href="../../administration/index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="view-requests">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface &middot; SPARQL Views</p>
+<h1>View Requests</h1>
+<p>Dydra extends the W3C SPARQL HTTP Protocol to permit a request to include a reference to a
+SPARQL query rather than including it as the request content.
+The facility permits a GET request to refer to any query defined in a repository’s web
+interface under</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/&#64;query</span></code></p>
+</div></blockquote>
+<p>An immediate request is a GET request with the view as the location</p>
+</div>
+</section>
+<section class="section" id="get">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">get</div></div>
+<div class="content">
+<h2>GET</h2>
+<p>A GET request to the view endpoint executes the view query against the repository and
+returns the results as the response.
+This request form specifies the view name instead of <code class="docutils literal notranslate"><span class="pre">sparql</span></code> as the path end:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">http://dydra.com/&lt;account-name&gt;/&lt;repository-name&gt;/&lt;view-name&gt;.&lt;type&gt;</span></code></p>
+</div></blockquote>
+<p>If a revision is specified, the response contains those present as of that revision.
+A request without a revision operates on the latest revision.</p>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: specifies the RDF response document media type.</div>
+<div class="line">Revision: specifies the target revision</div>
+</div>
+</div></blockquote>
+<p>If a request specifies the media type <code class="docutils literal notranslate"><span class="pre">application/sparql-query</span></code>, the request returns the query text as the response content.</p>
+</div>
+<div class="subsection" id="query-arguments">
+<h3>Query Arguments</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">$&lt;parameter-name&gt;: &lt;argument-value&gt;</div>
+</div>
+</div></blockquote>
+<p>Any statement pattern variable in a SPARQL view can be constrained with a request argument.
+These arguments begin with a <a href="#id1"><span class="problematic" id="id2">`</span></a>$`character.
+Each parameter establishes a dynamic binding for the duration of the query execution, that is a binding with indefinite scope and dynamic extent (<a class="reference external" href="https://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node43.html#SECTION00700000000000000000">Binding</a>).</p>
+<p>Other request parameters are available to govern query execution. See “HTTP Request Parameters” for the complete list.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> SPARQL Views</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL Views</a>
+    <span class="spacer"></span>
+    <a class="cell" href="materialization.html"><span class="dir">Next</span> View Materialization</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

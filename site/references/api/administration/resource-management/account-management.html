@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Account Management &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="Repository Management" href="repository-management.html">
+    <link rel="prev" title="Resource Management" href="index.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Administration<br>Account Management</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell on" href="../index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="account-management">
+<div class="rail"><div class="vlabel">administration</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Administrative Resources &middot; Resource Management</p>
+<h1>Account Management</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#post-account-creation"><span class="tn">01</span> POST : account creation</a></li>
+<li><a href="#delete-account-deletion"><span class="tn">02</span> DELETE : account deletion</a></li>
+<li><a href="#get-account-catalog"><span class="tn">03</span> GET : account catalog</a></li>
+<li><a href="#get-account-resources"><span class="tn">04</span> GET : account resources</a></li>
+<li><a href="#get-account-configuration"><span class="tn">05</span> GET : account configuration</a></li>
+<li><a href="#post-account-configuration"><span class="tn">06</span> POST : account configuration</a></li>
+<li><a href="#get-account-authorization"><span class="tn">07</span> GET : account authorization</a></li>
+<li><a href="#post-account-authorization"><span class="tn">08</span> POST : account authorization</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="post-account-creation">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">post : account</div></div>
+<div class="content">
+<h2>POST : account creation</h2>
+<p>A POST to this abstract account resource creates an account:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts</span></code></p>
+</div></blockquote>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="content">
+<h3>Content</h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;new account name&gt;&quot;</span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="response">
+<h3>Response</h3>
+<p>HTTP No Content upon successful completion</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="delete-account-deletion">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">delete : account</div></div>
+<div class="content">
+<h2>DELETE : account deletion</h2>
+<p>A DELETE to the specific resource deletes the respective account</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id1">
+<h3>Response</h3>
+<p>HTTP No Content upon successful completion</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-account-catalog">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">get : account catalog</div></div>
+<div class="content">
+<h2>GET : account catalog</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts</span></code></p>
+</div></blockquote>
+<div class="subsection" id="respsonse">
+<h3>Respsonse</h3>
+<p>Returns the names of the accounts to which the current user has access.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-account-resources">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">get : account</div></div>
+<div class="content">
+<h2>GET : account resources</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id2">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id3">
+<h3>Response</h3>
+<p>Returns a JSON model which describes the account resources.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>location : the service http resource locator</p></li>
+<li><p>identifier : the abstract url to identify account metadata</p></li>
+<li><p>repositories : an array of account repository metadata</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;account&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;account name&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;location&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://specific-host.com/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;identifier&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://specific-host.com/system/accounts/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;repositories&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">  </span><span class="p">]</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-account-configuration">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">get : account</div></div>
+<div class="content">
+<h2>GET : account configuration</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/configuration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id4">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id5">
+<h3>Response</h3>
+<p>Returns a JSON model which captures the account configuration and owner description.
+This includes read-only and modifiable fields.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;urn:dydra:Account&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;accountName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;account_of&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/users/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;has_owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/users/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;urn:uuid:cc39c758-1c85-3240-9afc-78c540a8c3b5&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;familyName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Testing&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;meta@test.unexample&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;firstName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Meta&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;fullName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Meta Testing&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;accessToken&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deadbeefcafebabie&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/test&quot;</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="post-account-configuration">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">post : account</div></div>
+<div class="content">
+<h2>POST : account configuration</h2>
+<p>Modifies the account configuration according to the content of a JSON model.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/configuration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id6">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id7">
+<h3>Content</h3>
+<p>Requires a JSON object with the possible fields.
+This includes modifiable fields only.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>email</p></li>
+<li><p>fullName</p></li>
+<li><p>accessToken</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;email&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;meta@test.unexample&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;fullName&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Meta Testing&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;accessToken&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;deadbeefcafebabie&quot;</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="id8">
+<h3>Response</h3>
+<p>HTTP No Content upon successful completion</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-account-authorization">
+<div class="rail"><div class="numeral">07</div><div class="vlabel">get : account</div></div>
+<div class="content">
+<h2>GET : account authorization</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/authorization</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id9">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: application/json</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</section>
+<section class="section" id="post-account-authorization">
+<div class="rail"><div class="numeral">08</div><div class="vlabel">post : account</div></div>
+<div class="content">
+<h2>POST : account authorization</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/authorization</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id10">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="index.html"><span class="dir">Previous</span> Resource Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Resource Management</a>
+    <span class="spacer"></span>
+    <a class="cell" href="repository-management.html"><span class="dir">Next</span> Repository Management</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

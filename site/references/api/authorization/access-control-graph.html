@@ -1,0 +1,295 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Access Control Graphs &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Administration" href="administration.html">
+    <link rel="prev" title="Operation Access Modes" href="operations.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Authorization<br>Access Control Graphs</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell on" href="index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="access-control-graphs">
+<div class="rail"><div class="vlabel">authorization</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Service Access Authorization</p>
+<h1>Access Control Graphs</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#introduction"><span class="tn">01</span> Introduction</a></li>
+<li><a href="#abstract-types"><span class="tn">02</span> Abstract Types</a></li>
+<li><a href="#request-processing"><span class="tn">03</span> Request Processing</a></li>
+<li><a href="#inferred-relationships-groups"><span class="tn">04</span> Inferred Relationships &amp; Groups</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="introduction">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">introduction</div></div>
+<div class="content">
+<span id="capability"></span><h2>Introduction</h2>
+<p>Dydra represents access controls in the form of W3C ACL graphs.
+Each account includes the repository <code class="docutils literal notranslate"><span class="pre">system</span></code>, which contains the
+metadata for the entities (repositories and views) which the account owns.
+Entries in the repository of the form</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="p">[]</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">accessTo</span> <span class="nv">?entity</span><span class="p">;</span>
+   <span class="nn">acl</span><span class="p">:</span><span class="nt">accessMode</span> <span class="nv">?mode</span><span class="p">;</span>
+   <span class="nn">acl</span><span class="p">:</span><span class="nt">agent</span> <span class="nv">?agent</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p>constitute a direct access control list entry.</p>
+<p>Indirect access specifications take the form of chained entries, where</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">acl:Execute</span></code>
+access accorded to an agent for one entity imputes that entity’s access permission
+to the agent.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rdfs:member</span></code> assertions impute the set’s access permissions to its members.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rdf:type</span></code> assertions impute the classes’s access permissions to its specializations.</p></li>
+</ul>
+<p>The access authorization for any given primitive operation is recorded
+for each given request agent in the agent’s capability list as a relation among</p>
+<blockquote>
+<div><p>( target resource X operation X mode )</p>
+</div></blockquote>
+<p>This relation comprises the agent’s capabilities.</p>
+<p>If no entry is present for a given ( target resource X operation ) combination, it is sought
+in the target’s resource access control graph (<a class="reference external" href="https://www.w3.org/wiki/WebAccessControl">ACL</a>).
+If a path is found, the <code class="docutils literal notranslate"><span class="pre">true</span></code> permission state is saved.
+Otherwise <code class="docutils literal notranslate"><span class="pre">false</span></code> is cached.</p>
+<p>The search for authorization is governed by this request state.</p>
+<blockquote>
+<div><p>In detail</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>agent : This is an authenticated, located or anonymous agent, depending on authentication credentials.
+This value is derived during the authentication process and remains unchanged.</p></li>
+<li><p>account : This is the account for which the agent is authenticated - or none for anonymous access.
+This value is derived during the authentication process.
+If a federation operation designates a local repository as the service clause location
+it asserts the repository owning account for this for the duration of that sub-query.</p></li>
+<li><p>repository : the repository which is the target of the query.
+This is initially designated by the request as the HTTP request resource.
+A federation operation asserts the service clause location for this for the duration of that sub-query.</p></li>
+<li><p>view : the currently active view - or none for in-line queries.
+This is initially determined from the request. If the request resource designates a view,
+that is the initial value. Otherwise the inline content serves as an anonymous view.</p></li>
+<li><p>access mode : read or write, as per the request operation</p></li>
+</ul>
+<p>The initial state comprises just the request’s agent – the user and/or account, repository and mode.</p>
+</div>
+</section>
+<section class="section heavy" id="abstract-types">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">abstract types</div></div>
+<div class="content">
+<h2>Abstract Types</h2>
+<p>The initial access control ontology comprises the following</p>
+<p>&lt;<a class="reference external" href="urn:dydra:User">urn:dydra:User</a>&gt; rdf:type
+Initial Capabilities
+——————–</p>
+<p>There are two aspects to authorization: for access to the request query or view and for access to repository data.
+An authenticated agent’s inherent capabilities are</p>
+<ul class="simple">
+<li><p>execute access to all views defined in the authenticated account</p></li>
+<li><p>execute access to an inline view</p></li>
+<li><p>read, write, and execute access to all repositories owned by the authenticated account.</p></li>
+</ul>
+<p>For any account, any respectively authenticated agent possesses as inherent capabilities:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nv">&lt;http://dydra.com/Account1/system&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Read</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;http://dydra.com/Account1/system&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Write</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;http://dydra.com/Account1/system&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Execute</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;http://dydra.com/Account1/User1&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Read</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;http://dydra.com/Account1/User1&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Write</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;http://dydra.com/Account1/User1&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Execute</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;urn:dydra:requestContent&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Execute</span> <span class="l">true</span> <span class="p">.</span>
+<span class="nv">&lt;urn:dydra:responseContent&gt;</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">Write</span> <span class="l">true</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p>These afford access to the account metadata repository and permits the account
+owner to modify the ACL graph as well as to modify the account itself.
+For any repository, these capabilities are extended with</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Read</span><span class="w"> </span><span class="k">true</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Write</span><span class="w"> </span><span class="k">true</span>
+<span class="o">&lt;</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">dydra</span><span class="p">.</span><span class="n">com</span><span class="o">/</span><span class="n">Account1</span><span class="o">/</span><span class="n">Repository1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">Execute</span><span class="w"> </span><span class="k">true</span>
+</pre></div>
+</div>
+<p>Anonymous access to queries (inline or view) and to repository data must be authorized.
+In the same manner cross-account federated access must also be authorized.</p>
+</div>
+</section>
+<section class="section heavy" id="request-processing">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">request processing</div></div>
+<div class="content">
+<h2>Request Processing</h2>
+<p>The authorization search is implemented by queries which are stored as views in the account metadata repository.
+There are two.
+One computes direct access permissions and the other permissions which are inferred based on indirect relations among entities.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">direct-access-authorization</span></code> :
+compute the access permitted for a request agent to a given target based on direct ACG assertions.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">inferred-access-authorization</span></code> :
+compute the access permitted for a request agent to a given repository based on inferred assertions.</p></li>
+</ul>
+<div class="subsection" id="direct-relationships">
+<span id="sparql"></span><h3>Direct Relationships</h3>
+<p>If neither exists, the following serve to locate direct access assertions for
+a given <code class="docutils literal notranslate"><span class="pre">?target</span></code> and <code class="docutils literal notranslate"><span class="pre">?mode</span></code> combination</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">prefix</span> <span class="nn">acl</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/ns/auth/acl&gt;</span>
+<span class="k">prefix</span> <span class="nn">rdfs</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
+<span class="k">prefix</span> <span class="nn">prov</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/ns/prov#&gt;</span>
+<span class="k">select</span> <span class="nv">?mode</span>
+<span class="k">where</span> <span class="p">{</span>
+  <span class="p">{</span> <span class="c"># an acl entry permits explicit access</span>
+    <span class="p">[</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">accessTo</span> <span class="nv">?target</span><span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">mode</span> <span class="nv">?mode</span> <span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">agent</span> <span class="nv">?agent</span> <span class="p">]</span> <span class="p">}</span>
+  <span class="k">union</span>
+  <span class="p">{</span> <span class="c"># an acl entry permits explicit access view membership/specialization</span>
+    <span class="p">{</span> <span class="p">{</span> <span class="nv">?mediator</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span> <span class="nv">?agent</span> <span class="p">.}</span>
+      <span class="k">union</span>
+      <span class="p">{</span> <span class="nv">?agent</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nv">?mediator</span> <span class="p">.}</span> <span class="p">}</span>
+    <span class="p">[</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">accessTp</span> <span class="nv">?target</span><span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">mode</span> <span class="nv">?mode</span> <span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">agent</span> <span class="nv">?mediator</span> <span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In this process,
+where the request specifies a view, the view term value is the absolute analog to the request
+url, where the authority has been replaced with just the service host - by default, <code class="docutils literal notranslate"><span class="pre">dydra.com</span></code>,
+and the scheme with <code class="docutils literal notranslate"><span class="pre">http</span></code>.
+If the request includes the query expression inline, the view term is <code class="docutils literal notranslate"><span class="pre">&lt;urn:dydra:requestContent&gt;</span></code>.
+The target repository is designated by the resource corresponding to the first two elements in the URL path.</p>
+</div>
+</div>
+</section>
+<section class="section" id="inferred-relationships-groups">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">inferred relationships</div></div>
+<div class="content">
+<h2>Inferred Relationships &amp; Groups</h2>
+<p>Using Dydra one can define “group” and “nested group” (hierarchical and inherited) relationships. In addition to direct assertions, Dydra authorization graphs may specify access through indirect relations.</p>
+<p>These include subtype, which can be used to express relations among agents and containment relations among target entities (resources).</p>
+<p>These may be defined explicitly in the target’s respective metadata repository and
+interpreted by an <code class="docutils literal notranslate"><span class="pre">inferred-access-authorization</span></code> view.</p>
+<p>If no definition is present for that view, the following view and relations apply.</p>
+<ul class="simple">
+<li><p>the user is a member of some entity which has the intended access</p></li>
+<li><p>the user is of a typed class which has the intended access</p></li>
+<li><p>the active authenticated account is a member of some entity which as the intended access</p></li>
+<li><p>the active view is a member of some entity which has the inteded access</p></li>
+<li><p>the active repository is a member of some entity which has the intended access</p></li>
+</ul>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">prefix</span> <span class="nn">acl</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/ns/auth/acl&gt;</span>
+<span class="k">prefix</span> <span class="nn">rdfs</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span>
+<span class="k">prefix</span> <span class="nn">prov</span><span class="p">:</span> <span class="nl">&lt;http://www.w3.org/ns/prov#&gt;</span>
+<span class="k">select</span> <span class="nv">?target</span>
+<span class="k">where</span> <span class="p">{</span>
+  <span class="p">{</span> <span class="c"># the user has the intened access</span>
+    <span class="p">[</span> <span class="nn">acl</span><span class="p">:</span><span class="nt">accessTo</span> <span class="nv">?target</span><span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">mode</span> <span class="nv">?mode</span> <span class="p">;</span>
+      <span class="nn">acl</span><span class="p">:</span><span class="nt">agent</span> <span class="nv">?mediator</span> <span class="p">.</span> <span class="p">]</span> <span class="p">}</span>
+  <span class="p">{</span> <span class="p">{</span> <span class="nv">?mediator</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span><span class="o">*</span> <span class="nv">?agent</span> <span class="p">.</span> <span class="p">}</span>
+    <span class="k">union</span>
+    <span class="p">{</span> <span class="nv">?agent</span> <span class="k">a</span> <span class="nv">?type</span> <span class="p">.</span>
+      <span class="nv">?type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClass</span><span class="o">*</span> <span class="nv">?mediator</span> <span class="p">.</span> <span class="p">}</span>
+    <span class="k">union</span>
+    <span class="p">{</span> <span class="nv">?mediator</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span><span class="o">*</span> <span class="nv">?account</span> <span class="p">.</span> <span class="p">}</span>
+    <span class="k">union</span>
+    <span class="p">{</span> <span class="nv">?mediator</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span><span class="o">*</span> <span class="nv">?view</span> <span class="p">.</span> <span class="p">}</span>
+    <span class="k">union</span>
+    <span class="p">{</span> <span class="nv">?mediator</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span><span class="o">*</span> <span class="nv">?repository</span> <span class="p">.</span> <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="subsection" id="target-entity-composition">
+<h3>Target Entity Composition</h3>
+<p>The entity classes are governed by the following definition:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="nn">foaf</span><span class="p">:</span><span class="nt">Agent</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nn">foaf</span><span class="p">:</span><span class="nt">Person</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nn">sioc</span><span class="p">:</span><span class="nt">UserAccount</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nl">&lt;http://purl.org/dc/terms/Dataset&gt;</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nl">&lt;urn:dydra:Account&gt;</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nl">&lt;urn:dydra:Account&gt;</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">sioc</span><span class="p">:</span><span class="nt">UserAccount</span> <span class="p">.</span>
+<span class="nl">&lt;urn:dydra:Group&gt;</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nl">&lt;urn:dydra:Repository&gt;</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Class</span> <span class="p">.</span>
+<span class="nl">&lt;urn:dydra:Repository&gt;</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nl">&lt;http://purl.org/dc/terms/Dataset&gt;</span> <span class="p">.</span>
+<span class="nv">?account</span> <span class="nn">prov</span><span class="p">:</span><span class="nt">hadMember</span> <span class="nv">?repository</span> <span class="p">.</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="agent-type">
+<h3>Agent Type</h3>
+<p>The relation among agent classes is governed by the following definition:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">AuthenticatedAgent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdf</span><span class="p">:</span><span class="k">type</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="k">Class</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">AuthenticatedAgent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">Agent</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="k">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdf</span><span class="p">:</span><span class="k">type</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="k">Class</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="k">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">AuthenticatedAgent</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="k">User</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">Person</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">LocatedAgent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdf</span><span class="p">:</span><span class="k">type</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="k">Class</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">LocatedAgent</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="n">foaf</span><span class="p">:</span><span class="n">Agent</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">Manager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="k">User</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">Administrator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">rdfs</span><span class="p">:</span><span class="n">subClassOf</span><span class="w"> </span><span class="o">&lt;</span><span class="n">urn</span><span class="p">:</span><span class="n">dydra</span><span class="p">:</span><span class="n">Manager</span><span class="o">&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="o">?</span><span class="k">user</span><span class="w"> </span><span class="n">acl</span><span class="p">:</span><span class="k">owner</span><span class="w"> </span><span class="o">?</span><span class="n">account</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="operations.html"><span class="dir">Previous</span> Operation Access Modes</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Service Access Authorization</a>
+    <span class="spacer"></span>
+    <a class="cell" href="administration.html"><span class="dir">Next</span> Administration</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

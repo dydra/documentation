@@ -1,0 +1,660 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Library Functions &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="SPARQL Views" href="views/index.html">
+    <link rel="prev" title="Abstract Algebra Expressions" href="algebra.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">SPARQL<br>Library Functions</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell on" href="index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell" href="../administration/index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="library-functions">
+<div class="rail"><div class="vlabel">sparql</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; SPARQL 1.1 Protocol Interface</p>
+<h1>Library Functions</h1>
+<p>The Dydra SPARQL processor supports numerous native operators in addition to those
+defined by the SPARQL query language.</p>
+<p>Many are drawn from the XPath function library while others are unique to the Dydra implementation.</p>
+<p>In addition to functional operators it includes matching the processor extends the SPARQL
+statement pattern unification process with multi-values predicates which add
+capabilities such as text matching to SPARQL’s basic <code class="docutils literal notranslate"><span class="pre">sameTerm</span></code> identification rules.</p>
+<hr class="docutils" />
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#boolean-expression"><span class="tn">01</span> boolean (EXPRESSION)</a></li>
+<li><a href="#date-expression"><span class="tn">02</span> date (EXPRESSION)</a></li>
+<li><a href="#datetime-expression"><span class="tn">03</span> dateTime (EXPRESSION)</a></li>
+<li><a href="#daytimeduration-expression"><span class="tn">04</span> dayTimeDuration (EXPRESSION)</a></li>
+<li><a href="#decimal-expression"><span class="tn">05</span> decimal (EXPRESSION)</a></li>
+<li><a href="#double-expression"><span class="tn">06</span> double (EXPRESSION)</a></li>
+<li><a href="#duration-expression"><span class="tn">07</span> duration (EXPRESSION)</a></li>
+<li><a href="#float-expression"><span class="tn">08</span> float (EXPRESSION)</a></li>
+<li><a href="#gday-expression"><span class="tn">09</span> gDay (EXPRESSION)</a></li>
+<li><a href="#gmonth-expression"><span class="tn">10</span> gMonth (EXPRESSION)</a></li>
+<li><a href="#gmonthday-expression"><span class="tn">11</span> gMonthDay (EXPRESSION)</a></li>
+<li><a href="#gyear-expression"><span class="tn">12</span> gYear (EXPRESSION)</a></li>
+<li><a href="#gyearmonth-expression"><span class="tn">13</span> gYearMonth (EXPRESSION)</a></li>
+<li><a href="#integer-expression"><span class="tn">14</span> integer (EXPRESSION)</a></li>
+<li><a href="#string-expression"><span class="tn">15</span> string (EXPRESSION)</a></li>
+<li><a href="#time-expression"><span class="tn">16</span> time (EXPRESSION)</a></li>
+<li><a href="#yearmonthduration-expression"><span class="tn">17</span> yearMonthDuration (EXPRESSION)</a></li>
+<li><a href="#abs-value"><span class="tn">18</span> abs (VALUE)</a></li>
+<li><a href="#ceil-value"><span class="tn">19</span> ceil (VALUE)</a></li>
+<li><a href="#compare-term1-term2-optional-collation"><span class="tn">20</span> compare (TERM1 TERM2 &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#concat-rest-strings"><span class="tn">21</span> concat (&amp;REST STRINGS)</a></li>
+<li><a href="#contains-string1-string2-optional-collation"><span class="tn">22</span> contains (STRING1 STRING2 &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#datetime-date-time"><span class="tn">23</span> dateTime (DATE TIME)</a></li>
+<li><a href="#day-from-date-term"><span class="tn">24</span> day-from-date (TERM)</a></li>
+<li><a href="#day-from-datetime-term"><span class="tn">25</span> day-from-dateTime (TERM)</a></li>
+<li><a href="#days-from-duration-term"><span class="tn">26</span> days-from-duration (TERM)</a></li>
+<li><a href="#ends-with-string1-string2-optional-collation"><span class="tn">27</span> ends-with (STRING1 STRING2 &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#floor-value"><span class="tn">28</span> floor (VALUE)</a></li>
+<li><a href="#format-date-value-picture-optional-language-calendar-place"><span class="tn">29</span> format-date (VALUE PICTURE &amp;OPTIONAL LANGUAGE CALENDAR PLACE)</a></li>
+<li><a href="#format-datetime-value-picture-optional-language-calendar-place"><span class="tn">30</span> format-dateTime (VALUE PICTURE &amp;OPTIONAL LANGUAGE CALENDAR PLACE)</a></li>
+<li><a href="#format-duration-value-picture-optional-language-calendar-place"><span class="tn">31</span> format-duration (VALUE PICTURE &amp;OPTIONAL LANGUAGE CALENDAR PLACE)</a></li>
+<li><a href="#hours-from-datetime-term"><span class="tn">32</span> hours-from-dateTime (TERM)</a></li>
+<li><a href="#hours-from-duration-term"><span class="tn">33</span> hours-from-duration (TERM)</a></li>
+<li><a href="#hours-from-time-term"><span class="tn">34</span> hours-from-time (TERM)</a></li>
+<li><a href="#lower-case-string"><span class="tn">35</span> lower-case (STRING)</a></li>
+<li><a href="#matches-text-pattern-optional-flags-nil"><span class="tn">36</span> matches (TEXT PATTERN &amp;OPTIONAL (FLAGS NIL))</a></li>
+<li><a href="#minutes-from-datetime-term"><span class="tn">37</span> minutes-from-dateTime (TERM)</a></li>
+<li><a href="#minutes-from-duration-term"><span class="tn">38</span> minutes-from-duration (TERM)</a></li>
+<li><a href="#minutes-from-time-term"><span class="tn">39</span> minutes-from-time (TERM)</a></li>
+<li><a href="#month-from-date-term"><span class="tn">40</span> month-from-date (TERM)</a></li>
+<li><a href="#month-from-datetime-term"><span class="tn">41</span> month-from-dateTime (TERM)</a></li>
+<li><a href="#months-from-duration-term"><span class="tn">42</span> months-from-duration (TERM)</a></li>
+<li><a href="#not-value"><span class="tn">43</span> not (VALUE)</a></li>
+<li><a href="#replace-input-pattern-replacement-optional-flags-nil"><span class="tn">44</span> replace (INPUT PATTERN REPLACEMENT &amp;OPTIONAL (FLAGS NIL))</a></li>
+<li><a href="#round-value"><span class="tn">45</span> round (VALUE)</a></li>
+<li><a href="#seconds-from-datetime-term"><span class="tn">46</span> seconds-from-dateTime (TERM)</a></li>
+<li><a href="#seconds-from-duration-term"><span class="tn">47</span> seconds-from-duration (TERM)</a></li>
+<li><a href="#seconds-from-time-term"><span class="tn">48</span> seconds-from-time (TERM)</a></li>
+<li><a href="#starts-with-string1-string2-optional-collation"><span class="tn">49</span> starts-with (STRING1 STRING2 &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#string-length-string"><span class="tn">50</span> string-length (STRING)</a></li>
+<li><a href="#substring-value-start-optional-length"><span class="tn">51</span> substring (VALUE START &amp;OPTIONAL LENGTH)</a></li>
+<li><a href="#substring-after-string-substring-optional-collation"><span class="tn">52</span> substring-after (STRING SUBSTRING &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#substring-before-string-substring-optional-collation"><span class="tn">53</span> substring-before (STRING SUBSTRING &amp;OPTIONAL COLLATION)</a></li>
+<li><a href="#timezone-from-date-term"><span class="tn">54</span> timezone-from-date (TERM)</a></li>
+<li><a href="#timezone-from-datetime-term"><span class="tn">55</span> timezone-from-dateTime (TERM)</a></li>
+<li><a href="#timezone-from-time-term"><span class="tn">56</span> timezone-from-time (TERM)</a></li>
+<li><a href="#upper-case-string"><span class="tn">57</span> upper-case (STRING)</a></li>
+<li><a href="#year-from-date-term"><span class="tn">58</span> year-from-date (TERM)</a></li>
+<li><a href="#year-from-datetime-term"><span class="tn">59</span> year-from-dateTime (TERM)</a></li>
+<li><a href="#years-from-duration-term"><span class="tn">60</span> years-from-duration (TERM)</a></li>
+<li><a href="#extension-functions"><span class="tn">61</span> Extension Functions</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="boolean-expression">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">boolean (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">boolean</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="date-expression">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">date (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">date</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="datetime-expression">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">datetime (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">dateTime</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="daytimeduration-expression">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">daytimeduration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">dayTimeDuration</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="decimal-expression">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">decimal (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">decimal</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="double-expression">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">double (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="duration-expression">
+<div class="rail"><div class="numeral">07</div><div class="vlabel">duration (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">duration</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="float-expression">
+<div class="rail"><div class="numeral">08</div><div class="vlabel">float (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">float</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="gday-expression">
+<div class="rail"><div class="numeral">09</div><div class="vlabel">gday (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">gDay</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="gmonth-expression">
+<div class="rail"><div class="numeral">10</div><div class="vlabel">gmonth (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">gMonth</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="gmonthday-expression">
+<div class="rail"><div class="numeral">11</div><div class="vlabel">gmonthday (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">gMonthDay</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="gyear-expression">
+<div class="rail"><div class="numeral">12</div><div class="vlabel">gyear (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">gYear</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="gyearmonth-expression">
+<div class="rail"><div class="numeral">13</div><div class="vlabel">gyearmonth</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">gYearMonth</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="integer-expression">
+<div class="rail"><div class="numeral">14</div><div class="vlabel">integer (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">integer</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="string-expression">
+<div class="rail"><div class="numeral">15</div><div class="vlabel">string (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">string</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="time-expression">
+<div class="rail"><div class="numeral">16</div><div class="vlabel">time (expression)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="yearmonthduration-expression">
+<div class="rail"><div class="numeral">17</div><div class="vlabel">yearmonthduration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">yearMonthDuration</span> <span class="pre">(EXPRESSION)</span></code></h2>
+<p>MACRO</p>
+</div>
+</section>
+<section class="section heavy" id="abs-value">
+<div class="rail"><div class="numeral">18</div><div class="vlabel">abs (value)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">abs</span> <span class="pre">(VALUE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="ceil-value">
+<div class="rail"><div class="numeral">19</div><div class="vlabel">ceil (value)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">ceil</span> <span class="pre">(VALUE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="compare-term1-term2-optional-collation">
+<div class="rail"><div class="numeral">20</div><div class="vlabel">compare (term1 term2</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">compare</span> <span class="pre">(TERM1</span> <span class="pre">TERM2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="concat-rest-strings">
+<div class="rail"><div class="numeral">21</div><div class="vlabel">concat (&amp;rest strings)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">concat</span> <span class="pre">(&amp;REST</span> <span class="pre">STRINGS)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="contains-string1-string2-optional-collation">
+<div class="rail"><div class="numeral">22</div><div class="vlabel">contains (string1</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">contains</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="datetime-date-time">
+<div class="rail"><div class="numeral">23</div><div class="vlabel">datetime (date time)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">dateTime</span> <span class="pre">(DATE</span> <span class="pre">TIME)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="day-from-date-term">
+<div class="rail"><div class="numeral">24</div><div class="vlabel">day-from-date (term)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">day-from-date</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="day-from-datetime-term">
+<div class="rail"><div class="numeral">25</div><div class="vlabel">day-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">day-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="days-from-duration-term">
+<div class="rail"><div class="numeral">26</div><div class="vlabel">days-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">days-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="ends-with-string1-string2-optional-collation">
+<div class="rail"><div class="numeral">27</div><div class="vlabel">ends-with (string1</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">ends-with</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="floor-value">
+<div class="rail"><div class="numeral">28</div><div class="vlabel">floor (value)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">floor</span> <span class="pre">(VALUE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="format-date-value-picture-optional-language-calendar-place">
+<div class="rail"><div class="numeral">29</div><div class="vlabel">format-date (value</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">format-date</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="format-datetime-value-picture-optional-language-calendar-place">
+<div class="rail"><div class="numeral">30</div><div class="vlabel">format-datetime (value</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">format-dateTime</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="format-duration-value-picture-optional-language-calendar-place">
+<div class="rail"><div class="numeral">31</div><div class="vlabel">format-duration (value</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">format-duration</span> <span class="pre">(VALUE</span> <span class="pre">PICTURE</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LANGUAGE</span> <span class="pre">CALENDAR</span> <span class="pre">PLACE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="hours-from-datetime-term">
+<div class="rail"><div class="numeral">32</div><div class="vlabel">hours-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">hours-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="hours-from-duration-term">
+<div class="rail"><div class="numeral">33</div><div class="vlabel">hours-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">hours-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="hours-from-time-term">
+<div class="rail"><div class="numeral">34</div><div class="vlabel">hours-from-time (term)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">hours-from-time</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="lower-case-string">
+<div class="rail"><div class="numeral">35</div><div class="vlabel">lower-case (string)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">lower-case</span> <span class="pre">(STRING)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="matches-text-pattern-optional-flags-nil">
+<div class="rail"><div class="numeral">36</div><div class="vlabel">matches (text pattern</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">matches</span> <span class="pre">(TEXT</span> <span class="pre">PATTERN</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">(FLAGS</span> <span class="pre">NIL))</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="minutes-from-datetime-term">
+<div class="rail"><div class="numeral">37</div><div class="vlabel">minutes-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">minutes-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="minutes-from-duration-term">
+<div class="rail"><div class="numeral">38</div><div class="vlabel">minutes-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">minutes-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="minutes-from-time-term">
+<div class="rail"><div class="numeral">39</div><div class="vlabel">minutes-from-time</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">minutes-from-time</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="month-from-date-term">
+<div class="rail"><div class="numeral">40</div><div class="vlabel">month-from-date (term)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">month-from-date</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="month-from-datetime-term">
+<div class="rail"><div class="numeral">41</div><div class="vlabel">month-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">month-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="months-from-duration-term">
+<div class="rail"><div class="numeral">42</div><div class="vlabel">months-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">months-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="not-value">
+<div class="rail"><div class="numeral">43</div><div class="vlabel">not (value)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">not</span> <span class="pre">(VALUE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="replace-input-pattern-replacement-optional-flags-nil">
+<div class="rail"><div class="numeral">44</div><div class="vlabel">replace (input pattern</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">replace</span> <span class="pre">(INPUT</span> <span class="pre">PATTERN</span> <span class="pre">REPLACEMENT</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">(FLAGS</span> <span class="pre">NIL))</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="round-value">
+<div class="rail"><div class="numeral">45</div><div class="vlabel">round (value)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">round</span> <span class="pre">(VALUE)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="seconds-from-datetime-term">
+<div class="rail"><div class="numeral">46</div><div class="vlabel">seconds-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">seconds-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="seconds-from-duration-term">
+<div class="rail"><div class="numeral">47</div><div class="vlabel">seconds-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">seconds-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="seconds-from-time-term">
+<div class="rail"><div class="numeral">48</div><div class="vlabel">seconds-from-time</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">seconds-from-time</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="starts-with-string1-string2-optional-collation">
+<div class="rail"><div class="numeral">49</div><div class="vlabel">starts-with (string1</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">starts-with</span> <span class="pre">(STRING1</span> <span class="pre">STRING2</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="string-length-string">
+<div class="rail"><div class="numeral">50</div><div class="vlabel">string-length (string)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">string-length</span> <span class="pre">(STRING)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="substring-value-start-optional-length">
+<div class="rail"><div class="numeral">51</div><div class="vlabel">substring (value start</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">substring</span> <span class="pre">(VALUE</span> <span class="pre">START</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">LENGTH)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="substring-after-string-substring-optional-collation">
+<div class="rail"><div class="numeral">52</div><div class="vlabel">substring-after</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">substring-after</span> <span class="pre">(STRING</span> <span class="pre">SUBSTRING</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="substring-before-string-substring-optional-collation">
+<div class="rail"><div class="numeral">53</div><div class="vlabel">substring-before</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">substring-before</span> <span class="pre">(STRING</span> <span class="pre">SUBSTRING</span> <span class="pre">&amp;OPTIONAL</span> <span class="pre">COLLATION)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="timezone-from-date-term">
+<div class="rail"><div class="numeral">54</div><div class="vlabel">timezone-from-date</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">timezone-from-date</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="timezone-from-datetime-term">
+<div class="rail"><div class="numeral">55</div><div class="vlabel">timezone-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">timezone-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="timezone-from-time-term">
+<div class="rail"><div class="numeral">56</div><div class="vlabel">timezone-from-time</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">timezone-from-time</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="upper-case-string">
+<div class="rail"><div class="numeral">57</div><div class="vlabel">upper-case (string)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">upper-case</span> <span class="pre">(STRING)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="year-from-date-term">
+<div class="rail"><div class="numeral">58</div><div class="vlabel">year-from-date (term)</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">year-from-date</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="year-from-datetime-term">
+<div class="rail"><div class="numeral">59</div><div class="vlabel">year-from-datetime</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">year-from-dateTime</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section heavy" id="years-from-duration-term">
+<div class="rail"><div class="numeral">60</div><div class="vlabel">years-from-duration</div></div>
+<div class="content">
+<h2><code class="docutils literal notranslate"><span class="pre">years-from-duration</span> <span class="pre">(TERM)</span></code></h2>
+<p>FUNCTION</p>
+</div>
+</section>
+<section class="section" id="extension-functions">
+<div class="rail"><div class="numeral">61</div><div class="vlabel">extension functions</div></div>
+<div class="content">
+<h2>Extension Functions</h2>
+<p>In addition to the standard SPARQL 1.1 filter functions, Dydra also supports
+several useful extension functions.
+The examples employ the following namespace prefix bindings:</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 86%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>prefix</p></th>
+<th class="head"><p>IRI</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rdf</p></td>
+<td><p><a class="reference external" href="http://www.w3.org/1999/02/22-rdf-syntax">http://www.w3.org/1999/02/22-rdf-syntax</a>-ns#</p></td>
+</tr>
+<tr class="row-odd"><td><p>dydra</p></td>
+<td><p><a class="reference external" href="http://dydra">http://dydra</a>.com#</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<div class="subsection" id="dydra-account-name">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:account-name()</span></code></h3>
+<p>This function returns the name of the current query’s owning account as a string value.</p>
+</div>
+<div class="subsection" id="dydra-agent-id">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:agent-id()</span></code></h3>
+<p>This function returns the id af the authenticated agent of the current
+query as a string value. If the agent is not authenticated the value is unbound.</p>
+</div>
+<div class="subsection" id="dydra-agent-location">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:agent-location()</span></code></h3>
+<p>This function returns the IP-address location af the authenticated agent of the current
+query as a string value. If the agent is not located the value is unbound.</p>
+</div>
+<div class="subsection" id="dydra-query-uri">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:query-uri()</span></code></h3>
+<p>This function returns the IRI of the current query.</p>
+</div>
+<div class="subsection" id="dydra-repository-name">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:repository-name()</span></code></h3>
+<p>This function returns the name of the current query’s target repository as a string value.</p>
+</div>
+<div class="subsection" id="dydra-repository-url">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:repository-url()</span></code></h3>
+<p>This function returns the URL of the current query’s target repository.</p>
+</div>
+<div class="subsection" id="dydra-revision-uri">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:revision-uri()</span></code></h3>
+<p>This function returns the IRI of the current query’s active revision.</p>
+</div>
+<div class="subsection" id="dydra-repository-revision-url">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:repository-revision-url()</span></code></h3>
+<p>This function returns the URL of the current query’s repository’s active revision.</p>
+</div>
+<div class="subsection" id="dydra-revision-parent-uri">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:revision-parent-uri()</span></code></h3>
+<p>This function returns the IRI of the current query’s active revision’s parent.</p>
+</div>
+<div class="subsection" id="dydra-transaction-signature">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:transaction-signature()</span></code></h3>
+<p>This function returns a digest signature of the query’s active revision.
+If none is available, it returns rdf:nil</p>
+</div>
+<div class="subsection" id="dydra-transaction-uri">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:transaction-uri()</span></code></h3>
+<p>This function returns the IRI of the current query’s active transaction.</p>
+</div>
+<div class="subsection" id="dydra-user-tag">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:user-tag()</span></code></h3>
+<p>This function returns the <cite>user query id</cite> tag associated with the current query as a string value.</p>
+</div>
+<div class="subsection" id="rdf-seq">
+<h3><code class="docutils literal notranslate"><span class="pre">rdf:Seq()</span></code></h3>
+<p>This function facilitates creating RSS 1.0 feeds using
+<code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> queries.
+Succesive invocations return monotonically increasing integer values.</p>
+</div>
+<div class="subsection" id="dydra-term-number">
+<h3><code class="docutils literal notranslate"><span class="pre">dydra:term-number()</span></code></h3>
+<p>Returns the internal term identifier for an RDF term.
+This value is stable within a given service.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="algebra.html"><span class="dir">Previous</span> Abstract Algebra Expressions</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> SPARQL 1.1 Protocol Interface</a>
+    <span class="spacer"></span>
+    <a class="cell" href="views/index.html"><span class="dir">Next</span> SPARQL Views</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

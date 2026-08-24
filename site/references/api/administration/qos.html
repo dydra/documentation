@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Quality of Service Provisioning &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html">
+    <link rel="search" title="Search" href="../search.html">
+    <link rel="next" title="Glossary" href="../glossary.html">
+    <link rel="prev" title="Revision Management" href="revision-management.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Administration<br>Quality of Service Provisioning</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../sesame/index.html">Sesame</a>
+    <a class="cell" href="../provenance/index.html">Provenance</a>
+    <a class="cell" href="../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../authorization/index.html">Authorization</a>
+    <a class="cell" href="../services/index.html">Services</a>
+    <a class="cell on" href="index.html">Administration</a>
+    <a class="cell" href="../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../genindex.html">Index</a>
+    <a class="cell" href="../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="quality-of-service-provisioning">
+<div class="rail"><div class="vlabel">administration</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Administrative Resources</p>
+<h1>Quality of Service Provisioning</h1>
+<p>The Dydra service provides a quality of service settings in order to
+isolate graph store service requests from other processing and
+to guarantee and/or limit resource for applications by identity and class.
+These provisions are governed by settings in the account settings repository</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/&lt;account&gt;/system</span></code></p>
+</div></blockquote>
+<p>The repository includes two graphs are present to contain the quality of service settings:</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;http://dydra.com/quality-of-service&gt;</span></code></div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">&lt;http://dydra.com/quality-of-service/views&gt;</span></code></div>
+</div>
+</div></blockquote>
+<p>As this is an internal repeository, managing these settings is mediated through another account repository</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/&lt;account&gt;/quality-of-service</span></code></p>
+</div></blockquote>
+<p>Its contents correspond to a simple schema</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nv">&lt;http://dydra.com/quality-of-service/class&gt;</span>
+  <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">Property</span> <span class="p">;</span>
+  <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nv">&lt;urn:dydra:View&gt;</span> <span class="p">;</span>
+  <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nv">&lt;http://dydra.com/quality-of-service/class&gt;</span> <span class="p">;</span>
+  <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nv">&lt;http://dydra.com/quality-of-service/class&gt;</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p>For example (with <code class="docutils literal notranslate"><span class="pre">qos:</span> <span class="pre">&lt;http://dydra.com/quality-of-service/&gt;</span></code> )</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nv">&lt;http://dydra.com/quality-of-service/views&gt;</span> <span class="p">{</span>
+  <span class="nv">&lt;http://dydra.com/accounts/nxp/repositories/plm__rev/views/ebi_lz&gt;</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/EBI</span>  <span class="p">.</span>
+  <span class="nv">&lt;http://dydra.com/accounts/nxp/repositories/plm__rev/views/getListOfItemsForType&gt;</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/PLM-VIEWS</span>  <span class="p">.</span>
+  <span class="nv">&lt;http://dydra.com/accounts/nxp/repositories/plm__rev/views/plm_die_search&gt;</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/PLM-VIEWS</span> <span class="p">.</span>
+  <span class="nv">&lt;http://dydra.com/accounts/nxp/repositories/plm__rev/views/ebiz_select_sales_item&gt;</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/EBIZ</span> <span class="p">.</span>
+  <span class="nv">&lt;http://dydra.com/accounts/nxp/repositories/plm__rev/views/vcp_wafertestsheet-teststage-udm_redline&gt;</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/VCP</span> <span class="p">.</span>
+<span class="p">}</span>
+<span class="nv">&lt;http://dydra.com/quality-of-service&gt;</span> <span class="p">{</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/EBI</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Application</span> <span class="p">.</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/PLM-VIEWS</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Application</span> <span class="p">.</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/VCP</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/HighResource</span> <span class="p">.</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/EBIZ</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Application</span> <span class="p">.</span>
+
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/HighResource</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">quality</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Queued</span> <span class="p">.</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Reporting</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">quality</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Scheduled</span> <span class="p">.</span>
+  <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/Application</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">quality</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class\/SPARQL</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">quality-of-service</span></code> repository is available through the standard service API.
+This permits update query operations and imports through the graph store protocol.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/&lt;account&gt;/quality-of-service/service</span></code></p>
+</div></blockquote>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#put"><span class="tn">01</span> PUT</a></li>
+<li><a href="#post"><span class="tn">02</span> POST</a></li>
+<li><a href="#get"><span class="tn">03</span> GET</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="put">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">put</div></div>
+<div class="content">
+<h2>PUT</h2>
+<p>A PUT operation to this repository replaces all view service quality settings.</p>
+<p>A PATCH operation propagates changes to the repository content to the respective <code class="docutils literal notranslate"><span class="pre">&lt;account&gt;/system</span></code> repository,
+from where they are used to generate the nginx request routing locations which determine service response priority.</p>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: text/csv</div>
+</div>
+</div></blockquote>
+<p>Among the alternative is TARQL import via the repository <code class="docutils literal notranslate"><span class="pre">qos-import</span></code> view:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span>  ## this is a csv import view for qos settings
+  construct {
+   graph &lt;http://dydra.com/quality-of-service/views&gt; {
+    ?view qos:class ?class .
+   }
+  }
+  where {
+   { select ?Classification ?APPLICATION ?ViewName ?FREQUENCY ?SAMPLE_URL
+     where {} }
+   bind(uri(concat(&#39;http://dydra.com/accounts/nxp/repositories/plm__rev/views/&#39;, ?ViewName)) as ?view)
+   bind(uri(concat(&#39;http://dydra.com/quality-of-service/class/&#39;, replace(if(contains(?APPLICATION, &#39;(&#39;), strbefore(?APPLICATION, &#39;(&#39;), ?APPLICATION), &#39; &#39;, &#39;-&#39;))) as ?class)
+  }
+
+| Content-Type: application/n-quads, application/trig
+</pre></div>
+</div>
+<p>The standard quad media types can be used to import content into the repository.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="post">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">post</div></div>
+<div class="content">
+<h2>POST</h2>
+<p>A POST request contributes additional view classifications or augments the classification hierarchy.</p>
+</div>
+</section>
+<section class="section" id="get">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">get</div></div>
+<div class="content">
+<h2>GET</h2>
+<p>A GET operations retrieves</p>
+<p>The repository also backs a SPARQL endpoint, to which standard queries can be set.</p>
+<p>These view settings are combined with the specifications for available service resources are described in the system configuration,
+in the <code class="docutils literal notranslate"><span class="pre">system/system``repositors,</span> <span class="pre">where</span> <span class="pre">entries</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">``&lt;http://dydra.com/quality-of-service&gt;</span></code> graph follow the schema</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">qos</span><span class="p">:</span><span class="nt">server</span>
+  <span class="nn">rdf</span><span class="p">:</span><span class="nt">type</span> <span class="nn">rdf</span><span class="p">:</span><span class="nt">Property</span> <span class="p">;</span>
+  <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">qos</span><span class="p">:</span><span class="nt">class</span> <span class="p">;</span>
+  <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">Literal</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p>These combined settings translate into a configuration which governs the operation of the service interface proxy by
+specifying routing locations and associating each with processing resources.
+These appear, for example, as</p>
+<div class="highlight-nginx notranslate"><div class="highlight"><pre><span></span><span class="k">location</span><span class="w"> </span><span class="p">~</span><span class="w"> </span><span class="sr">^/nxp/plm__rev/vcp_wafertestsheet-teststage-udm_redline</span><span class="w"> </span>$<span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">limit_req</span><span class="w"> </span><span class="s">zone=api</span><span class="w"> </span><span class="s">burst=8</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">proxy_pass</span><span class="w">       </span><span class="s">http://Queued</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w">      </span><span class="nv">$host</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Real-IP</span><span class="w"> </span><span class="nv">$remote_addr</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">client_max_body_size</span><span class="w"> </span><span class="mi">256m</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">upstream</span><span class="w"> </span><span class="s">Queued</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8101</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">Administration</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8199</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">SPARQL</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">least_conn</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8104</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8103</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8102</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">Scheduled</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">least_conn</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8106</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8105</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">upstream</span><span class="w"> </span><span class="s">Service</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kn">least_conn</span><span class="p">;</span>
+<span class="w">  </span><span class="kn">server</span><span class="w"> </span><span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">8107</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="revision-management.html"><span class="dir">Previous</span> Revision Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Administrative Resources</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../glossary.html"><span class="dir">Next</span> Glossary</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="The reference: the SPARQL 1.1 and Graph Store HTTP protocols, revisioning, provenance, authorization, service definitions and administration — every request parameter, every response header.">
+    <title>Repository Management &#8212; Dydra API</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="../../_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html">
+    <link rel="search" title="Search" href="../../search.html">
+    <link rel="next" title="View Management" href="view-management.html">
+    <link rel="prev" title="Account Management" href="account-management.html"> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database &middot; Triple Store &middot; API Reference</div>
+      <div class="wordmark"><a href="../../index.html">dydra</a></div>
+    </div>
+    <div class="meta">Administration<br>Repository Management</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../../graphstore/index.html">Graph store</a>
+    <a class="cell" href="../../sparql/index.html">SPARQL</a>
+    <a class="cell" href="../../sesame/index.html">Sesame</a>
+    <a class="cell" href="../../provenance/index.html">Provenance</a>
+    <a class="cell" href="../../revisioning/index.html">Revisioning</a>
+    <a class="cell" href="../../authorization/index.html">Authorization</a>
+    <a class="cell" href="../../services/index.html">Services</a>
+    <a class="cell on" href="../index.html">Administration</a>
+    <a class="cell" href="../../glossary.html">Glossary</a>
+    <span class="spacer"></span>
+    <a class="cell" href="../../genindex.html">Index</a>
+    <a class="cell" href="../../search.html">Search</a>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="repository-management">
+<div class="rail"><div class="vlabel">administration</div></div>
+<div class="content">
+<p class="chapno">Dydra API &middot; Administrative Resources &middot; Resource Management</p>
+<h1>Repository Management</h1>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#post-repository-creation"><span class="tn">01</span> POST : repository creation</a></li>
+<li><a href="#delete-repository-deletion"><span class="tn">02</span> DELETE : repository deletion</a></li>
+<li><a href="#get-repository-content-introspection"><span class="tn">03</span> GET : repository content introspection</a></li>
+<li><a href="#get-repository-configuration"><span class="tn">04</span> GET : repository configuration</a></li>
+<li><a href="#post-repository-configuration"><span class="tn">05</span> POST : repository configuration</a></li>
+<li><a href="#get-repository-collaboration"><span class="tn">06</span> GET : repository collaboration</a></li>
+<li><a href="#post-repository-collaboration"><span class="tn">07</span> POST : repository collaboration</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="post-repository-creation">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">post : repository</div></div>
+<div class="content">
+<h2>POST : repository creation</h2>
+<p>In order to create a repository post to the accounts abstract repository resource:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories</span></code></p>
+</div></blockquote>
+<div class="subsection" id="headers">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="content">
+<h3>Content</h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;repository&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;new repository name&gt;&quot;</span><span class="p">},</span>
+<span class="w"> </span><span class="nt">&quot;class&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;repository class&gt;&quot;</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The options class specifies the repository’s schematic storage model and access patterns.</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>class</p></th>
+<th class="head"><p>schematic model</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">internal-view-repository</span></code></p></td>
+<td><p>The repository materializes the results of a view
+applied to a base repository</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hdt-repository</span></code></p></td>
+<td><p>The repository uses the HDT storage model</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmdb-repository</span></code></p></td>
+<td><p>The repository uses a 6x B-tree storage model to
+index all quad term combinations</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">revisioned-lmdb-repository</span></code></p></td>
+<td><p>The repository extends the lmdb-repository storage
+to incorporate a linear index for revision
+information</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section class="section heavy" id="delete-repository-deletion">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">delete : repository</div></div>
+<div class="content">
+<h2>DELETE : repository deletion</h2>
+<p>In order to delete a repository, delete the specific resource:</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="response">
+<h3>Response</h3>
+<p>HTTP No Content upon successful completion</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-repository-content-introspection">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">get : repository</div></div>
+<div class="content">
+<h2>GET : repository content introspection</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id1">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id2">
+<h3>Response</h3>
+<p>Returns a data model which describes the relationships apparent in the repository data and
+its defined interface views.</p>
+<div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s2">&quot;@type&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;repository&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">repository</span><span class="w"> </span><span class="nx">name</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;location&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">repository</span><span class="w"> </span><span class="nx">host</span><span class="o">-</span><span class="nx">specific</span><span class="w"> </span><span class="nx">HTTP</span><span class="w"> </span><span class="nx">API</span><span class="w"> </span><span class="nx">URL</span><span class="p">,</span>
+<span class="w"> </span><span class="s2">&quot;identifier&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">repository</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="nx">metadata</span><span class="w"> </span><span class="nx">resource</span><span class="w"> </span><span class="nx">identifier</span>
+<span class="w"> </span><span class="s2">&quot;getViews&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">metadata</span><span class="w"> </span><span class="nx">models</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">defined</span><span class="w"> </span><span class="nx">SELECT</span><span class="w"> </span><span class="nx">views</span>
+<span class="w"> </span><span class="s2">&quot;updateViews&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">metadata</span><span class="w"> </span><span class="nx">models</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">defined</span><span class="w"> </span><span class="nx">MODIFY</span>
+<span class="w"> </span><span class="s2">&quot;postViews&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">metadata</span><span class="w"> </span><span class="nx">models</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="nx">defined</span><span class="w"> </span><span class="nx">TARQL</span><span class="w"> </span><span class="nx">views</span>
+<span class="w"> </span><span class="s2">&quot;patterns&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">predicate</span><span class="w"> </span><span class="nx">patterns</span><span class="w"> </span><span class="nx">derived</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="nx">a</span><span class="w"> </span><span class="nx">formal</span><span class="w"> </span><span class="nx">concept</span><span class="w"> </span><span class="nx">analysis</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">repository</span>
+<span class="w"> </span><span class="s2">&quot;description&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">repository</span><span class="w"> </span><span class="nx">description</span><span class="w"> </span><span class="nx">text</span>
+<span class="w"> </span><span class="s2">&quot;predicates&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">predicates</span><span class="w"> </span><span class="nx">present</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">repository</span>
+<span class="w"> </span><span class="s2">&quot;paths&quot;</span><span class="o">:</span><span class="w"> </span><span class="nx">an</span><span class="w"> </span><span class="nx">array</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">object</span><span class="o">/</span><span class="nx">subject</span><span class="w"> </span><span class="nx">predicate</span><span class="w"> </span><span class="nx">pairs</span><span class="w"> </span><span class="nx">present</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">the</span><span class="w"> </span><span class="nx">repository</span>
+<span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<p>The service computes the model on demand and caches it for the duration of a processor cycle.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/status/&lt;account&gt;/repositories/&lt;repository&gt;</span></code></p>
+</div></blockquote>
+</div>
+<div class="subsection" id="id3">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-repository-configuration">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">get : repository</div></div>
+<div class="content">
+<h2>GET : repository configuration</h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/configuration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id4">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id5">
+<h3>Response</h3>
+<p>Returns a JSON model which captures the repository configuration and owner description.
+This includes read-only and modifiable fields.</p>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;@type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Repository&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/users/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;has_parent&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/accounts/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/accounts/test/repositories/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;has_owner&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;http://dydra.com/users/test&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;urn:uuid:90976810-4d92-013e-d8dc-0cc47a92447e&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;meta description&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;prefixes&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PREFIX xx: &lt;http://xx.org/ns#&gt;\n&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;privacySetting&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;readByAuthenticatedUserOrIP&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Meta Repo&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;permissible_ip_addresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">],</span>
+<span class="w"> </span><span class="nt">&quot;views&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[]}</span>
+</pre></div>
+</div>
+<p>The alternative privacy settings specify read and write access for owner, authenticated and anonymous agents:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>private</p></li>
+<li><p>readByIP</p></li>
+<li><p>readByAuthenticatedUser</p></li>
+<li><p>readByAuthenticatedUserOrIP</p></li>
+<li><p>public</p></li>
+</ul>
+</div></blockquote>
+<p>The ip addresses setting are a vector of ip addresses.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="post-repository-configuration">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">post : repository</div></div>
+<div class="content">
+<h2>POST : repository configuration</h2>
+<p>Modifies the repository configuration according to the content of a JSON model.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/configuration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id6">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id7">
+<h3>Content</h3>
+<p>Requires a JSON object with the possible fields.
+This includes modifiable fields only.</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>abstract</p></li>
+<li><p>description</p></li>
+<li><p>prefixes</p></li>
+<li><p>privacySetting</p></li>
+<li><p>permissible_ip_addresses</p></li>
+</ul>
+</div></blockquote>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;abstract&quot;</span><span class="p">:</span><span class="s2">&quot;Meta Repo&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="s2">&quot;meta description&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;privacySetting&quot;</span><span class="p">:</span><span class="s2">&quot;readByAuthenticatedUserOrIP&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;prefixes&quot;</span><span class="p">:</span><span class="s2">&quot;PREFIX xx: &lt;http://xx.org/ns#&gt;\n&quot;</span><span class="p">,</span>
+<span class="w"> </span><span class="nt">&quot;permissible_ip_addresses&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;127.0.0.1&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="subsection" id="id8">
+<h3>Response</h3>
+<p>HTTP No Content upon successful completion</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="get-repository-collaboration">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">get : repository</div></div>
+<div class="content">
+<h2>GET : repository collaboration</h2>
+<p>Returns the access authorization for collaborating accounts.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/collaboration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id9">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Accept: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id10">
+<h3>Response</h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;write&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span>
+<span class="w"> </span><span class="p">{</span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jhacker&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;write&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}]</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="post-repository-collaboration">
+<div class="rail"><div class="numeral">07</div><div class="vlabel">post : repository</div></div>
+<div class="content">
+<h2>POST : repository collaboration</h2>
+<p>Modifies the access authorization for collaborating accounts.</p>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">https://dydra.com/system/accounts/&lt;account&gt;/repositories/&lt;repository&gt;/collaboration</span></code></p>
+</div></blockquote>
+<div class="subsection" id="id11">
+<h3>Headers</h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">Content-Type: application/json</div>
+</div>
+</div></blockquote>
+</div>
+<div class="subsection" id="id12">
+<h3>Content</h3>
+<div class="highlight-JSON notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;test&quot;</span><span class="p">},</span>
+<span class="w"> </span><span class="p">{</span><span class="nt">&quot;account&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jhacker&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;read&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;write&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>Where an entry specifies no access modes, the entry is deleted.</p>
+</div>
+</div>
+</section>
+
+
+
+  <nav class="band pager" aria-label="Document">
+    <a class="cell" href="account-management.html"><span class="dir">Previous</span> Account Management</a>
+    <a class="cell" href="index.html"><span class="dir">Up</span> Resource Management</a>
+    <span class="spacer"></span>
+    <a class="cell" href="view-management.html"><span class="dir">Next</span> View Management</a>
+  </nav>
+
+  <footer class="footer">
+    <div class="wm"><a href="../../index.html">dydra</a></div>
+    <div class="fl">Dydra API &middot; 2026-09-01<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,8 @@
+.DS_Store
+*~
+* copy.html
+
+# site/references/api/ is another project's build output, reproduced by
+# `make install` in sphinx-api. Uncomment to keep it out of the repository --
+# at the cost of a clone no longer being publishable on its own.
+#site/references/api/
