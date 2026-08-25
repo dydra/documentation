@@ -43,12 +43,12 @@ index:
 list:
 	@$(NODE) build-index.js --list
 
-upload: index
+upload:
 	rsync $(RSYNCOPTS) $(SITE)/ $(DEST)/
 	@echo
 	@echo "Released to $(DEST)."
 
-release: upload
+release: index upload
 
 # a static server for looking at the tree as it will be served, rather than
 # over file://, where the directory URLs do not resolve to index.html

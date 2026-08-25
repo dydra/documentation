@@ -1,182 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="description">An overview of the dydra.com RDF storage service</meta>
-  <meta name="date">2026-08-31</meta>
-  <title>Dydra Home</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #faf9f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
-    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #faf9f5; z-index: 9999; }
-    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
-    #__bundler_placeholder { color: #999; font-size: 14px; }
-  </style>
-  <noscript>
-    <style>#__bundler_loading { display: none; }</style>
-    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
-      This page requires JavaScript to display.
-    </div>
-  </noscript>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dydra Home</title>
+<meta name="description" content="An overview of the dydra.com RDF storage service">
+<meta name="date" content="2026-08-31">
+<!--
+  Flattened from the design handoff in
+  org/datagraph/spocq-gensrc/doc/code-generation/design_handoff_tschichold-3/
+  ("Dydra Home README.md", "Dydra Home.dc.html").
+
+  The handoff's offline rendering carries its 57 KB dc-runtime gzipped and
+  inline, and loads it through a blob URL. Where DecompressionStream is not
+  available the loader hands the compressed bytes to the script tag anyway,
+  which fails with: SyntaxError: Invalid character '\u001f' -- the gzip magic
+  number. Nothing on this page needs a runtime: the markup below is the
+  authored markup, with the runtime's style-hover attributes written as the
+  hover rules in the stylesheet. No script, no blob, no bundle.
+-->
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; background: #e9e9e9; }
+  body { background: #fafafa; color: #111;
+         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
+  ::selection { background: #111; color: #fafafa; }
+  a { color: inherit; text-decoration: none; }
+
+  /* the hover states, which were style-hover attributes on the elements */
+  .lk:hover { opacity: 0.5; }
+  .lk-inv:hover { opacity: 0.6; }
+  .btn-dark:hover { background: #fafafa; color: #111; box-shadow: inset 0 0 0 2px #111; }
+  .btn-light:hover { opacity: 0.85; }
+  .btn-outline:hover { background: #fafafa; color: #111; }
+
+  /* the prototype is built at a fixed 1280px and is not responsive; collapse
+     the rails and the multi-column grids rather than let it scroll sideways */
+  @media (max-width: 860px) {
+    .page { padding-top: 96px !important; }
+    .grid-rail { grid-template-columns: 1fr !important; }
+    .grid-rail > .rail { border-right: 0 !important; border-bottom: 1px solid #111;
+        flex-direction: row !important; align-items: baseline !important; gap: 20px;
+        padding: 14px 0 !important; }
+    .grid-rail > .rail > div { writing-mode: horizontal-tb !important;
+        transform: none !important; }
+    .grid-halves, .grid-pair, .grid-cards, .grid-cta { grid-template-columns: 1fr !important; }
+    .grid-halves > div:first-child { border-right: 0 !important;
+        border-bottom: 1px solid #111; }
+    h1.hero { font-size: 13vw !important; }
+    h2.display { font-size: 11vw !important; }
+    .masthead-nav { gap: 18px !important; font-size: 12px !important; flex-wrap: wrap; }
+  }
+</style>
 </head>
 <body>
-  <div id="__bundler_thumbnail">
-  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" fill="#fafafa"></rect>
-    <rect x="30" y="30" width="40" height="6" fill="#111"></rect>
-    <text x="50" y="62" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" letter-spacing="-1" text-anchor="middle" fill="#111">dydra</text>
-  </svg>
+<div class="page" style="max-width:1280px; margin:0 auto; background:#fafafa; min-height:100vh; border-left:1px solid #ddd; border-right:1px solid #ddd; padding-top:118px; padding-bottom:94px;">
+
+  <!-- MASTHEAD -->
+  <header style="position:fixed; top:0; left:0; right:0; max-width:1280px; margin:0 auto; z-index:50; background:#fafafa; border-left:1px solid #ddd; border-right:1px solid #ddd; border-bottom:7px solid #111; padding:22px 56px 16px; display:grid; grid-template-columns:1fr auto; align-items:end;">
+    <div>
+      <div style="font-size:11px; letter-spacing:0.36em; text-transform:uppercase; margin-bottom:10px;">Graph Database · Triple Store</div>
+      <div style="font-size:46px; font-weight:700; letter-spacing:-0.03em; line-height:0.9;">dydra</div>
+    </div>
+    <nav class="masthead-nav" style="display:flex; gap:34px; font-size:13px; letter-spacing:0.04em; padding-bottom:6px;">
+      <a class="lk" href="../index.html">Documentation</a>
+      <a class="lk" href="#what">What it is</a>
+      <a class="lk" href="#service">Service</a>
+      <a class="lk" href="#scale">Scale</a>
+      <a class="lk" href="#start" style="font-weight:700;">Sign in</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section style="padding:0 56px; border-bottom:1px solid #111;">
+    <div class="grid-rail" style="display:grid; grid-template-columns:88px 1fr; min-height:560px;">
+      <!-- left rail -->
+      <div class="rail" style="border-right:1px solid #111; display:flex; flex-direction:column; justify-content:space-between; padding:30px 0;">
+        <div style="font-size:12px; letter-spacing:0.3em; writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;">dydra.com</div>
+        <div style="font-size:64px; font-weight:300; line-height:0.8;">01</div>
+      </div>
+      <!-- headline column -->
+      <div style="padding:48px 0 48px 48px; display:flex; flex-direction:column; justify-content:center;">
+        <h1 class="hero" style="font-size:96px; font-weight:700; line-height:0.92; letter-spacing:-0.04em; max-width:14ch; text-wrap:balance;">Every fact, one statement at a time.</h1>
+        <div class="grid-pair" style="display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:54px; max-width:760px;">
+          <p style="font-size:17px; line-height:1.5; max-width:34ch;">Dydra is a hosted graph database — a triple store you query with full SPARQL 1.1, no servers to run, no schema to migrate.</p>
+          <div style="border-left:1px solid #111; padding-left:24px;">
+            <div style="font-size:11px; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:14px;">Available now</div>
+            <a class="btn-dark" href="#start" style="display:inline-block; background:#111; color:#fafafa; font-size:15px; font-weight:700; letter-spacing:0.04em; padding:15px 30px;">Open a free account →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER RULE -->
+  <div style="border-bottom:1px solid #111; display:flex; align-items:stretch; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; overflow-x:auto;">
+    <div style="padding:13px 56px; border-right:1px solid #111; font-weight:700; white-space:nowrap;">SPARQL 1.1</div>
+    <div style="padding:13px 28px; border-right:1px solid #111; white-space:nowrap;">RDF 1.2 — pre-alpha</div>
+    <div style="padding:13px 28px; border-right:1px solid #111; white-space:nowrap;">Named graphs</div>
+    <div style="padding:13px 28px; border-right:1px solid #111; white-space:nowrap;">Federated query</div>
+    <div style="padding:13px 28px; margin-left:auto; font-weight:700; white-space:nowrap;">Free account at dydra.com</div>
+  </div>
+
+  <!-- WHAT IT IS -->
+  <section id="what" style="padding:0 56px; border-bottom:7px solid #111;">
+    <div class="grid-rail" style="display:grid; grid-template-columns:88px 1fr;">
+      <div class="rail" style="border-right:1px solid #111; padding:40px 0; display:flex; flex-direction:column; justify-content:space-between;">
+        <div style="font-size:64px; font-weight:300; line-height:0.8;">02</div>
+        <div style="font-size:12px; letter-spacing:0.3em; writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;">The standard</div>
+      </div>
+      <div style="padding:56px 0 56px 48px;">
+        <h2 style="font-size:15px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:48px;">A database built on the open web stack</h2>
+        <div class="grid-cards" style="display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#111; border:1px solid #111;">
+          <div style="background:#fafafa; padding:34px 28px 40px;">
+            <div style="font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;">SPARQL 1.1, in full</div>
+            <p style="font-size:15px; line-height:1.55;">Query, update, federate. The complete specification — not a subset — so the queries you write are the queries that run.</p>
+          </div>
+          <div style="background:#fafafa; padding:34px 28px 40px;">
+            <div style="font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;">RDF 1.2, early</div>
+            <p style="font-size:15px; line-height:1.55;">A pre-alpha of RDF 1.2 with quoted triples, putting statements about statements within reach today.</p>
+          </div>
+          <div style="background:#fafafa; padding:34px 28px 40px;">
+            <div style="font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;">Hosted, entirely</div>
+            <p style="font-size:15px; line-height:1.55;">No installation, no operations. Create an account, load your data, and query over HTTP from anywhere.</p>
+          </div>
+        </div>
+
+        <!-- SPARQL EXAMPLE -->
+        <div style="margin-top:48px;">
+          <div style="display:grid; grid-template-columns:auto 1fr; align-items:end; gap:20px; margin-bottom:0; border-bottom:3px solid #111; padding-bottom:14px;">
+            <div style="font-size:13px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase;">One request, counted</div>
+            <div style="font-size:12px; letter-spacing:0.08em; text-align:right;">HTTP · SPARQL · JSON</div>
+          </div>
+          <pre style="background:#111; color:#fafafa; font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace; font-size:14px; line-height:1.65; padding:30px 34px; margin-top:0; overflow-x:auto; white-space:pre;"><span style="opacity:0.5;">$</span> curl https://dydra.com/me/foaf/sparql \
+  --data-urlencode <span style="font-weight:700;">'query=SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }'</span> \
+  -H 'Accept: application/json'
+
+[ { "n": 631 } ]</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE: PUBLIC vs DEDICATED -->
+  <section id="service" style="border-bottom:1px solid #111;">
+    <div class="grid-halves" style="display:grid; grid-template-columns:1fr 1fr;">
+      <div style="padding:56px 48px 60px 56px; border-right:1px solid #111;">
+        <div style="font-size:64px; font-weight:300; line-height:0.8; margin-bottom:30px;">03</div>
+        <h3 style="font-size:34px; font-weight:700; letter-spacing:-0.02em; line-height:1.0; margin-bottom:22px; max-width:14ch;">The public service is free.</h3>
+        <p style="font-size:16px; line-height:1.55; max-width:42ch; margin-bottom:30px;">Create a free account at dydra.com, set up your repositories, and run SPARQL against them at no cost. It is the fastest way to put RDF to work.</p>
+        <a class="lk" href="#start" style="font-size:14px; font-weight:700; letter-spacing:0.04em; border-bottom:2px solid #111; padding-bottom:3px;">Create a free account →</a>
+      </div>
+      <div style="padding:56px 56px 60px 48px; background:#111; color:#fafafa;">
+        <div style="font-size:64px; font-weight:300; line-height:0.8; margin-bottom:30px;">04</div>
+        <h3 style="font-size:34px; font-weight:700; letter-spacing:-0.02em; line-height:1.0; margin-bottom:22px; max-width:16ch;">Dedicated servers, for sensitive work.</h3>
+        <p style="font-size:16px; line-height:1.55; max-width:42ch; margin-bottom:30px; color:#dcdcdc;">When you need higher performance or your data is private, we run dedicated instances — isolated, tuned, and provisioned for your demands.</p>
+        <a class="lk-inv" href="#start" style="font-size:14px; font-weight:700; letter-spacing:0.04em; border-bottom:2px solid #fafafa; padding-bottom:3px;">Talk to us about a server →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCALE / RONDB -->
+  <section id="scale" style="padding:0 56px; border-bottom:7px solid #111;">
+    <div class="grid-rail" style="display:grid; grid-template-columns:88px 1fr;">
+      <div class="rail" style="border-right:1px solid #111; padding:40px 0; display:flex; align-items:flex-start;">
+        <div style="font-size:64px; font-weight:300; line-height:0.8;">05</div>
+      </div>
+      <div style="padding:64px 0 64px 48px;">
+        <div style="font-size:13px; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:24px;">New backend</div>
+        <div class="grid-pair" style="display:grid; grid-template-columns:1.3fr 1fr; gap:56px; align-items:end;">
+          <h2 class="display" style="font-size:72px; font-weight:700; line-height:0.9; letter-spacing:-0.035em;">Now scaling into the billions.</h2>
+          <div style="border-left:1px solid #111; padding-left:28px;">
+            <div style="font-size:64px; font-weight:700; line-height:0.85; letter-spacing:-0.04em;">10⁹+</div>
+            <div style="font-size:13px; letter-spacing:0.12em; text-transform:uppercase; margin-top:10px;">triples per store</div>
+          </div>
+        </div>
+        <p style="font-size:17px; line-height:1.55; max-width:58ch; margin-top:38px;">A new data backend built on <strong>RonDB</strong> carries Dydra past the limits of a single node — distributed, in-memory, and engineered for stores in the billion-triple range without changing a line of your SPARQL.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="start" style="border-bottom:7px solid #111; background:#111; color:#fafafa; padding:72px 56px 80px;">
+    <div class="grid-cta" style="display:grid; grid-template-columns:1fr auto; align-items:end; gap:40px;">
+      <h2 class="display" style="font-size:80px; font-weight:700; line-height:0.86; letter-spacing:-0.04em; max-width:16ch;">Load your first graph today.</h2>
+      <div style="display:flex; flex-direction:column; gap:14px; min-width:260px;">
+        <a class="btn-light" href="https://dydra.com" style="background:#fafafa; color:#111; font-size:16px; font-weight:700; letter-spacing:0.03em; padding:18px 30px; text-align:center;">Create a free account</a>
+        <a class="btn-outline" href="#service" style="border:1px solid #fafafa; color:#fafafa; font-size:16px; font-weight:700; letter-spacing:0.03em; padding:17px 30px; text-align:center;">Request a dedicated server</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="position:fixed; bottom:0; left:0; right:0; max-width:1280px; margin:0 auto; z-index:50; background:#fafafa; border-left:1px solid #ddd; border-right:1px solid #ddd; border-top:7px solid #111; padding:30px 56px; display:grid; grid-template-columns:1fr auto auto; gap:48px; align-items:center; font-size:12px; letter-spacing:0.08em;">
+    <div style="font-size:24px; font-weight:700; letter-spacing:-0.03em;"><a href="../index.html">dydra</a></div>
+    <div style="text-transform:uppercase; letter-spacing:0.18em;">Graph database · Triple store · SPARQL 1.1</div>
+    <div style="text-transform:uppercase; letter-spacing:0.18em;">© 2026 Dydra</div>
+  </footer>
+
 </div>
-  <div id="__bundler_loading">Unpacking...</div>
-
-  <script>
-    
-document.addEventListener('DOMContentLoaded', async function() {
-  const loading = document.getElementById('__bundler_loading');
-  function setStatus(msg) { if (loading) loading.textContent = msg; }
-
-  // Error sink persists across replaceWith since it's on window, not the DOM.
-  window.addEventListener('error', function(e) {
-    var p = document.body || document.documentElement;
-    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
-    d.id = '__bundler_err';
-    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
-    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
-      '[bundle] ' + (e.message || e.type) +
-      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
-  }, true);
-
-  try {
-    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
-    const templateEl = document.querySelector('script[type="__bundler/template"]');
-    if (!manifestEl || !templateEl) {
-      setStatus('Error: missing bundle data');
-      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
-      return;
-    }
-
-    const manifest = JSON.parse(manifestEl.textContent);
-    let template = JSON.parse(templateEl.textContent);
-
-    const uuids = Object.keys(manifest);
-    setStatus('Unpacking ' + uuids.length + ' assets...');
-
-    const blobUrls = {};
-    await Promise.all(uuids.map(async (uuid) => {
-      const entry = manifest[uuid];
-      try {
-        const binaryStr = atob(entry.data);
-        const bytes = new Uint8Array(binaryStr.length);
-        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
-
-        let finalBytes = bytes;
-        if (entry.compressed) {
-          if (typeof DecompressionStream !== 'undefined') {
-            const ds = new DecompressionStream('gzip');
-            const writer = ds.writable.getWriter();
-            const reader = ds.readable.getReader();
-            writer.write(bytes);
-            writer.close();
-            const chunks = [];
-            let totalLen = 0;
-            while (true) {
-              const { done, value } = await reader.read();
-              if (done) break;
-              chunks.push(value);
-              totalLen += value.length;
-            }
-            finalBytes = new Uint8Array(totalLen);
-            let offset = 0;
-            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
-          } else {
-            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
-          }
-        }
-
-        blobUrls[uuid] = URL.createObjectURL(new Blob([finalBytes], { type: entry.mime }));
-      } catch (err) {
-        console.error('Failed to decode asset ' + uuid + ':', err);
-        blobUrls[uuid] = URL.createObjectURL(new Blob([], { type: entry.mime }));
-      }
-    }));
-
-    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
-    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
-    const resourceMap = {};
-    for (const entry of extResources) {
-      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
-    }
-
-    setStatus('Rendering...');
-    for (const uuid of uuids) template = template.split(uuid).join(blobUrls[uuid]);
-
-    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
-    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
-    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
-    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
-
-    const resourceScript = '<script>window.__resources = ' +
-      JSON.stringify(resourceMap).split('</' + 'script>').join('<\\/' + 'script>') +
-      ';</' + 'script>';
-    // Inject after <head> so the DOCTYPE stays first; prepending the script
-    // would push the parser into quirks mode. DOMParser always emits a <head>
-    // (synthesizing one if the source HTML omitted it) but may carry
-    // attributes through, so match the full opening tag. slice() rather than
-    // replace() keeps us clear of $-pattern substitution in resourceScript.
-    const headOpen = template.match(/<head[^>]*>/i);
-    if (headOpen) {
-      const i = headOpen.index + headOpen[0].length;
-      template = template.slice(0, i) + resourceScript + template.slice(i);
-    }
-
-    // Parse the template and swap the root element. Scripts inserted via
-    // DOMParser/replaceWith are inert per spec — re-create each with
-    // createElement so they execute, awaiting onload for src scripts to
-    // preserve ordering (React before ReactDOM before Babel before text/babel).
-    const doc = new DOMParser().parseFromString(template, 'text/html');
-    document.documentElement.replaceWith(doc.documentElement);
-    const dead = Array.from(document.scripts);
-    for (const old of dead) {
-      const s = document.createElement('script');
-      for (const a of old.attributes) s.setAttribute(a.name, a.value);
-      s.textContent = old.textContent;
-      // text/babel scripts with a src: fetch and inline. transformScriptTags
-      // does XHR against the src, but blob:null/ from a file:// origin is
-      // silently dropped. Inlining makes it a plain inline babel script,
-      // which transformScriptTags handles unconditionally.
-      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
-        const r = await fetch(s.src);
-        s.textContent = await r.text();
-        s.removeAttribute('src');
-      }
-      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
-      old.replaceWith(s);
-      if (p) await p;
-    }
-    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
-    // which fired before we swapped the document. Trigger manually if present.
-    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
-      window.Babel.transformScriptTags();
-    }
-  } catch (err) {
-    setStatus('Error unpacking: ' + err.message);
-    console.error('Bundle unpack error:', err);
-  }
-});
-
-  </script>
-
-  <script type="__bundler/manifest">
-{"3d96ab9e-934b-4979-b117-4c18a35e1be9":{"mime":"text/javascript","compressed":true,"data":"H4sIAAAAAAAAA91963rbRpLo/zwFxEnGgE1Cl9hOQlnW2JKcOCPZPpKczKysSCAIkrBIgAFAXSLr+/Yh9gn3SU5d+g5AkpPMnN3jfLGJRnehurq6uqq6unp52ft+583O/ovDnW1vVOQzbxj3ikVWpbNkuSzi5YdhVXr//Z//5Q1zL8srLxmmVejtJ4NFOh16F2k18U7jodHK++tfvcEi8+DRo0qn4RedRZl4ZVWkcdVZ/8L3A2/juXf9heedR4V3cjJMRu+KfO5teG8HH5O4CqEgzRIsS4rqat2s+CYvZtFUVPfzwceud5ZcdaHCdJEQXHj00syDV96mBm5UvfaSbDFLimgwTfpeVSySrhfn2SgdL6yyiyKtzGf6hHcTeH0EfgSwjgEHKtUozheDaRq/ShOgTguCTj+4TnU1T/IRIb+0seF1yqvZIJ92oAtY9MjrdOCzBqD1L+CTy8sejlGRREC0qoSS0SKLqzTPvHFS7WMx0BoJ7WEPy8rbB6Qu0myYX4T0ep3epSPPX9oPvGpS5Bdellx4O0WRF35HD2vfaualJXFDdB6lU6SRd5VUnYChFUm1KDJvH59umnDafrvnorXt4AVVTNS2PwM3aHov9LYlfjhwExwsPwzDqBiXNEqagGEMBK6SnWkyS7LKJyCiJvwOrKGYR0WZOENBZdvxdh4vCMAwj+3eD2P4OpSGvy6S4uogmcIcwB5e9oaxxJroMISGAv1sMZ2uGzDKuEjn1c60GRK/PRpGVQQwe/x4LGEzhGtvDtxYduGf5DwFOt8ALMYdmiGnltx3T31sMwQqvahgYg8WVQJDgvAJSifwNjcJSWpik/5agKmS2XwKlO0DBcI0y5Lih8O93a54+7Hs615tqp9hlVxWW3lWASm9T594YnQ6shX3QT1QT+jppsaOYlwOAZ4PY2ePCYiebC+qYmSM5Wc4Ev5m/0N59Mvz44fB5vPlMLlMYmpmjI9q1DpM8TQHUbiBvBJOo7J6nQ2Ty7cjv/NsGb/x3BxuURekQW8Ve8rPzzRqQDNo3fotSV7xuRLkUuI7jUGyqJKjleNwmmTjatLlb1nsAVwFgHD+wQR7h6QrYGoQDV/BunEATJCNkSBdr4NDtDypZlObw/438+i/mStVb4roQjImsRg9SxwZbp/6oGjCjwzZ86ZJxSCH/FwVV6pvXA4U/PHg7RseSvoe17zxYuJ/WfszPnqj8RXfAJKIFU4U0CKX03LfwbcviiK6CtOS/vW5UhD8/o+LWQxKwIbVfy6X7LOBNcIv5SOoLgJLq3jDxHXTftevTbsigb82vGuBzigvYCrTmzMPIAsVB5byEld+o49IrzOYhEybLzsBgTo6O2Y04YfZQZciJlxsF4i5DAgTRg7NGjhvGL+JZjSZ30XVBMagmmRQIBEkTiJqcjmzeQNX4fRO4nyYvN9/vZXP5nmGq968ka3MwRpEJBrnYTmfppXfWe6AfAH9KKAv7ed51bGmKNYPiwSmJ8i15Q/hMP4QotD5chlEELQ1XmHxpii3od0Yi/cACnntRpXg5YuDnZOtgwNA6ZTX/DLuEcRJPh0mxfUgis/GRb7Ihv1iPIj8tSdPuvL/8OtgfZAXUK2/Or/0ynyaDj2qtdLF/8Inghyex9V6RTRMF2V/bX4JDS97ZfobyNO+eAkl6/l5Uoym+UV/kg6HScaU+xuM96iA0ShBFPXKCajN1ytfGaj15nmZ4vD2V1dWvvKerHx1gz8aa4j3DBlJhj1GUVyBAjQDdFwSdG+vmYI4LOb4a5aWJZReq08VCQjV9DxRRNC0jPNpXkCLSx+0+BJo1o0XRQEstIUvvCdfdasiykqY1FDmUpEa940K9+9Mvz9IYLImn9sp2e46ZvHff/BAIqW6Gw2AA2D5WU+zMqn6K+vznOD0knNoUfYzmCMNpJjCcEZFb4y8gXPou5VhMu4ys61+011d/a777TfdlcBbA6pw8eNvumtrwIOrq93wuyeB9/U3XzU1ePr1V0H9g8h1Sf8xMgoyyXqUpbOIOiCZy1sNH5degjM1BYspS6vkMyicVZNePAGb0M8efYfC0KkQ/O4xaIRcq6bgX+uetZD+Di781ubCmyYB0UvQULmeR8MhovgY5MC3MLtHwCb9VZAKy0BLb5H2ZnmWA6A46apfEiFmZ1NufBOsXwCr9wZAj7M+/d3DAo1BfdYNU5Co0VU/zZCheoNpHp+tX6TDatJfS2brkyQdTwAl+OnIGIkGlFZpHE170TQdZ33UdUAkVVU+W/83C8Ha/JYAFqCP9kpSJmlIm+ixyGAlzKfnyfAaB6E3Ao6aXvVbhoCq0IQIv30CtGkdEuiFSwXxZuWJJIDs2dfQM6V9MV+seFCo0Z3kZUX/RqVkIFdo6srTfJzGbjUlbKp83keOmyajin781iOlv7+2+vibx99+/fTxN+uz6LLHrPB0JZ64uD2FYVtdwdHQHfzLYGVlZW1FDMVfRqORYOm1e7G0TQ+YFOsXE5AiParUB+2kd1FE8yYByd1efujtpdjh0nu3//rN4Qmu07uv3/BaDZM1ms/L5YtkgErIGQiOaJz0kst5XuDa7n1YrK2sPvbOkmQOqFQTgRU2LK+y2EOPwtR0ZxXJOAKp7UXszfLKKpmH3sNlXn5nyTCNQKcCZJUC9Lc5fBIUs1lUjNOs762ET+LZulB1QN9CP1PS9ci3BNV4DsMn0iFYwtF5ng515b8gJqCWdNUv77liE2gs5q4XLapct3rY9R4qUYo/oxHQUiHoMcK8WPai4cdFCSCSS/QHeT0g3Vla9dqrKCjIFEPQPnujdArwQcOEUfKW0hkSO8oMYHfWVDCVYO4NE5RZXu+770oLplFjUbAM98KVldXyDnjAZFwdOgVj2/dWW8ACjlPgYBwN5JA7wKJkRS5DNwbwTIZrlAmXZFXq4LvShOyN0ohPpT/x1fvd3ZN3L76XimgHl8TuIB9eXUupjeu04LSVG8Uu8sdzyStm/RvSfJXej/VI888L00fV9abaUYXKP6rHaBkAHvAmbLIDyOQzVHHQuVMwjcvKL6NRsk1WgS/hBIbtYxoQnvkldDi8399FhEJU+MGmoA+ScSAwUAR0LFZNUGUzODaOQqVmDBn4lhJNE0kJr27olLfbz6U24qwPIiq+EDpd4W0ZiuGwXVPKbG9yLBrjIIzoNvcQO3I3DEenZcUKpoAKt/EH8bP0nDDyIXDj2asEup4MfdnWqQJK8L5401YlGubzivxMGkpX9F1UHeFHfIlFOCmSURBWkyTz0QImLy78G+ZnbAOTj8YPyDEj61VqK8LoeoSOgQoamR7CKrBsfaYxVN0MpYsoULgv5kN4/gEmgIE61NVVBRMEIfGIsSOChZbb7R6+Ya6Js1z51myXdWeYnsvKXC1MkYE6QkqI2TuMpc38cwqTg2vWOSoULoTAoVvZ/O2yupomHaXplZarbMMWcbISgpkk0TCExTzJhluk2auJZTIxrogbivDAy9tbLkdxTfgaTF9dFdb1FKyKK2zjtlCT8gDk8zCawsTGD/luj4+6HnDyYRqTj4ZmUQiK6AGuBv6K6rJ6sTMawfBZo22QbzHATQh6J6D6fkaPmffIW1XgPO5LCA1KmCZAmMXAeCmmu/sRqxWsrQmgaDe8UXK06x0dqxcC3sTfJz2EoaDT6S2YBQUoLSUKZJwZTeMjd2Q27N0fzVSyTLANfiQw6Wa/kkwJwweabOFPfHuIAgE5mYKFqtq3Ve56Fo+LnkpmcN1DoEQW2j30ensHlM/9Hdwf+OXoRe8/ot5vJ18ei18rve/g4eGyXMjfvN97ubMvq/c2Pwwf+R9C+DuAJdJejdlE8c+jadn1avsSiATA0O52kGRFOjMpuoR1lNhHfdJb0W/xJToZyanpd9DnSUXUO+Ey7HmrokJAFcjUKn8GvfxnMG0TglF3ztqYEzzec1jter3VoIE7kl+hKyOwSQ7z+S5o+tOdXxdgYlZX/AUD6V/dqTc9x7nc9sUVePpVbI8oRhbS/daGshVMOPiZzwVFNJDyIsVF3ae3gTmJ0SfSAaJ1+sacE6RBbIGcxfm6U3+ptf5SY/1bwFu1h8koWkyrNtBGXVNJqvHHUkfx0VL78AaBzV7cFjfNdXN8aqo1AmhGNXpsqofypdOgy9i1wD6l0IFhp5X/1UxkvVSwsqj8ZjEbgKBwuc+YGs83vDWcEhadHnQeoAy0SPcAULh1bonatWlUmzgNXn8xFqTD6vGoa7GNE9dQ6YfJnLTsFWOvAstTKoN/nnkO7lD46JG9Z0EdSZVECRjqo0eSw0gW1yoGHXP2UJNeTzMw1hfYQe2VJgZpVPAln1lkaBcxv5sWDh3E7q4nhjU9NrXEmHt8RBtd8d10ElWOzfqBrK+JpOobdCLWFE02zPZLBjumqE4cy0rmMCC01Hsu4IjKPaOyYnOzGGAHSIEqzRaJPYRLtlBO5WrVVF9uvCsiAppr+sub0JVHJAFBEeefnZrWc+2xh8tLuwjp5hZOkTLE4pSWiWUtwaiYChzB1kH1XeoC5iKMtRqFEPJUvCg4dKhEwU27l5uiEnQOy4+wPYiHY90IGVGUSiakdxegHSc4bhaD3jJHQ2vMuVMz2SMeK2KRwO2eHP2mSsu/gDazHDjDP2skAX2WSEB/1ykAxUcz3XsC5z3a8FbhizO3/2hqN8uYI6uj5iRfXbeKcZeYeqOLBVU/OiIQ5gXDeI5CyVSv1dc/Gl93prg1ba3Kxx0bWoNIlB+xxCJ5D806N8bvj+aXb76oA1myZGttiHjXOrm6TWMisnW9j0HwGWOLsXPm0G7ACBjUF+N57c5uG8GGOQ2wa1p7hh4arbdvvdjb2T15cXiIoXCdMu7FoOpPex2pqe+/+Pnk5/0X73ALn0CLTQWqCza82GQQoR0iQFC+o0f5Ct10xit8lK9wGhuv8FG+GoH1YbzCR/mqMMoLWWjCUUAmJnBRGEdzdj7KN6Kg84Uw/WTv378R/RchBRgWugNWX5qI4BpRnogySTGUBHPfPzrreufHZH0enXe9s2M05wL5gZ2fUJbsGfTNsxgY6QzwyrMt/CXwhfJJlI0TfkE/1Zs0my8qevEaf6lyMGhnKb84oJ/qDXDcML/I6NXfk6tt+G2+W8zlm/dzs3wOfF/KV+/wQb2d5WDRK5h7+GRBpfcCLr01INO7JCNXuHy9g492jWkSnSe6xi4+qhqjPF4waq/wlyofTBcM9SX8UKXDfAGsqSm9Tc8OvdEpc1nNkmzBROfnPXi2mAQnD4VF+Jv9o1+edx4cf+oc/dI5ftj59ODolwfHDx8ED5UL+/Xeu7f7hycHO7uvTrZ23x7ssBGMft39ZLxzOWee6jzzL3vsEv80jMWvAOzTR+JzsN4Hy88Frp1x2jG5Sk9qYWL7H8rAPwJD/PgRWuSGWX78MICXDzeC5bFld7Oc2AIry0fPtZTG+BvXXdyKlgElQv409UzGePknXa/qehFNg84z7EYF/0fYjefPluVz53mHGkjfXMPHlp9NkuksqQDpT88BaVBsOs/QqU+lX652bm37YZnrQY+fi7bLqvHz29qKjliUNXtXzrteRo5NNM7RZzWHDhnS9RG91rjQOCyPu6CfMlV6SIU4rPLd/CIpiPKgF6LhbdLEiJ86grVuCkSdplF5bMRS1QSRXkpv6Zln8mDHf7a8GSBC+A0cGX9z4+jDh/L5cdDpEr8FXdWwA2TH0URERGGTlYZfrWmYZ8kgGhzmW7jq6K0FuTmgydVj9g2IYkBvJhqS6/18rshVAx+X5WEOdPHhhxPR2hyUNgShgLSE+jLwar0TuJZNykFdU/aOYMBqX7t02Wp4hpqEq9XLcLt8LgHUbQFZNz/CemFZRUVVkge60+thkCa379ukw7Lg2IYqFFITrDUgeZ1c+WwOeh7Gh5qhloz2BdrMqPtEF1rJLR9+uP5w7R99KD8cHD/aDD7cwH/lwy+XDeWfGroknPOGFr07WlXqj3TXomIltywMTWsud6dMHw0ilMKyuRgC13eur+vjNUcaCtR5VJfraC+PXSevxoIA8IJe4lhhWer9FTTwTddFSWG0FPBaBuHHPM38TqeJ+uyRBoxcFU0MghM2H+dTVLQ4DDYD2Qy6BHAf+2ydHTGo831SwfqJfT46Nv3+c1iEh/nWNCrLxHyLav8kzaqD9DccY+1RMubGtZBw4uQHTpOjMAwRmTCSIcXlsW1q0Z4o6fQgaPGBjGZdKgOcqzk6tNwJg2ixxm3ubFJoaHJlzg0taQPpL/dES2ueUDOaHbpFzasp4DOCSBUKfLFMEoNW6siL4jirCzftSPNmUM/kV88eoXC+KHnrKTTKjV48DeQRmOCeKADTcEjtMJ/VvB0IWE+lHntJlrgRUUNqJeQIr/UnKtKoxzGl7isaZ+ipMTxtA6R6UjN8rIGJkRTwMQbCj7hRYbhBlHGpGgE76ya4Ir2CguYGFvpgGDRgrtR3Pv6EO/FQEcQuPB6tHdurExeLcfs6cAfHmLU86kd0vskUyTzQx03S5Nps37WZqKu5VYU5o5r4w9sD0NcO/7m7c/Ju/+071GGXH3p/Ozl5935/5+TEe7hMOsEBaFtHrGfKoCqpd2IolfxdYECFfKhyqd13ODJOPlHEp3ygSCv5wBEZ8knEZil4GDYCYzdDBZEJoCQjzo53ArEDnFA+TStbJkZTVHxEODu9F0KJdo7InSZVBdG6L6otCZtdR8MbzXUYPBf2HV/8Eny30aEglJBFS2w8W40NSh3Cc1c3mj84jz5XuzTlncsM4SRCOQOQ4XuAJwfenzewnhXCvzAj7bF7faPbTbrGoYgBIDOjaTWDhcGI/XC302UIgVxil5eXvCwvk9kYaNH3hmkBuPXoNFUPv9CDGZGOM2xM9QG6PmuFTj/H7tGrI9R8o/3hvg6NqaLZnFZkZ+HDZRH/OgSuIW55gyU7uzt7KDTevN3eMaUvVS/rZ3PE0tiVe5yIxqNHQU18GMwTI98QPIoBxs+CVsJ4ypCYmwAhhSJI2woNoMA+1h0uoukZRRsUSWbWF+NktuJNZTo3yIpQXF0S60lwrD0NpPY0oGooMq9vqDK+kN1iYOHJSZRlOYYPoIfZGqp1kwO5eo3DLOxZZTLZSzRWKowm1jHjylMHofixaBqEHLIHHeFeSPFQNz2oXf2rt7DG4c4/JF8I3BAGhdsQe623AFhq5q2WQKcEpxO2NQuraIzMPw3hB66htqDQH6Z6QpnjpdTAFJZSP5lavOG2SUd2k9ejW1sobcNq9I/XVHjXt9iq101JixLeg2Ta1Eh5Wuzv6WA254tGHSmQrBpyob2IiiwZ/gCWTnnLGmuvatjmvYrQ9mmCXEwiRziyGoJvN2G2qPjDzQ5qG50PKyj1sZVhjGlchIi/Uhu+YgPFqIHxNFojw29CcYg1/M6RDgs+9vBDNTS0cEZs+p7EpnmyaEa35f9lJRiWOP4nMj7IxDKWWajUagKqCmwIk0Zr1/c6QcN0cSw1aGIufrZhifDuNixNs1LIPCQuQp9IP4xx0PpVEY2RqaSn5ZqG+0Y+gtwyzNK5FKy2trzkk5mq+zd3NzTqASBzw5RAGBytwct4fZNnSYy6OpPyJr9wN29oi0Wu4Oj530Tea1jqMJ9CXvRI23ZgGKFXTjnoh+U8kkqp+YcoRrufyjpghz+fgvCsUxAdTVoD8vU1se1ccg8wsndz03EqGhTTLCL/OFPZaYps4BS1fBQkxTkssRKQDN7n1Q+eo9KDCVdd2cg5qDWwuYtxM52baHwP+opTNzXiyr4ZhWbwncWAxpxISxAA6VCK2/Ogflr23GEd1Z2mqaW6gGF+560Y8BQgO0Cf3eVCMHBAJgJpGkWI8XlBwLuIhpSSyt65oecxpZpFp7XyWtJzmpYVWIW4/2gYkrDQ28fAsZo4C2qH0UalCHuuNYlK0SAFMd8x26C1+UYGZL+mRdFpSz4V82wYnUEQ8FaARqsrFhZn6bCmjjprse7uQRE34Wt28U5xLPkHFX9siEH+TEn2CZqW05LNflgvcP0qdwtJrEVfWlKyFlcqVURKpiMSP1uwPGC1jaBudB6AXJEEe+Q96Kg8IZkXYVc8H2sIZidEcNfpFuliChFBtSNjY7vmzlG1mGMw0GaTJ7NPJaRtT3258vRtaI4BVJdatyyltcWUUeGlFBm6vpragcnXuPwy4xzxHDmGKU0Nv5QxNzrephm/O3FUeLJ8sspxSiiT6qMwqQA3wcgfgzbJKsulIdgoUEy93JIn0OV7iBNyVDXKExzXfTpRcLdQACj1xvx1CWZJBVSY+Ii3QUM6gntIknuKhXN2/TaKBFNjwlksEYefjYLgXHSpBkx6jqCDv5uxGznF6JxmFZtgzZzRYAxZDJK1LBfk+ueQKfdVLEHa4jnBPcpZfp7UoLS/N0BZ5u18+nrYhJW1+2C2IHdeC6NaRziasLAqGPCYdxXoZuaVr5u41/HyarcuTUhjgwjHxjBnG1bKP2ci6A2nUkWwEM8lV5oBT04kon2FsvmWRqfPg2S1AlTIodvX5Ntsc/eqqRMol6NcIORkcvyrY/KvGgSthwHivBzbM1JsQkiHwTuROsddys8Nf/G55SsOpMOUPZG+SOFzbq2k9XBQvbZSA8sd6+7wwHyXUY9UmV1bMMLoJL5bGjjCR+w/qalFW3pBl0HfuorUHDWWpBhP80E0xaWzvqIIDNpFRQ/DsHoMolfG+VwtN1pNNg6JABbNH7pbGFmgFsW0SSIgMrbwkpMM98285Q+h/7G8/FSVl4H/YfPTXz59GciToAAR9/Q78J6SJH0sO/8/Si48xc4+3NdD1RzopaAvbfxBaXd5i7CbRKU+Ygf9lvNBHWOAZRqQWVpCfqjlrrJDKCzxaQDebJGlhtqqeOgl8AWdd9/AJ8dzpd1ayG3orTJaBOzGnObRcOcS6JJFU5/jAJCRLK4/58mF/sExbRKXDaK7QcLp44vnRsAqRTQos9QREaXTBVm/NKTDZ6wnWjLgcIl++Ja8EB2ycRa6h9Ec1Q3Z3hIDje23oPGS9F6aw8R50aBDBmheiUJhfcnB+J4q4Mh1jcrIBE21uV6mj1qap1cPeJvx9619NjicfXPanaF5uNm2UjsOCfxc79Lw+VhSp7Zil7xWa9xxc8eT6Va8jtg8Kjvadms4RLy0VV+HKaUHTxZjTNSU905RAJ96MW0X0eIZpZl3fU0usrWn6DsTzrJZPlxA4/f7uyUYuYl2pkXiJLmH/ux1TKDiRWATYpaEKVbvtAwhp9+sj6PSjTDKiQM4tGnjm+oC2XdyhIzIcGtkPI69MZ7rmpTHdDJMvZoXSn9mwsegu7II1vMJss9cHyNo1PE0hGscPWFtyDZoGGmP6g8cMGYdUvocJczQtPSyTMElTiFmMOCZd0CqgFFHLM2OHd+qXN2h99mu8FpP9bE+B/3/kYqig742TnHn+6DFU/X/iqv7OjUl9ePP4e1/hb58Gx4Tf0sqzrQm6Mfb9Oja5qKlR2OI7iHt3+rjCkegx2AmCFp9joXVrQr+mIJ5W6hRmyWKAUD/JhuU00I3rVS/zxKUvp7b7EBWm+szWUQXsYNHBRidO0AkFPaamfJtksRndHoXILfvwiFwpwUwH0ldyu7xe2SDHYXonqHz5DyR+gJ6ep2iLm1QmmCOZfDES94xkeGxno6drjlzBXN3ZaZbgHmPGWnPpi9UaC0lCNOHn1jGoTaxiy9wjBBTc3YVC0owwnNU9d9KbO5XkxS+3RFZdNdvq0OZkXAPSMuv5YcPvZdRfNYTOb68KscTUUqMqEWu66WAUARzC7QVymClMMR8LzIJV8uX2Z2i0cPiUE4a/pdicQTl6O8yqTh5B2dwAfoOjBxFCIChEuPrR3RvJhWRtNbcBA+zME7e0zv/XnCtBiYkRaPtdLiHW0kKXv29aH+CaVvemcPqVP05nU7f48GjGjQcsUMYodE0opy6IOtoxFSGad6RBQWTcqVVnj9LijGMGuYTFOJeDRfX/QnY16CBDOo0RoN+6uM5wO/bMZHYTNbtRL9hrV6UDXuyXc/gaUMOjzJxBOmVqCf9L53tLfqGMgE6zpTRL8ghrR5L3lL6kK1LAS4Eo3IfY6oHnZ/gr39VL4JPn1T5+gPTmyPPvGe+g0XXncldw0UeuEJAjbATYV9OYG7lF3Qi3o+6nuJ1skoGTWfuxR7pmT4dSFGQkQ4TO+NLGDjiWqoV9no6cJsP7tkc8YrOpA8DqwzOlKiuI+umXo4AOIHAZYBaw4+mhrflEnhXU/+0RmfrcmrHgx+lqXJjKzNHF7D8jytcl3zl8EEvDGZq6z5dmV92Ankwp+vcYaB2SFjrEg+G6mpbt4bmStFLOqkqmJaUP1gWcPbyoGbpXnucK9K7EB6irspACH2gjZ+xCjsydmSqtMLmSCm57smXbOlauz1Wb3B/p70fnPvSirXgAxib7BsRUVjUGzxaZpiL0mmnJ5w1zjgWh/keLNf4y5oZXNAa42yMKNZsG7xrDyj9s0tOKPuhnaI1LDk4WImSVxEKuitfJrfCdE3lokhEOjbn0o1bE8C9yOKkBGDiEKgn81vJL1Kpr/JEsR6hpZJCyYNqIPFL0VyXW9pss9YBfLcAjcA3DQb807Lem3tlt1QrF4N71MqSZFjK1RUUGBIPRjNcEw+yaF5O8gqFC66HkuwPSj35cdEcl14VnYF1FamwYcot+t//+V9aq33o6UDkAlNMpAiXAe9To63q0iMEA1SZ5ml85hlTwTsvLWD8oV6WQwtEA2aZtn/5CE1p6FDt5DLs4gY6tOlejkXdQsGfJ0gVzQN8zQuAKMAAxFw81H2fuKur6Buek4lLXGH1GebJHAz7Mpe9FylcAX6M6RyGeVJmD3AQelGF2ktFVEb1IimuOF1O5VCxJ2KzvRfq+zBQszkIGlAgBGbqmghid3STCcebAwypj6NxnkYE5AXGuPA599I7BSROPVBfOKtDSX0HMuTYoSizQCXZeW+YYHI8nEvGHEKfIOYsGPUmYEncZ4BHEZBmKLQbM5HbnW3el0nBbp7Pa/cTHnTXqY0kM7yDASONH0SP1SVeI/AWqrNkjglYigRDwmnkzHnHyelslgDSYa5ZCRen5iIG0VaOFlOD74BqDzDeYohe0DIF1LMx1EV8F4XpnHno0QhFdlsRqXiRzhOMJkI9VGB9yrbAj+Up8WExRLXYHsvTIiQ7jTyrp/cZMqQK1b4n4Qm8KfSEkSH2D9iQ5UenDtlv5GU4OTnveytd+Bc6Zl+5YUA0sxi6nj8NMCQggfiENLqubdiW249qNphD+KeOxQykLdsKVppHo9dBKPRmh3zWemk1cC125Fgag94A82JHwH6TPD/rA2sIGR8XUTkBdri6II5NM0LP294iJhyAdFTiAbjAT6vSyy8yQ5YAJ0mP/4OhaRcD96FqDKDoCjY8dpRWpQEM4QyTBM1piV3gTSNchwUuZYVrDCxcCzb5UCrhXMLk1QYL4nClMeoI20mRwspBQ4XuZ94HSMzVWmk2Yhz1tIPvUH3KQRXOYPphjuxN47faa0sCN22Tbc5u0UnsBJ0Do9x11GKwPs07M+jMDtwXg8OzE8aEkzMY8wHTMvStuF/LOYuf3dTBAUAPWIf1Rjz+aeSV10SKKsX5hISmOSn0Jj/nhS7Le/mcLjYJWMpgElzvFC13ovupOcQocJBn8BaGFOQNT1WUkpiYhHNXg8JBo0vQ6Ohg1SsvornlPNGzRcwJ9b26HxyPjLHvCLrsGKHGNLTSOYtpORUuJ1w2d+XUWsglxA/q891am6xD2g2V1GLUXlGJzVoVmazZ5meXp5K7UXQIcQuOdQK0NvuJdjLbRdk5nwW7pbcOf/PJFP93zs86oubQOkxhR3/WO228bgxG1/Clj4x7Y3uUNcc2omYsY2EY1srFmTx030o4dRkknWDsOsTZGi1A9BYgzLn7j7Q/rEx4IpJ/E5XBk5MegB6ll8nQmMIXKVKUbsacz5OhNSkNEtUmIQpYzkygI826Mq6sawaSUafo/qcbyQWEf20vCeu4Pb7Fq1nfHwPCyS8YpK1tDosr9YRzjCGKfUth06Irn8tpVNFM58f1Jp6wBhbr8zDSZ1y9QCkaPgeG+EKpQY48x9QhoHMYPlt76A9AahpyW+mpF2jBOMbfriHaWbk3R93wu+AqMk2w17gHhHYJxrkEocc8GEcFnoEmUb/uDYUxaoAC62SUwtAJ9ziigdId4c5waSBDaFSCUYKx3iZ7KZuIJ2l9QG+VOO6wvmEPQRE64k9EmSwKmzUM3d6exgwHuAGbYHwSFYBMIhAbG7UNDKij2jTIY2hZoHSsv0eRCm8tF2hdOHVbxHfjgZsm6cVH8QTlTI+CDcBdLz2bWk0OelMGt61et69fNw341vRnpG63NuEaLAmzc05gQJMWZ29aMBHbljeV6FzbGCYCrbpG2PDBP7LkuwcwGjZZanssDkbzeyz+ylS6lWWaDCqaMu10hOUhqPFq6whaQSxNhL4/qf8EDq2fpLk3OrWh+VdMnRpPNO2m4Z872Fxk5m/k9P9dwkTvbFPy/T+4wsSYKlfF6JH2WoSWk7G2iUHpL7TvH+p/LG+p/bEUdd1Pk4YlQhPr39T7BFq7CrVaVg9QbIp4tJua4YT645us4+gCrbW2N7++oZDDdgxe8qWblgDUuy1AddP0deMdzXccfyJTXvVNi6NeTYepmJiT+trk1REsMMEYxw3n8CtBiHk7AsNwzWfnAB3l1kYgOnjXZLn6MgDfvIppgI6siQAkZzic2kjC5Mx4FshufR7yK6P8WEaFfFisrX635nWsidVyNtneIsM/zB1iSLvOKNKBavNWudrx5Ilv7Gx2a0fRM4LUMqjUXp14aZwHbnUR4taJ0yJeTKPCYzcXG6ZEdavBzb2OTdcdjHUt7d9BSaevDZ9o2NU07vLryHCufIbLQZX04kmR07TqNBzabzTuXVpYbYL/CWN/K4Z3D7jAxzVknOWyYK3nd/GBYoFbidVAnrsIco/eiZMT9/QXNWiYqp6uRYF9lHO+7S2v1TsFLc3GpgTlAHC8Su0auPgGTSP1oa7jebHCgMRK9cf8cSbyzpSwvvanOb9qvGhuleLJiqWajgIdtdSQuiHlbpwSHAdMzXtj8XKNk++SZ76m3GZNuLH6ZMkcXR3DE+4hTv8kSae+a04eK5baxsUJYQiBD89TdW21Ro/2wvuUF4uW8q7JPsc1LFCiiPBL2ow3sVG/HR8S/23vzTUES3TFmZHLCvNcAXGcLlgRGojdsCW90l40l/JBxYrw5Wjmle5aw6WMQwiPFHFLA0cxChV0VqlUOQoV6O20JJcbxmrUFf17XpN290VpdkaCe12V5hhcjkPBtq9uuTutHUzjVWqW9mpfp+ZuMTrWjprQjdzBXs6ucP9yQJWxUSoFkh6OUBxGEiHL5gYvD3cpetM1Grnx/frNusHMcrNP1CXukjOlAfkvFFXsO9XYQa5DlNNyawEcPxNHAOSBPh7dJUN1p2tMQABldv5W/ILiy7TkyBnEBGeUPzYDuYQTeuz4n/WVV2kpsOAktE5WK7u5TIwJGI1V/hIjQH4cfvml+MmR8lezQT7tMEHqN9Bs5yAMh3QPDd//a85bfYUMvhPTXAc7lsmYEiJiWjsRfBa6+cGMyzla7v9Ql3gcAbzjhpFXl23wwL188XJn9+T9Pu4QdiZVNS/7y8uLbH42RqfD8t8G0SCZLpfqBr6/fROuPQ0fL1N5CMtaKE4CI7Dvd9++fLF78u7t7u7J6zeHO/s/wdMeJmx9stJU5/D13s7b94dc5evkscUFIoOmYLU9issp/TzbF8FQdlhcHAGn3y1W6UZcRH03j/CubK9+nLdI0KRJhnucEepumGKPJJ9O26urxHnW3QUoUV4iNr49zBdgleYXIb1S4wzr4CwtE3mwz7dEvdkn1cIslJXdzgNuAjBdv4rRWh+bL7r02rOblnGRzivTAgYTgdIbKfYyX8VFXpZvi3RMjoFOlOXZFd6c0TEr5RluqqgFA3DzA/u9PG0JGOsXCsXWi0jNQ1mthLqxhwpRMc4v23MSOY9yFOIr11XLb1Fe89lLM25FqsUYm+DkKZQBJH36NMb20pe7dPnjIz6wT1mOnAO5GIJIuapVJmw6sL/pMFu/nZsIgrhnlyjP9/VS3+Q1vU0J/IowPws4EJC4igNNOj8cHr4jzb0go3FR1lfNQlzxq4dHfIdODDSwIqa+beqjOW1ClYoZwdjW8QjsTl6JkaTGC7w3JqlKUCo7BZ8T8Doo/QV/H2vlIAgJiT4uh67HS5zdRVOKz3IDQNtOEgH1dNO73H8HDjGD67kvpt3y2Ycm8I91WkIefvA6jCL+EhjizyL5dZEWWIp9C0ytXAcbm+RiKPWSUAA13/hi7/amQdm2z9OTEWoQyz0P0ESlerZHJi6nDg2MBZ1b0IkyR32wFUeBCx89U41u953XZvs1EqTvUkX188ahgJIFpll4i1hIhpbN5jBzRxwllzxo1TWJaKNnjXCHey4xbochKjQOrl6yrTku7tBO3CnukNDmLpxJJg4SMadY+il5AxjjrpFef9CFYMz++rjdEb6mB+7Vi9e7O9sSpVsH0BH1VgfvT+jGBU2I/TUjI4BjXcqbt3k8xjwels6xxHG7TekkZcALjJjB7nh8F5vYtTCbBdTDMYB/jjJ5Elg2Q9VcTEb1zprMfOpIH9LCFmLGqgb6A6G4ZNfsiTz01WZSbNkYczZjzHqikhe7134sOVqkkcPY3FS06yDTG2PsHEHnK7wT6dh7kOViaguXAuVJFK6zBx2w/iOYFljmzHV5nBUkfuBkSvwjfC2XlFv4mWWWN1hQphtYzPS+K/fBav3jwds3IZ9MTkdXIptTg3yLzmGSU6qN+0i6PyberMYhBZaJ1X4G5q93aotSXMg6elA6N6cejB2MsncqVBXz7Wl4SyhqbY458/kiSqtXeSHSutjzmSLt2DohNhTbZraeKiugf6Uh0QvdMUJ+q230/Gf5he/USMstvMOtwRHQBK/CYzD1iHNxzhNjnxnWDuZuMgGW2pMDwrnmKajb4UxpIeOcfQb6kL3ySzoIB5Hj52mWsXqA2ra4NNG8nqLl840WY7jZeU7ZzC0dpW0qMrc6/ty7phOA49MQaDNFBZ13kAKW49SQWVusd2DfWWlmXL0nbcgNOEvyReUjR3TbPAh6Psgfn9myefkzsyA1rYH35WmS+JZhKK5Xg/Z13bSNn/VKah3o8Jomd4P70wmNdnXrNW+jwUtlzY51B3nXC7emURyv6cq3oteAnJ2w5w/pGZLIlBTmc8gqiCI1ktDWMDY370uqZkIZdDIrkmvP8oTeojw5SgYj+CcrG5SCxDlKY5J0qZ2mf0hCOaLJ0RNsTQG1BMLCSxiNz5draSn2ATj9PKwtDcuvyiqtpYSVuB79Zc/MBs8xkX2UeYvsLMODOwK9sEUMtuSB1mPpiCigtZuz67M1dKqxyTqcYjVDj3TcYC6LCJC2lkvbvq4eoo4Q4cB15eTpKzOja0vcrupdw+HomvtedNvcr2705etQdG3u4x08AlyTmTDGjfcqx8qmUWi0Er0UG9vO941gS8p9YWyRRMCxaVzqHZIXh2/3Xm+dbB2gr5tnCVSdRlewhNFTJxxdXsssdKNpcnkTxvnUKlnHv3p8WRReCg3vF7PsJhwX6VBVxIebMIqvo2k6znqY7Lvsx3Rt8U34Mb7+CLMJZkpPpLnTrwa1V+U8ipPeIKkukgQ+M1q9RgT6qzegy5QTmBJnVNDj3/2VmxCzwXAZ/urjX9Du4sn1CED2LviM/JOVFSx8ahU+5cJvrMJvuPBbq/BbKixXV7kU7zzsr67OL6lwzSxcE4Vfm4Vfi8LHZuFjUfjELHwiCp+ahU+5cG3FKFxbEYXm19fo6wtMjnONDs6e8kj2qTCOyuQmrGJ+SYOlxgIEChLyYgKj16NR6HMRjHU0//Ya/up/i+Dhx+oKPa6uyOc1fl6Tz0/5+al4XntMz2vU5dnK9SwqxmmGgzervhVPvSoXH5hVAM8oZLBQ+tQqJeCzgWrPt+kJEAMNQpQLKAMNRb4gQPO8LJLptbzGrw8PUZWeJ/QmGpT6DTzAHKjgTYG6/PUAj+oWvSIaposSGO2rmzDH48HXeBhjNM0v+vA0RGYeDPJLqH6JgwXCri9aQgl+hY4AXceLosyLvngE7l5dWbnmXBqY5wOArIgvwvBkyY243VpLAb7GSQuB7Z2D19+/Odl+u3Wy93ZbXKq9/AzqRB8GR788P374YYBCFq+6hv+POg+OQVUAzjgZ5vEJWJcJFomK/mZfTNRPfOOi0cr/cPEowB/Lqdx423rx5qcXBycvv8c9l7+MVpIk+a7TsOP2A+G8F2XROCnwOpwuiGQd+mLtulEgcms4g7HpFYtrL87vuUfHvd7O4z329esFh3ZRo+w8KimYdWdqvVV9AQ6ptgkIQkDLP2ncY+PkAbSACGeyY67YYVJWK+TGao89hf41LTl9POc9jE/EqOFnO130ESQYUNB5aKQQc5YUM+JE5/pJRCcEJRr6QbARfYtkbi9ces7UxWpeI6nWm77QYbpbvnLgj1DuuYkls+V6QNG46wRrO0OJ8NzdRTPZc63N7/+alUF5wzulmx3x1qfrQRSfjUmg9L+8VvPm5uYvqM3mefU8FBHtDSLq1NqLrG9DWigY3OCclGiiay0NttPZto5uipb+LXSvG2j8t2D4aDjcOQccdlGLzkAudISHHCjsuPDJIrH5DTRGPwkRW/a0468Qp0vAShlNGdDEBkmn7peymNNmcqF6uRvrItm3c9ml2CCljOP2ZYowl9XOjgitIhm4Nc1LEm58qxtwywGnmDAzg9M7lgd4ueFmUz3LCMT6zbeKCZ1R3GYsZCsZc0Qh/d6cgLIaOu6cau7+WnLfCZZMwxT7bcOz3ttzRyu3d3B/YrC8rUv7J/Z9nK5TUCS9gNciA6x5g1/H7ao+rEkBnVQRmhkLme86BGmfEVeX1MPrU+GfZ3QRO2cqg+dHjxrPGlBKB7qz/Si1NgiFp5NSnlIteWtlvdIsunqZvIsKygiwYWCPjGAxI3aChLFGzet5qyZI667Ig6391+8Oa9ubJNeNj9avNDfRE/dQM6xPfIcidchJ21/EfLuA6G0tQf16HQeDydlj0YyHyeXm1dv3Yu9adIoabrlPxdEAUVa7NJ57Yt4abwGhqWAtQApGQ2drZAnqM6lWxwZz16TCPzf6enDFBruv3/ydUraqkr2dwxd/ClsgxEdep50tJkUyMvniVqYBa5hvzv2XMUvzqkwfjzHCDaW4jwdhgyaqXrfSQfqFiBCp/U0UK8SeqAGTX6WOF7s6pyIJshAVtD7C7/otk+TfmQb6egzfgee1TQgA13LBtkIXsVQOQoe9WmlYq3fzp0y4lp7bbBRlrErw1Lv3rLypjYAzIRFmfdrWZcBnTOKmuJEmL3mjf02oNt2aZVAP0uWcxk7yUOaEd/TqYJLAEMNQmgGqia0MfnZwZeapu8flws6IdDGxdENCbNwG5Bpq8kBFRx2jSHft5zy7T5i7mE8m/9xbAbqv7uKccp2TDMxAUYAJJgJHvn7qbqUSFqLLfDMnxSqReDaLadcN49o65KgWp9j6fbpylev1nXf6lfwmzgQc5zDNyqSo9hd4GUdCPt1rQWvamu50dVUow3oqn7bCX4XmnOF5lNr1b1AkmNblRRWG38SN++Klb/sW0E+dNt5ELXbmubVv7F+YznNnE9xwfgNQHRji2yXmmVq0B/FAi5EQdT7lNGe6iM6vuYXGUaE+O4m7FtT2t+dJgena1DMeVui3O1d0xREfTBAAJZs2735iCsPGEyUF5xW19/AoFcejR/LREOOjDKV2QScqAsx3HDTJLMmITGeJMXxG/kR0zN8vplPr3LnxxQxTfwlIgeiHe2anxnu8/aSdcFtv9969fYMX0G+/3seJGza5wfa5GcpHI/LZvdJAZDDcqLGyKT6N7PKqpiuCzfqs8KuqtkNOOnTyWNJMDCUFSddOu1jsRg2sT6m8lxst8fa+DViNjwVlxAlsFZB7Z7a1es1ZojRHChh9o4PiQ6FxKEpSwcip2vdkSlq6sdw6+MkvZCOmdN8TrgKszh5by4Uga5u3WfU9Mx4cGqozMU6suGzs3MfT98yNPbO9jMjWr1tA8F7anYBqQQ4t4HY4ZrINWsN+pCK95m89BWsHHayjUw2Cp8685kpehCOZDdl2EKkXTvoacRSXLsKzZzwsd8u49CUZxjm/33+t7wpl3PDo6TCmqaMcCzoKXgbBJ2VjGDwsmxgI7zoKGmPp3A1ykcGUP0Zyz9pxXn7ucUDr3RvoTCMnoo6GXIThO/XFVjdnxBolRYJJstT9ALTPTXe2m9Osbadbif7mKz106rK2uP+qibBVPQmOTE5WsJeOfmzHhwi0MvCh5lzrXzUudw+ICHh8dtkbxs+9wTSPz2R8AUcdsDavLx64i7pNpKVIP+poKARgwT/2kiqSFBq6ueSsVsl5mlxwO/pptqKCxnYqhR76q/jYcyDyv/0Av8VZRady0AjqYymAkGYlofxY2jA+mqd5RCi5giYc0vcMYb170lWTIrno3xbaaoRjf2GN2I0yjHDfQJ7nrG9X1WjFJPwcKclkhyr4j+Vxpq9ubCgU6md9eYunYXsyTC6T2CdkNsOjVQqNsgPN1A4RZbGy9Y1ALqfN+1iuNWVvtdGJbU9dg3oouIaQse5eass7YI+/PeiKYQV0GZY/4uTMNAR1BC01yKT+TdNoKp41bj6531BKQ/FXSugA1gT98uVPoPQKrlLK62sTToTVk1HqXsBij5sEiF4O+FpdwprB8QBv6ZYjM1biCe0Nkwtp33vGflhP7nbw43OOnOagHO+Usy/WryEQF7ycmitK3SHn4uDkkxUyBRWCaVmXn81cdC863VPUmMmDKdm4yXVGq1r6JWN5rt3eg6mkRXrTPJtehXefE2kZqj8pw8bnThbK72luynQ91p7z7PPVRH0mkLS3oJb6C7eDcjVyxEF2hjG7AkruKEPLpu12SDJJFVLKNnWnY2KirnwOTporWj/9pJ59JLGyj9gTj9Gzr3T0+C6CBh7X5mNte5n4Ejd4wyofj6fom49poqr7ZTC3+ZXh9bnfAA9jkcvPHFwRudLVe112WINR3GDVNqv8jQygSdXAaFypC0NeNuR2qS3KAml3197+7sfyzq9+LFu/Scqq0XlnKbkXBvPaHZ7S7S5up5O63Y3SmkEmc3oi9wP3m3qeq2iSONrcrKWws/RKV6FsZaj26BhGmmmDIV5FOjRnXwPrIGpvZU3AQrUyokZ1mZUkQuTy02/de4HvOyMoQfw70mQttdaeAspmcU6U31MUfq4h8PvMgAYj4DM0f0vvv1PXb/QrKteSeCbXUN/2FMl3Gi+75EdlDktZpS6IEywmn42RM6rsC8XadFUZiqyh+Ru7/+rA6iwqzl5J920jgPsKQAWSLpiGbgyl1twM+J5TWx3Tn085NzP8CE9O1EfsiHADDTneB/miiC0cWjyVElI9Iw1pbswFroOXUjhq9+7+zoutw/aMJnSw/2+r34Zfh6vLi9mQC3AqDMUNlU5SE4Z3sP+a9ngm0dffPu5tf3+1e/ni6uOvK6PvDt7Nf0rOt5++Hv9Wbb2aZnuvnuY/L//j/3w/GyWPXpf/8e3hrzvpdhH/cLa3+/fXT0fpy+X/cIBvv927A+HeMJ/VkMbCOxFH2Dby48PvLye/ra1Of/r+n2/24uGPb69+XVndGY5XPk6y5XhtLSsvV86ufn23cngZ/fTk55+G5cEPq6OD7fejJ//88eOq7S3H6Nr96EKZZ7aH/NasIeauW+lsoXbQUaJi2jG6dokPj0RZdSOsgLtyfVjHCtAte0AmByeEwJDecZFWVxJhuQfrZERR5xdwDbDmj5OQgXsnzJqeOA1iG3SfkUJFJlAx8kuUocIZD6XJ3/r1nXlVyjAqr7LY1Wabkq3w6fDArCLzrcg6SBBfp/o4tQ/be19eA+43p9owuDs1y03zsFHqifezocNbFyozA7emqN6Q78fDI+D8E/j/rhQ6zttoOvWPpP6vuUbJla4WCdbWgFVPTOmuPQvZO3QcmPlVxFXJtZ7jBTFOj4Uhqbeb9B4V705xfxx3UweXp4651YJX1WyV956borozQ1++ONjREX/24IKSgKPri5bWPg8sGuno6gfe7fFroaP3jcs21i6xwVczryQNlJV131huw44yLS3PCvEeAPS6g1180i5VqlffK3gF1cqYs+LJBqRkGdVZCxOVjbpW2ovOw6Yj5M2B5uaQRPPU2HnD3rEWJFbs22w2W1ERI3Ffi882e2p+SnIEW7GQdRtHc5OxkdA1enIgNDjVF8NMQDEmUG61JSQsvE2EkBK3RurUBfGiQA6aXqnjEFGpLuWiztCtMttbIBrzqXnf13xRTrBmWihVSVjbfN8X31ISFaAkIQE6CDSHiUWQO9bNIMPYUEK5Zw4r0s1nwxRv5htA18Z81w2C5I0wGKJTI833aU/rd/qGHFLkQqMLmAKBdm4TBk06e8lXpsESlXvu/WgeiEK84STlG/hm0dyLDHjs1YJv4s4rJtcqiit5yVmJ5LdwDDwM1ZdXkTN2BjCCUU0iwG6W4kFe+Gro7ZMcKc2uo0Nn5vmnz8q4hwP7/LRrgDnFUvj2tPfw1MPQNBBo3Jr7PEwQCLrfwBgo0mia/pY4g/PiNoVc8mBNa7d3uNsH8GFOi340fej5jAxYje6g2QgdtqvmMl7CqmGjghBeAn/1axkcjHUHBaQvoHWNCAo8XS1qaQFw5zyWoRX9VnnvWID1HjVEDYAJcSp9y3gCGKkpMcUDyJhnn/21ZLp5p45FIhtpcCneDYTNIzb1pylIA7oAE52G6KwD0SXuYgfGjKacsk3tupbIowKcwEx32b0/vNlMaq1vSn4RRAVdS8eZOtwOK0GgtSm1qBOOfLsR7QHIpHQBNgglN8iRI5eUals/OgISQKgRuyKLlWAjG5hSiWomBr6wFUNWqFBl0omlCjNPXX0z6NhzFFbWHHF2IWdjQFwhk6pyWjt4JpSg8CZALP4v9+5x0IjfAAA="}}
-  </script>
-
-  <script type="__bundler/ext_resources">
-[]
-  </script>
-
-  <script type="__bundler/template">
-"<!DOCTYPE html>\n<html><head>\n<meta charset=\"utf-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<script src=\"3d96ab9e-934b-4979-b117-4c18a35e1be9\"><\u002Fscript>\n<\u002Fhead>\n<body>\n<x-dc>\n\n<helmet>\n<link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">\n<style>\n  * { margin: 0; padding: 0; box-sizing: border-box; }\n  html { -webkit-font-smoothing: antialiased; }\n  body { background: #fafafa; color: #111; font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif; }\n  ::selection { background: #111; color: #fafafa; }\n  a { color: inherit; text-decoration: none; }\n<\u002Fstyle>\n<\u002Fhelmet>\n<div style=\"max-width:1280px; margin:0 auto; background:#fafafa; min-height:100vh; border-left:1px solid #ddd; border-right:1px solid #ddd; padding-top:118px; padding-bottom:94px;\">\n\n  <!-- MASTHEAD -->\n  <header style=\"position:fixed; top:0; left:0; right:0; max-width:1280px; margin:0 auto; z-index:50; background:#fafafa; border-left:1px solid #ddd; border-right:1px solid #ddd; border-bottom:7px solid #111; padding:22px 56px 16px; display:grid; grid-template-columns:1fr auto; align-items:end;\">\n    <div>\n      <div style=\"font-size:11px; letter-spacing:0.36em; text-transform:uppercase; margin-bottom:10px;\">Graph Database · Triple Store<\u002Fdiv>\n      <div style=\"font-size:46px; font-weight:700; letter-spacing:-0.03em; line-height:0.9;\">dydra<\u002Fdiv>\n    <\u002Fdiv>\n    <nav style=\"display:flex; gap:34px; font-size:13px; letter-spacing:0.04em; padding-bottom:6px;\">\n      <a href=\"#what\" style-hover=\"opacity:0.5;\">What it is<\u002Fa>\n      <a href=\"#service\" style-hover=\"opacity:0.5;\">Service<\u002Fa>\n      <a href=\"#scale\" style-hover=\"opacity:0.5;\">Scale<\u002Fa>\n      <a href=\"#start\" style=\"font-weight:700;\" style-hover=\"opacity:0.5;\">Sign in<\u002Fa>\n    <\u002Fnav>\n  <\u002Fheader>\n\n  <!-- HERO -->\n  <section style=\"padding:0 56px; border-bottom:1px solid #111;\">\n    <div style=\"display:grid; grid-template-columns:88px 1fr; min-height:560px;\">\n      <!-- left rail -->\n      <div style=\"border-right:1px solid #111; display:flex; flex-direction:column; justify-content:space-between; padding:30px 0;\">\n        <div style=\"font-size:12px; letter-spacing:0.3em; writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;\">dydra.com<\u002Fdiv>\n        <div style=\"font-size:64px; font-weight:300; line-height:0.8;\">01<\u002Fdiv>\n      <\u002Fdiv>\n      <!-- headline column -->\n      <div style=\"padding:48px 0 48px 48px; display:flex; flex-direction:column; justify-content:center;\">\n        <h1 style=\"font-size:96px; font-weight:700; line-height:0.92; letter-spacing:-0.04em; max-width:14ch; text-wrap:balance;\">Every fact, one triple at a time.<\u002Fh1>\n        <div style=\"display:grid; grid-template-columns:1fr 1fr; gap:48px; margin-top:54px; max-width:760px;\">\n          <p style=\"font-size:17px; line-height:1.5; max-width:34ch;\">Dydra is a hosted graph database — a triple store you query with full SPARQL 1.1, no servers to run, no schema to migrate.<\u002Fp>\n          <div style=\"border-left:1px solid #111; padding-left:24px;\">\n            <div style=\"font-size:11px; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:14px;\">Available now<\u002Fdiv>\n            <a href=\"#start\" style=\"display:inline-block; background:#111; color:#fafafa; font-size:15px; font-weight:700; letter-spacing:0.04em; padding:15px 30px;\" style-hover=\"background:#fafafa; color:#111; box-shadow:inset 0 0 0 2px #111;\">Open a free account →<\u002Fa>\n          <\u002Fdiv>\n        <\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- TICKER RULE -->\n  <div style=\"border-bottom:1px solid #111; display:flex; align-items:stretch; font-size:12px; letter-spacing:0.16em; text-transform:uppercase;\">\n    <div style=\"padding:13px 56px; border-right:1px solid #111; font-weight:700;\">SPARQL 1.1<\u002Fdiv>\n    <div style=\"padding:13px 28px; border-right:1px solid #111;\">RDF 1.2 — pre-alpha<\u002Fdiv>\n    <div style=\"padding:13px 28px; border-right:1px solid #111;\">Named graphs<\u002Fdiv>\n    <div style=\"padding:13px 28px; border-right:1px solid #111;\">Federated query<\u002Fdiv>\n    <div style=\"padding:13px 28px; margin-left:auto; font-weight:700;\">Free account at dydra.com<\u002Fdiv>\n  <\u002Fdiv>\n\n  <!-- WHAT IT IS -->\n  <section id=\"what\" style=\"padding:0 56px; border-bottom:7px solid #111;\">\n    <div style=\"display:grid; grid-template-columns:88px 1fr;\">\n      <div style=\"border-right:1px solid #111; padding:40px 0; display:flex; flex-direction:column; justify-content:space-between;\">\n        <div style=\"font-size:64px; font-weight:300; line-height:0.8;\">02<\u002Fdiv>\n        <div style=\"font-size:12px; letter-spacing:0.3em; writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;\">The standard<\u002Fdiv>\n      <\u002Fdiv>\n      <div style=\"padding:56px 0 56px 48px;\">\n        <h2 style=\"font-size:15px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:48px;\">A database built on the open web stack<\u002Fh2>\n        <div style=\"display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:#111; border:1px solid #111;\">\n          <div style=\"background:#fafafa; padding:34px 28px 40px;\">\n            <div style=\"font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;\">SPARQL 1.1, in full<\u002Fdiv>\n            <p style=\"font-size:15px; line-height:1.55;\">Query, update, federate. The complete specification — not a subset — so the queries you write are the queries that run.<\u002Fp>\n          <\u002Fdiv>\n          <div style=\"background:#fafafa; padding:34px 28px 40px;\">\n            <div style=\"font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;\">RDF 1.2, early<\u002Fdiv>\n            <p style=\"font-size:15px; line-height:1.55;\">A pre-alpha of RDF 1.2 with quoted triples, putting statements about statements within reach today.<\u002Fp>\n          <\u002Fdiv>\n          <div style=\"background:#fafafa; padding:34px 28px 40px;\">\n            <div style=\"font-size:13px; font-weight:700; margin-bottom:16px; padding-bottom:12px; border-bottom:3px solid #111;\">Hosted, entirely<\u002Fdiv>\n            <p style=\"font-size:15px; line-height:1.55;\">No installation, no operations. Create an account, load your data, and query over HTTP from anywhere.<\u002Fp>\n          <\u002Fdiv>\n        <\u002Fdiv>\n\n        <!-- SPARQL EXAMPLE -->\n        <div style=\"margin-top:48px;\">\n          <div style=\"display:grid; grid-template-columns:auto 1fr; align-items:end; gap:20px; margin-bottom:0; border-bottom:3px solid #111; padding-bottom:14px;\">\n            <div style=\"font-size:13px; font-weight:700; letter-spacing:0.24em; text-transform:uppercase;\">One request, counted<\u002Fdiv>\n            <div style=\"font-size:12px; letter-spacing:0.08em; text-align:right;\">HTTP · SPARQL · JSON<\u002Fdiv>\n          <\u002Fdiv>\n          <pre style=\"background:#111; color:#fafafa; font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace; font-size:14px; line-height:1.65; padding:30px 34px; margin-top:0; overflow-x:auto; white-space:pre;\"><span style=\"opacity:0.5;\">$<\u002Fspan> curl https://dydra.com/me/foaf/sparql \\\n  --data-urlencode <span style=\"font-weight:700;\">'query=SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }'<\u002Fspan> \\\n  -H 'Accept: application/json'\n\n[ { \"n\": 631 } ]<\u002Fpre>\n        <\u002Fdiv>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- SERVICE: PUBLIC vs DEDICATED -->\n  <section id=\"service\" style=\"border-bottom:1px solid #111;\">\n    <div style=\"display:grid; grid-template-columns:1fr 1fr;\">\n      <div style=\"padding:56px 48px 60px 56px; border-right:1px solid #111;\">\n        <div style=\"font-size:64px; font-weight:300; line-height:0.8; margin-bottom:30px;\">03<\u002Fdiv>\n        <h3 style=\"font-size:34px; font-weight:700; letter-spacing:-0.02em; line-height:1.0; margin-bottom:22px; max-width:14ch;\">The public service is free.<\u002Fh3>\n        <p style=\"font-size:16px; line-height:1.55; max-width:42ch; margin-bottom:30px;\">Create a free account at dydra.com, set up your repositories, and run SPARQL against them at no cost. It is the fastest way to put RDF to work.<\u002Fp>\n        <a href=\"#start\" style=\"font-size:14px; font-weight:700; letter-spacing:0.04em; border-bottom:2px solid #111; padding-bottom:3px;\" style-hover=\"opacity:0.5;\">Create a free account →<\u002Fa>\n      <\u002Fdiv>\n      <div style=\"padding:56px 56px 60px 48px; background:#111; color:#fafafa;\">\n        <div style=\"font-size:64px; font-weight:300; line-height:0.8; margin-bottom:30px;\">04<\u002Fdiv>\n        <h3 style=\"font-size:34px; font-weight:700; letter-spacing:-0.02em; line-height:1.0; margin-bottom:22px; max-width:16ch;\">Dedicated servers, for sensitive work.<\u002Fh3>\n        <p style=\"font-size:16px; line-height:1.55; max-width:42ch; margin-bottom:30px; color:#dcdcdc;\">When you need higher performance or your data is private, we run dedicated instances — isolated, tuned, and provisioned for your demands.<\u002Fp>\n        <a href=\"#start\" style=\"font-size:14px; font-weight:700; letter-spacing:0.04em; border-bottom:2px solid #fafafa; padding-bottom:3px;\" style-hover=\"opacity:0.6;\">Talk to us about a server →<\u002Fa>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- SCALE / RONDB -->\n  <section id=\"scale\" style=\"padding:0 56px; border-bottom:7px solid #111;\">\n    <div style=\"display:grid; grid-template-columns:88px 1fr;\">\n      <div style=\"border-right:1px solid #111; padding:40px 0; display:flex; align-items:flex-start;\">\n        <div style=\"font-size:64px; font-weight:300; line-height:0.8;\">05<\u002Fdiv>\n      <\u002Fdiv>\n      <div style=\"padding:64px 0 64px 48px;\">\n        <div style=\"font-size:13px; letter-spacing:0.24em; text-transform:uppercase; margin-bottom:24px;\">New backend<\u002Fdiv>\n        <div style=\"display:grid; grid-template-columns:1.3fr 1fr; gap:56px; align-items:end;\">\n          <h2 style=\"font-size:72px; font-weight:700; line-height:0.9; letter-spacing:-0.035em;\">Now scaling into the billions.<\u002Fh2>\n          <div style=\"border-left:1px solid #111; padding-left:28px;\">\n            <div style=\"font-size:64px; font-weight:700; line-height:0.85; letter-spacing:-0.04em;\">10⁹+<\u002Fdiv>\n            <div style=\"font-size:13px; letter-spacing:0.12em; text-transform:uppercase; margin-top:10px;\">triples per store<\u002Fdiv>\n          <\u002Fdiv>\n        <\u002Fdiv>\n        <p style=\"font-size:17px; line-height:1.55; max-width:58ch; margin-top:38px;\">A new data backend built on <strong>RonDB<\u002Fstrong> carries Dydra past the limits of a single node — distributed, in-memory, and engineered for stores in the billion-triple range without changing a line of your SPARQL.<\u002Fp>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- CTA -->\n  <section id=\"start\" style=\"border-bottom:7px solid #111; background:#111; color:#fafafa; padding:72px 56px 80px;\">\n    <div style=\"display:grid; grid-template-columns:1fr auto; align-items:end; gap:40px;\">\n      <h2 style=\"font-size:80px; font-weight:700; line-height:0.86; letter-spacing:-0.04em; max-width:16ch;\">Load your first graph today.<\u002Fh2>\n      <div style=\"display:flex; flex-direction:column; gap:14px; min-width:260px;\">\n        <a href=\"https://dydra.com\" style=\"background:#fafafa; color:#111; font-size:16px; font-weight:700; letter-spacing:0.03em; padding:18px 30px; text-align:center;\" style-hover=\"opacity:0.85;\">Create a free account<\u002Fa>\n        <a href=\"#service\" style=\"border:1px solid #fafafa; color:#fafafa; font-size:16px; font-weight:700; letter-spacing:0.03em; padding:17px 30px; text-align:center;\" style-hover=\"background:#fafafa; color:#111;\">Request a dedicated server<\u002Fa>\n      <\u002Fdiv>\n    <\u002Fdiv>\n  <\u002Fsection>\n\n  <!-- FOOTER -->\n  <footer style=\"position:fixed; bottom:0; left:0; right:0; max-width:1280px; margin:0 auto; z-index:50; background:#fafafa; border-left:1px solid #ddd; border-right:1px solid #ddd; border-top:7px solid #111; padding:30px 56px; display:grid; grid-template-columns:1fr auto auto; gap:48px; align-items:center; font-size:12px; letter-spacing:0.08em;\">\n    <div style=\"font-size:24px; font-weight:700; letter-spacing:-0.03em;\">dydra<\u002Fdiv>\n    <div style=\"text-transform:uppercase; letter-spacing:0.18em;\">Graph database · Triple store · SPARQL 1.1<\u002Fdiv>\n    <div style=\"text-transform:uppercase; letter-spacing:0.18em;\">© 2026 Dydra<\u002Fdiv>\n  <\u002Ffooter>\n\n<\u002Fdiv>\n<\u002Fx-dc>\n\n\n<\u002Fbody><\u002Fhtml>"
-  </script>
 </body>
 </html>
