@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MCP &amp; Score — User Guide</title>
+<meta name="description" content="Connect a language model to a Dydra repository over the Model Context Protocol, and explore the graph in score — a compact notation for shaped queries.">
+<meta name="date" content="2026-09-01">
+<style>
+  :root{ --ink:#111; --paper:#fafafa; --muted:#585858; --dcdc:#dcdcdc; --hair:#ddd; --ex:#fcfcfc; }
+  *{ box-sizing:border-box; }
+  html{ background:#e9e9e9; }
+  body{ margin:0; font-family:"Helvetica Neue",Helvetica,Arial,sans-serif; color:var(--ink);
+        background:var(--paper); -webkit-font-smoothing:antialiased; }
+  .container{ max-width:1280px; margin:0 auto; background:var(--paper);
+        border-left:1px solid var(--hair); border-right:1px solid var(--hair); }
+  a{ color:inherit; }
+  .masthead{ display:grid; grid-template-columns:1fr auto; align-items:end;
+        padding:30px 56px 18px; border-bottom:7px solid var(--ink); }
+  .eyebrow{ font-size:11px; text-transform:uppercase; letter-spacing:.34em; margin-bottom:12px; }
+  .wordmark{ font-size:42px; font-weight:700; letter-spacing:-.03em; line-height:.9; }
+  .masthead .meta{ text-align:right; font-size:12px; text-transform:uppercase; letter-spacing:.18em; line-height:1.8; }
+  .title{ display:grid; grid-template-columns:88px 1fr; border-bottom:7px solid var(--ink); }
+  .title .rail{ border-right:1px solid var(--ink); position:relative; }
+  .title .content{ padding:56px 56px 54px 48px; }
+  .chapno{ font-size:12px; text-transform:uppercase; letter-spacing:.3em; color:var(--muted); margin:0 0 18px; }
+  h1{ font-size:82px; font-weight:700; line-height:.9; letter-spacing:-.04em; margin:0; max-width:15ch; text-wrap:balance; }
+  .lede{ font-size:18px; line-height:1.5; max-width:62ch; margin:34px 0 0; }
+  /* compact table of contents */
+  .toc{ margin:44px 0 0; max-width:560px; }
+  .toc-label{ font-size:11px; text-transform:uppercase; letter-spacing:.28em; color:var(--muted); margin:0 0 6px; }
+  .toc-list{ list-style:none; margin:0; padding:0; border-top:1px solid var(--ink); }
+  .toc-list li{ border-bottom:1px solid var(--hair); }
+  .toc-list a{ display:flex; align-items:baseline; gap:18px; text-decoration:none; padding:8px 0; font-size:15px; }
+  .toc-list a:hover{ opacity:.5; }
+  .toc-list .tn{ font-weight:300; letter-spacing:.05em; color:var(--muted); min-width:2ch; }
+  .section{ display:grid; grid-template-columns:88px 1fr; }
+  .section.heavy{ border-bottom:7px solid var(--ink); }
+  .rail{ border-right:1px solid var(--ink); padding-top:34px; }
+  .numeral{ font-size:58px; font-weight:300; line-height:.8; padding-left:18px; }
+  .vlabel{ writing-mode:vertical-rl; transform:rotate(180deg); text-transform:uppercase;
+        font-size:11px; letter-spacing:.3em; margin:26px 0 0 34px; color:var(--muted); }
+  .content{ padding:36px 56px 52px 48px; }
+  h2{ font-size:15px; font-weight:700; text-transform:uppercase; letter-spacing:.24em; margin:0 0 30px; }
+  h3{ font-size:22px; font-weight:700; letter-spacing:-.02em; margin:38px 0 14px; }
+  h4{ font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.16em; margin:30px 0 12px;
+        border-bottom:3px solid var(--ink); padding-bottom:10px; }
+  p{ font-size:16px; line-height:1.55; max-width:74ch; margin:0 0 16px; }
+  ul,ol{ font-size:16px; line-height:1.55; max-width:74ch; padding-left:22px; }
+  li{ margin:0 0 8px; }
+  code{ font-family:"Courier New",Courier,"Nimbus Mono",monospace; font-size:.92em; }
+  strong{ font-weight:700; }
+  .muted{ color:var(--muted); }
+  .step{ font-size:11px; text-transform:uppercase; letter-spacing:.2em; color:var(--muted); }
+  /* examples: black border, almost-white ground, Courier (NOT reversed) */
+  pre{ background:var(--ex); color:var(--ink); border:1px solid var(--ink);
+        font-family:"Courier New",Courier,"Nimbus Mono",monospace;
+        font-size:13px; line-height:1.6; padding:18px 22px; overflow-x:auto; margin:18px 0 8px; }
+  pre .k{ font-weight:700; } pre .c{ color:#777; }
+  .callout{ border-left:1px solid var(--ink); padding:4px 0 4px 24px; margin:24px 0; }
+  table.data{ border-collapse:collapse; width:100%; font-size:13.5px; margin:18px 0 8px; }
+  table.data th,table.data td{ border:1px solid var(--ink); padding:9px 12px; text-align:left; }
+  table.data th{ font-size:11px; text-transform:uppercase; letter-spacing:.12em; font-weight:700; }
+  table.data td.num{ font-variant-numeric:tabular-nums; text-align:right; }
+  .footer{ border-top:7px solid var(--ink); padding:28px 56px; display:grid; grid-template-columns:1fr auto;
+        align-items:center; gap:40px; }
+  .footer .wm{ font-size:22px; font-weight:700; }
+  .footer .fl{ font-size:12px; text-transform:uppercase; letter-spacing:.16em; text-align:right; line-height:1.9; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database · Triple Store · User Guide</div>
+      <div class="wordmark">dydra</div>
+    </div>
+    <div class="meta">User Guide · Chapter<br>MCP &amp; Score</div>
+  </header>
+
+  <section class="title">
+    <div class="rail"><div class="vlabel">chapter</div></div>
+    <div class="content">
+      <p class="chapno">Chapter — MCP &amp; score</p>
+      <h1>Point a model at your graph.</h1>
+      <p class="lede">Every Dydra repository answers the Model Context Protocol at its own endpoint.
+      A language model connects there and asks in whichever notation suits the question — SPARQL,
+      GraphQL, or <em>score</em>, a compact notation for shaped queries that a model can write
+      without knowing your namespaces. This chapter shows how a client connects, what each notation
+      is for, and how to explore a repository you have never seen before.</p>
+      <nav class="toc" aria-label="Contents">
+        <div class="toc-label">Contents</div>
+        <ol class="toc-list">
+          <li><a href="#s01"><span class="tn">01</span> What this is</a></li>
+          <li><a href="#s02"><span class="tn">02</span> Connecting a client</a></li>
+          <li><a href="#s03"><span class="tn">03</span> The three notations</a></li>
+          <li><a href="#s04"><span class="tn">04</span> Score notation</a></li>
+          <li><a href="#s05"><span class="tn">05</span> Exploring a repository</a></li>
+          <li><a href="#s06"><span class="tn">06</span> Composing explorations</a></li>
+          <li><a href="#s07"><span class="tn">07</span> What the server tells you</a></li>
+          <li><a href="#s08"><span class="tn">08</span> In practice</a></li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <!-- 01 WHAT THIS IS -->
+  <section id="s01" class="section heavy">
+    <div class="rail"><div class="numeral">01</div><div class="vlabel">what it is</div></div>
+    <div class="content">
+      <h2>What this is</h2>
+      <p>A model that has to query a graph faces three problems at once: it must know the query
+        language, it must know <em>your</em> vocabulary, and it must know <em>your</em> schema.
+      SPARQL recommendations solve the first and nothing the other two -
+      a model asked to write SPARQL against an unfamiliar schema invents IRIs and guesses relationships.</p>
+      <p>The MCP endpoint answers all. It accepts three request notations, and it profers introspections
+        tools to explore the repository's schema:</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ink);border:1px solid var(--ink);margin:8px 0;">
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">SPARQL</h4>
+          <p style="font-size:14.5px;margin:0;">When the question is already a query. The full
+          language, answered as SPARQL Results JSON or as a graph.</p>
+        </div>
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">GraphQL</h4>
+          <p style="font-size:14.5px;margin:0;">When the client already speaks it. A schema exposes
+           the RDF classes and properties as a GraphQL response document.</p>
+        </div>
+        <div style="background:var(--paper);padding:28px 24px 34px;">
+          <h4 style="margin-top:0;">Score</h4>
+          <p style="font-size:14.5px;margin:0;">When the shape of the answer is uncertain and the
+          vocabulary is unknown. Bare names resolve against the repository; the server says what it
+          resolved them to. Tools permit incremental graph exploration</p>
+        </div>
+      </div>
+      <p>A request names its notation as a media type. The server dispatches on that and answers in
+      the paired notation, saying which one it used — so a client never guesses, and never has to ask
+      for a format.</p>
+      <p>Score is the notation to reach for when exploring. It is a shape, not a query: you say which
+      type you want and which properties, and the server compiles it to SPARQL, runs it, and
+      remembers it as a node in an <strong>exploration tree</strong> you can branch from, join, walk,
+      and refine. At any point you can ask what SPARQL a shape compiled to.</p>
+    </div>
+  </section>
+
+  <!-- 02 CONNECTING -->
+  <section id="s02" class="section heavy">
+    <div class="rail"><div class="numeral">02</div><div class="vlabel">connect</div></div>
+    <div class="content">
+      <h2>Connecting a client</h2>
+
+      <p class="step">The endpoint</p>
+      <p>One endpoint per repository, taking <code>POST</code> requests:</p>
+      <pre>https://dydra.com/<span class="k">{account}</span>/<span class="k">{repository}</span>/mcp</pre>
+      <p>Each request carries a bearer token; authorization is checked per request, and the
+      repository is the one in the path. There is nothing to open and nothing to close.</p>
+
+      <p class="step">There is no handshake</p>
+      <p>MCP is a stateless protocol. A request carries its own protocol version and client
+      capabilities in <code>_meta</code>, and mirrors its method and target into headers so that
+      proxies can route without reading the body:</p>
+      <pre><span class="k">POST</span> /acme/org-data/mcp HTTP/1.1
+Content-Type: application/json
+Accept: application/json, text/event-stream
+Authorization: Bearer <span class="c">&lt;token&gt;</span>
+MCP-Protocol-Version: 2026-07-28
+MCP-Method: tools/call
+MCP-Name: query
+
+{ "jsonrpc": "2.0", "id": 1, "method": "tools/call",
+  "params": {
+    "name": "query",
+    "arguments": { "mimeType": "application/sparql-query",
+                   "text": "<span class="k">SELECT</span> (<span class="k">COUNT</span>(*) <span class="k">AS</span> ?n) <span class="k">WHERE</span> { ?s ?p ?o }" },
+    "_meta": {
+      "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+      "io.modelcontextprotocol/clientInfo": { "name": "ExampleClient", "version": "1.0.0" },
+      "io.modelcontextprotocol/clientCapabilities": {} } } }</pre>
+      <p>The server answers with a single JSON object, or with an event stream scoped to that one
+      request, according to what the client accepts. Both are ordinary MCP; a client library will
+      handle the choice for you.</p>
+      <p>Because the call is an ordinary HTTP request, the request parameters the SPARQL endpoint
+      understands are understood here too — <code>?timeLimit=30</code>,
+      <code>?describeObjectDepth=2</code> and the rest, read by the same initialization step and in
+      force for the call. Content negotiation among them: a response content type applies to the
+      <em>envelope</em>, which is a different thing from the notation of the result inside it. Where
+      a tool argument names the same setting, the argument wins.</p>
+
+      <p class="step">Ask the server what it is</p>
+      <p><code>server/discover</code> reports the protocol versions it serves, its capabilities, and
+      a plain-language <code>instructions</code> paragraph describing the notations. Read that once
+      rather than carrying the explanation in your own prompt.</p>
+      <pre>{ "supportedVersions": ["2026-07-28", "2025-11-25", …],
+  "capabilities": {
+    "tools": {}, "resources": {}, "prompts": {},
+    "extensions": {
+      "org.datagraph.spocq/notation": {
+        "requestMediaTypes": ["application/sparql-query", "application/sparql-update",
+                              "application/score", "application/graphql"] } } },
+  "instructions": "<span class="c">…how to query this repository in the three notations…</span>" }</pre>
+
+      <div class="callout">
+        <p style="margin:0;"><strong>Older clients still work.</strong> A client that opens with
+        <code>initialize</code>, as the 2025-11-25 revision required, is served under those rules —
+        a session id is assigned and echoed, and <code>ping</code> is answered. New clients should
+        not use that path; it is there so existing ones keep working while they migrate.</p>
+      </div>
+
+      <p class="step">Two tools</p>
+      <p><code>tools/list</code> is how a client finds them. It takes no arguments and returns the
+      manifest — each tool with its description and its JSON Schema, which is what a model reads to
+      know what to send:</p>
+      <pre>{ "jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": { "_meta": { … } } }
+
+<span class="c">→</span> { "tools": [
+       { "name": "query",
+         "description": "Run one query against the RDF repository. The mimeType argument names …",
+         "inputSchema": { "type": "object",
+                          "required": ["mimeType", "text"],
+                          "properties": { "mimeType": { "type": "string", … },
+                                          "text":     { "type": "string", … },
+                                          "limit":    { "type": "integer", … }, … } } },
+       { "name": "score", … },
+       … ],
+     "ttlMs": 300000, "cacheScope": "private" }</pre>
+      <p>The list is the same for every request and comes back in a fixed order, so a client may
+      cache it. What varies is the authorization you present, not the connection.</p>
+      <table class="data">
+        <thead><tr><th>Tool</th><th>Arguments</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>query</code></td>
+              <td><code>mimeType</code>, <code>text</code>, <code>limit</code>,
+                  <code>variables</code>, <code>session</code>,
+                  <code>describeForm</code>, <code>describeObjectDepth</code>,
+                  <code>describeSubjectDepth</code></td>
+              <td>One request in any notation. Stateless.</td></tr>
+          <tr><td><code>score</code></td>
+              <td><code>op</code>, <code>body</code>, <code>session</code>,
+                  <code>node</code>, <code>strict</code></td>
+              <td>The exploration language — nineteen operations over a session you hold a handle to.</td></tr>
+        </tbody>
+      </table>
+
+      <p class="step">Where the older tools went</p>
+      <p>Previous versions had one tool per engine. Each of those remains as a deprecated alias that
+      forwards to the two above, so existing clients keep working; each is a call you can make
+      directly instead:</p>
+      <table class="data">
+        <thead><tr><th>Was</th><th>Now</th></tr></thead>
+        <tbody>
+          <tr><td><code>sparql_select</code>, <code>sparql_describe</code></td><td><code>query</code> with <code>mimeType: application/sparql-query</code></td></tr>
+          <tr><td><code>sparql_update</code></td><td><code>query</code> with <code>mimeType: application/sparql-update</code></td></tr>
+          <tr><td><code>graphql_query</code>, <code>graphql_mutate</code></td><td><code>query</code> with <code>mimeType: application/graphql</code></td></tr>
+          <tr><td><code>list_graphs</code></td><td>the resource <code>rdf://graphs</code> — or a "<code>SELECT DISTINCT ?g</code>" SPARQL query, if you want it as bindings</td></tr>
+          <tr><td><code>orch_survey</code>, <code>orch_profile</code>, <code>orch_select</code>, <code>orch_suggest</code>, <code>orch_accept</code>, <code>orch_history</code>, <code>orch_navigate</code></td><td><code>score</code> with the matching <code>op</code></td></tr>
+        </tbody>
+      </table>
+      <p>An alias answers in the paired notation like any other call.
+        For example, <code>sparql_select</code> returns SPARQL results as JSON on an embedded resource.
+      block.</p>
+    </div>
+  </section>
+
+  <!-- 03 NOTATIONS -->
+  <section id="s03" class="section heavy">
+    <div class="rail"><div class="numeral">03</div><div class="vlabel">notations</div></div>
+    <div class="content">
+      <h2>The three notations</h2>
+      <p>The <code>mimeType</code> argument names the notation of <code>text</code>. It also
+      determines the notation of the answer — the pairing is automatic and total, and the server
+      never guesses a notation from the text:</p>
+      <table class="data">
+        <thead><tr><th>Request <code>mimeType</code></th><th>Notation</th><th>Response <code>mimeType</code></th></tr></thead>
+        <tbody>
+          <tr><td><code>application/sparql-query</code></td><td>SPARQL — SELECT, ASK</td><td><code>application/sparql-results+json</code></td></tr>
+          <tr><td><code>application/sparql-query</code></td><td>SPARQL — CONSTRUCT, DESCRIBE</td><td><code>text/turtle</code></td></tr>
+          <tr><td><code>application/sparql-update</code></td><td>SPARQL update</td><td><code>application/sparql-results+json</code></td></tr>
+          <tr><td><code>application/score</code></td><td>a score</td><td><code>application/score</code></td></tr>
+          <tr><td><code>application/graphql</code></td><td>a GraphQL document</td><td><code>application/graphql-response+json</code></td></tr>
+        </tbody>
+      </table>
+
+      <p class="step">Where the answer says what it is</p>
+      <p>The result travels as an embedded resource carrying its own media type, and the pairing is
+      repeated in <code>_meta</code> for a client that routes on metadata:</p>
+      <pre>{ "resultType": "complete",
+  "content": [
+    { "type": "resource",
+      "resource": { "uri": "rdf://acme/org-data/result/9f2c…",
+                    "mimeType": "application/sparql-results+json",
+                    "text": "{\"head\":{\"vars\":[\"name\"]},\"results\":{…}}" } } ],
+  "structuredContent": { "head": { "vars": ["name"] }, "results": { "bindings": [] } },
+  "isError": false,
+  "_meta": {
+    "org.datagraph.spocq/requestMediaType":  "application/sparql-query",
+    "org.datagraph.spocq/responseMediaType": "application/sparql-results+json" } }</pre>
+      <p>A JSON-valued answer — SPARQL results, a GraphQL document — also arrives parsed as
+      <code>structuredContent</code>, so a client need not parse the text itself. Score and Turtle
+      are just unstructured text notations.</p>
+
+      <h3>The dataset — before you write any SPARQL</h3>
+      <p>A repository loaded from quads keeps its data in <b>named graphs</b>, and the SPARQL
+      default graph is not their union. A query that names no graph reads an empty graph and
+      answers nothing — no error, no warning, no rows. Either name the graph, or select over the
+      union:</p>
+      <pre>SELECT ?name WHERE { GRAPH ?g { ?s foaf:name ?name } }
+SELECT ?name FROM &lt;urn:dydra:all&gt; WHERE { ?s foaf:name ?name }</pre>
+      <p>The <code>score</code> tool already reads the union, so a shape needs nothing from you,
+      and the SPARQL that <code>materialize</code> emits carries the clause it was evaluated with.
+      Keep that prologue if you run the query elsewhere: removing
+      <code>FROM &lt;urn:dydra:all&gt;</code> is the likeliest reason a materialized query returns
+      nothing when run by hand.</p>
+
+      <h3>The same question, three ways</h3>
+
+      <p class="step">SPARQL — when the query is the point</p>
+      <pre>{ "mimeType": "application/sparql-query",
+  "text": "<span class="k">PREFIX</span> foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+           <span class="k">SELECT</span> ?name ?mbox <span class="k">WHERE</span> { ?s a foaf:Person ; foaf:name ?name ; foaf:mbox ?mbox }" }</pre>
+
+      <p class="step">Score — when the vocabulary is the problem</p>
+      <pre>{ "mimeType": "application/score",
+  "text": "{ @type: Person, @shape: [name, email], @options: { limit: 10 } }" }</pre>
+      <p>Three bare names, none of them a real IRI. The server resolves each against the
+      repository's own vocabulary and tells you what it chose.</p>
+
+      <p class="step">GraphQL — when the client already speaks it</p>
+      <p>The schema is derived from the repository's own classes and properties. Queries and
+      mutations both go in the same media type; a mutation's fields all run in one transaction, so
+      either the whole mutation takes effect or none of it does:</p>
+      <pre>{ "mimeType": "application/graphql",
+  "text": "{ person { Name Email } }" }
+
+{ "mimeType": "application/graphql",
+  "text": "mutation { createPerson(Name: \"Dave Green\", Email: \"dave@acme.org\") { Name } }" }</pre>
+      <p>A GraphQL fault is reported inside the response document, in its <code>errors</code> member
+      — the call itself succeeded. Pass variables as the <code>variables</code> argument.</p>
+
+      <p class="step">An update</p>
+      <p>Updates go in their own media type, and are acknowledged in the SPARQL results family:</p>
+      <pre>{ "mimeType": "application/sparql-update",
+  "text": "<span class="k">INSERT DATA</span> { <span class="k">GRAPH</span> &lt;http://acme/org-data/people&gt; {
+             &lt;http://acme/org-data/dave&gt; foaf:name \"Dave Green\" } }" }
+
+<span class="c">→ { "head": {}, "boolean": true }</span></pre>
+      <p>Sending an update as a query is an error. The response tells you which media type to use.</p>
+
+      <h3>Describing one resource</h3>
+      <p>When the question is "what does the store hold about <em>this</em> thing", the query form is
+      <code>DESCRIBE</code>. It pairs to Turtle, like any graph-producing query:</p>
+      <pre>{ "mimeType": "application/sparql-query",
+  "text": "<span class="k">DESCRIBE</span> &lt;http://acme/org-data/alice&gt;" }
+
+<span class="c">→ text/turtle</span>
+&lt;http://acme/org-data/alice&gt;
+    a                foaf:Person ;
+    foaf:name        "Alice Chen" ;
+    foaf:mbox        "alice@acme.org" ;
+    org:memberOf     &lt;http://acme/org-data/engineering&gt; .</pre>
+      <p>What counts as the description is a <em>concise bounded description</em>, and the store
+      offers three forms with a separate reach in each direction — how far to follow forward through
+      the objects of a statement, and how far to follow back through its subjects:</p>
+      <table class="data">
+        <thead><tr><th>Setting</th><th>Values</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>describeForm</code></td>
+              <td><code>asymmetric</code> · <code>symmetric</code> · <code>inverse</code></td>
+              <td>Follow outward only; outward and inward; or inward only. The full names are
+                  <code>simple-concise-bounded-description</code> and its
+                  <code>-symmetric-</code> and <code>-inverse-</code> variants.</td></tr>
+          <tr><td><code>describeSubjectDepth</code></td><td>integer</td>
+              <td>How far to follow the resource <strong>forward</strong>, as the subject of a
+                  statement. 1 gives its own statements; 2 also gives the statements of the
+                  resources they name. <strong>0 gives none of them</strong> — the description
+                  comes back empty.</td></tr>
+          <tr><td><code>describeObjectDepth</code></td><td>integer</td>
+              <td>How far to follow it <strong>backward</strong>, as the object of a statement —
+                  what points at this resource, then what points at those.</td></tr>
+        </tbody>
+      </table>
+      <p>These are repository and request configuration
+        (<code>urn:dydra:describeForm</code>, <code>urn:dydra:describeObjectDepth</code>,
+        <code>urn:dydra:describeSubjectDepth</code>). They reach a query by either of two routes.</p>
+      <p>As <strong>arguments of the call</strong>, beside <code>mimeType</code> and
+        <code>text</code>:</p>
+      <pre>{ "mimeType": "application/sparql-query",
+  "text": "<span class="k">DESCRIBE</span> &lt;http://acme/org-data/alice&gt;",
+  "describeForm": "symmetric",
+  "describeSubjectDepth": 2,
+  "describeObjectDepth": 1 }</pre>
+      <p>Or as <strong>parameters of the request</strong> that carries the call. An MCP call is an
+        ordinary HTTP request, so the parameters the SPARQL endpoint understands are understood
+        here too — see
+        <a href="../../references/api/sparql/request-parameters.html">the HTTP API</a>:</p>
+      <pre><span class="k">POST</span> /acme/org-data/mcp?describeSubjectDepth=2&amp;describeObjectDepth=1</pre>
+      <p>The arguments of the call take precedence over the parameters of the request, and both over
+        the repository's configured defaults. When none are given, the defaults stand.</p>
+
+      <h3>From a question to an answer</h3>
+      <p>The shortest honest path from a question in words to a result you can quote, for a client
+      that would rather write SPARQL than explore:</p>
+
+      <p class="step">1 · Read the vocabulary</p>
+      <pre>{ "method": "resources/read",
+  "params": { "uri": "rdf://acme/org-data/vocabulary" } }   <span class="c">; Turtle: the real IRIs</span></pre>
+
+      <p class="step">2 · Write the query against what it says</p>
+      <pre>{ "name": "query",
+  "arguments": {
+    "mimeType": "application/sparql-query",
+    "text": "<span class="k">PREFIX</span> foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+             <span class="k">PREFIX</span> org:  &lt;http://www.w3.org/ns/org#&gt;
+             <span class="k">SELECT</span> ?name ?org <span class="k">WHERE</span> {
+               ?p a foaf:Person ; foaf:name ?name ; org:memberOf ?o .
+               ?o foaf:name ?org }",
+    "limit": 50 } }</pre>
+
+      <p class="step">3 · Read the bindings</p>
+      <pre>{ "head": { "vars": ["name", "org"] },
+  "results": { "bindings": [
+    { "name": { "type": "literal", "value": "Alice Chen" },
+      "org":  { "type": "literal", "value": "Engineering" } },
+    … ] } }</pre>
+      <p>The same document arrives parsed as <code>structuredContent</code>. Answer from the
+      bindings, and cite the IRIs the vocabulary gave you — not ones recalled from elsewhere.</p>
+    </div>
+  </section>
+
+  <!-- 04 SCORE -->
+  <section id="s04" class="section heavy">
+    <div class="rail"><div class="numeral">04</div><div class="vlabel">score</div></div>
+    <div class="content">
+      <h2>Score notation</h2>
+      <p>Score is JSON with four differences, each earning its keep for graph work. The name evokes
+      a music score: a compact notation that prescribes the structure and lets the performer realize
+      the rest.</p>
+
+      <h4>A name is not a string</h4>
+      <p>An identifier written without quotes is a <strong>name</strong> — it denotes a term, and can
+      be mapped to an IRI. A quoted string is <strong>data</strong>. They are different things, and
+      the notation keeps them apart:</p>
+      <pre>{ foaf:name: Alice }     <span class="c">the value is the NAME Alice — a term to resolve</span>
+{ foaf:name: "Alice" }   <span class="c">the value is the STRING "Alice" — a data value</span></pre>
+      <p>That distinction is what makes name resolution safe to apply everywhere: only names are
+      candidates, so a literal is never rewritten into somebody's vocabulary.</p>
+
+      <h4>Three kinds of name</h4>
+      <ul>
+        <li><strong>QNames</strong> — <code>foaf:name</code>, <code>org:memberOf</code>. Written
+          unquoted, expanded through the repository's prefix map.</li>
+        <li><strong>Operators</strong> — <code>@type</code>, <code>@shape</code>, <code>$eq</code>.
+          A fixed vocabulary, never resolved.</li>
+        <li><strong>Bare names</strong> — <code>Person</code>, <code>name</code>. Resolved against
+          the repository's vocabulary after parsing.</li>
+      </ul>
+      <p>A full IRI is written in angle brackets — <code>&lt;http://example.com/ns#Type&gt;</code> —
+      which is how you say a term the prefix map does not cover.</p>
+
+      <h4>Shapes</h4>
+      <p><code>@shape</code> takes an <em>array</em> of property names, not an object. A plain name
+      is a leaf property; a single-key object is a traversal into a sub-shape:</p>
+      <pre><span class="c">;; flat</span>
+{ @type: foaf:Person,
+  @shape: [foaf:name, foaf:mbox],
+  @options: { limit: 10 } }
+
+<span class="c">;; one level down: each person's organizations, by name</span>
+{ @type: foaf:Person,
+  @shape: [foaf:name, {org:memberOf: [foaf:name]}] }
+
+<span class="c">;; a type the prefix map does not cover</span>
+{ @type: &lt;http://example.com/ns#MyType&gt;,
+  @shape: [&lt;http://example.com/ns#prop1&gt;] }</pre>
+
+      <h4>Shape operators</h4>
+      <table class="data">
+        <thead><tr><th>Operator</th><th>Takes</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>@type</code></td><td>a name</td><td>the class of the anchor entity</td></tr>
+          <tr><td><code>@shape</code></td><td>array</td><td>the properties to retrieve</td></tr>
+          <tr><td><code>@anchor</code></td><td>object</td><td>constrain the anchor — <code>{ foaf:name: "Alice" }</code> binds that property to a value</td></tr>
+          <tr><td><code>@optional</code></td><td>array</td><td>properties that need not be present</td></tr>
+          <tr><td><code>@union</code></td><td>array of shapes</td><td>alternatives</td></tr>
+          <tr><td><code>@order</code></td><td>array</td><td><code>[{field: foaf:name, dir: asc}]</code>, or a bare field name</td></tr>
+          <tr><td><code>@group</code></td><td>array</td><td>grouping fields</td></tr>
+          <tr><td><code>@distinct</code></td><td>true</td><td>duplicate elimination</td></tr>
+          <tr><td><code>@limit</code></td><td>integer</td><td>row cap; also <code>@options: { limit: n }</code></td></tr>
+        </tbody>
+      </table>
+
+      <h4>Bare names, and what the server did with them</h4>
+      <p>A shape written in bare names comes back with a record of the resolution, so a model can see
+      the guess it was given and correct it:</p>
+      <pre>{ @type: Person, @shape: [name, email] }
+
+<span class="c">→</span> { node: n3, count: 10,
+     results: [ … ],
+     resolved:   { Person: foaf:Person, name: foaf:name, email: foaf:mbox },
+     ambiguous:  { name: [foaf:name, schema:name] },
+     unresolved: [] }</pre>
+      <p>Where several terms share a local name, the most used wins and the alternatives are listed.
+      Pass <code>"strict": true</code> on the tool call to make an ambiguous or unresolvable name an
+      error instead of a guess.</p>
+
+      <div class="callout">
+        <p style="margin:0;">Names are resolved by local part first, then by <code>rdfs:label</code>,
+        both case-insensitively. A repository with labelled terms is markedly easier to explore in
+        bare names than one without.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 EXPLORING -->
+  <section id="s05" class="section heavy">
+    <div class="rail"><div class="numeral">05</div><div class="vlabel">explore</div></div>
+    <div class="content">
+      <h2>Exploring a repository</h2>
+      <p>The <code>score</code> tool takes an operation and a score-notation body. Nineteen
+      operations, in six groups. Every one of them takes the session handle as
+      <code>"session"</code>, and every one that acts on a node takes an optional
+      <code>"node"</code> — without it, the active node is used.</p>
+
+      <h4>Session</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>connect</code></td><td>—</td><td>Open an exploration session and return its handle; populates the vocabulary cache from the repository.</td></tr>
+          <tr><td><code>disconnect</code></td><td>—</td><td>Close the session and release its tree.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Discovery</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>survey</code></td><td><code>{ scope: types }</code></td><td>Enumerate the repository's types, predicates, or graphs, with counts. <code>{ scope: predicates, for_type: foaf:Person }</code> narrows to one type's predicates; <code>{ scope: graphs }</code> lists named graphs.</td></tr>
+          <tr><td><code>profile</code></td><td><code>foaf:Person</code></td><td>Describe one type: its predicates, how many instances carry each, and a sample value for each.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Query</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>select</code></td><td>a shape</td><td>Compile the shape to SPARQL, run it, and record it as a node.</td></tr>
+          <tr><td><code>branch</code></td><td>a shape</td><td>As <code>select</code>, but with the active node as the parent — the way to try a second reading of the same data without losing the first.</td></tr>
+          <tr><td><code>expand</code></td><td><code>org:memberOf</code></td><td>Add one predicate traversal to the active node's shape and re-evaluate.</td></tr>
+          <tr><td><code>narrow</code></td><td><code>{ where: … }</code></td><td>Record a constraint on the active node and re-evaluate it. See the note in §06 — the filter is recorded, not yet compiled.</td></tr>
+          <tr><td><code>nl</code></td><td>free text</td><td>Interpret a description as a shape and run it. A keyword heuristic over the vocabulary's labels — it works on well-labelled data and is no substitute for writing the shape.</td></tr>
+          <tr><td><code>materialize</code></td><td><code>sparql</code></td><td>Emit the active node's compiled SPARQL — or <code>shape</code> for the shape it came from.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Composition — worked through in §06</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>join</code></td><td><code>{ node1: n5, node2: n6 }</code></td><td>Natural join: merge the shapes of two nodes of the same type into one select over the union of their properties.</td></tr>
+          <tr><td><code>walk</code></td><td><code>{ source: n5, predicate: org:memberOf }</code></td><td>Follow a linking predicate into another type. Given two nodes, the predicate is discovered; given a node and a predicate, the target type is.</td></tr>
+          <tr><td><code>shape</code></td><td><code>{ node: n5, @shape: [foaf:age] }</code></td><td>Merge a modifier into a node's shape and re-evaluate: <code>@shape</code> adds, <code>@type</code> replaces, <code>@options</code> override.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>The tree</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>history</code></td><td>—</td><td>The whole exploration tree: every node, its operation, status and result count.</td></tr>
+          <tr><td><code>navigate</code></td><td><code>n3</code></td><td>Set the active node, by id or alias.</td></tr>
+          <tr><td><code>node</code></td><td><code>n3</code> or —</td><td>Show the active node's details; with a body, set it.</td></tr>
+          <tr><td><code>name</code></td><td><code>{ node: n3, alias: people }</code></td><td>Give a node an alias, usable anywhere an id is.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Advice</h4>
+      <table class="data">
+        <thead><tr><th>Operation</th><th>Body</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>suggest</code></td><td><code>{ mode: branch }</code></td><td>Propose next moves from where you are, as ranked candidates. Modes: <code>branch</code>, <code>expand</code>, <code>narrow</code>.</td></tr>
+          <tr><td><code>accept</code></td><td><code>{ node: n7, candidate: 0 }</code></td><td>Run one of those candidates, recording where it came from.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>A cold start, end to end</h3>
+      <p>An unfamiliar repository, from nothing to a query whose SPARQL you can read.</p>
+
+      <p class="step">1 · Open a session</p>
+      <pre>{ "name": "score", "arguments": { "op": "connect" } }
+
+<span class="c">→</span> { session: "a1b2c3d4-…", repository: "acme/org-data",
+     vocabulary: { types: 12, prefixes: 22 },
+     expires_after_minutes: 30 }</pre>
+      <p>Keep that handle. Every later call carries it as <code>"session"</code>. It is checked
+      against your credentials on each use, and expires after thirty minutes idle — a call against a
+      stale handle says so and you open a new one.</p>
+
+      <p>The exploration itself is stored, as RDF in a repository of the account, so a handle
+      resolves whichever server process receives it and survives that process being recycled.
+      Nothing on the wire remembers the handle for you, but the tree behind it is not yours to
+      keep.</p>
+
+      <p><b>Two clients on one handle are not serialized for you.</b> If another client moves the
+      exploration between your calls, your next operation is refused with a message saying it was
+      not recorded. Read the current tree with <code>history</code> and apply the operation
+      again.</p>
+
+      <p class="step">2 · What is in here?</p>
+      <pre>{ "name": "score", "arguments": { "op": "survey", "session": "a1b2c3d4-…" } }
+
+<span class="c">→</span> { node: n1, scope: types, count: 12,
+     results: [ { type: foaf:Person,       count: 847 },
+                { type: org:Organization,  count: 23 },
+                { type: foaf:Project,      count: 156 },
+                … ] }</pre>
+
+      <p class="step">3 · What does a person look like?</p>
+      <pre>{ "name": "score",
+  "arguments": { "op": "profile", "session": "a1b2c3d4-…", "body": "foaf:Person" } }
+
+<span class="c">→</span> { node: n2, type: foaf:Person, instance_count: 847,
+     properties: [ { predicate: foaf:name,     count: 847, sample: "Alice Chen" },
+                   { predicate: foaf:mbox,     count: 812, sample: "alice@acme.org" },
+                   { predicate: org:memberOf,  count: 790, sample: org:Engineering },
+                   … ] }</pre>
+
+      <p class="step">4 · Ask for a shape</p>
+      <pre>{ "name": "score",
+  "arguments": { "op": "select", "session": "a1b2c3d4-…",
+                 "body": "{ @type: foaf:Person, @shape: [foaf:name, foaf:mbox], @options: { limit: 5 } }" } }
+
+<span class="c">→</span> { node: n3, count: 5,
+     results: [ { v1: "Alice Chen", v2: "alice@acme.org" },
+                { v1: "Bob Park",   v2: "bob@acme.org" },
+                … ] }</pre>
+
+      <p class="step">5 · Read the SPARQL it compiled to</p>
+      <pre>{ "name": "score",
+  "arguments": { "op": "materialize", "session": "a1b2c3d4-…", "body": "sparql" } }
+
+<span class="c">→</span> { node: n4, format: sparql,
+     query: "SELECT ?v1 ?v2 WHERE { ?s a foaf:Person ; foaf:name ?v1 ; foaf:mbox ?v2 } LIMIT 5" }</pre>
+      <p><code>materialize</code> is the audit path. Whatever a model composed, this says plainly
+      what will run — check that it says what you meant before trusting the numbers.</p>
+
+      <p class="step">6 · See where you have been</p>
+      <pre>{ "name": "score", "arguments": { "op": "history", "session": "a1b2c3d4-…" } }
+
+<span class="c">→</span> n1 survey     (complete, 12)
+     └── n2 profile  (complete, 15)
+         └── n3 select  (complete, 5)
+             └── n4 materialize  (complete, 0) *</pre>
+
+      <h3>Asking for a next move</h3>
+      <p>Two operations exist for a client that does not know what to do next — which is the ordinary
+      condition of a model meeting a dataset for the first time.</p>
+      <p><code>suggest</code> reads where you are — the active node's type, its shape, how many rows
+      it returned, and which of the type's predicates you are not yet using — and proposes candidates
+      from it. The mode says what kind of move you want:</p>
+      <pre>{ "name": "score",
+  "arguments": { "op": "suggest", "session": "a1b2c3d4-…", "body": "{ mode: expand }" } }
+
+<span class="c">→</span> { node: n5, mode: expand,
+     candidates: [
+       { kind: expand, label: "Add org:memberOf",
+         expression: { predicate: org:memberOf }, score: 0.5,
+         rationale: "Add predicate org:memberOf to the shape" },
+       { kind: expand, label: "Add foaf:title",
+         expression: { predicate: foaf:title }, score: 0.5,
+         rationale: "Add predicate foaf:title to the shape" },
+       … ] }</pre>
+      <p>Each candidate carries its <code>kind</code> — the operation it would run —
+      its <code>expression</code>, a <code>score</code> to rank it by, and a
+      <code>rationale</code> saying why. Nothing has run yet; a suggestion is a node in the tree like
+      any other, and it holds its candidates.</p>
+      <p><code>accept</code> runs one of them by index:</p>
+      <pre>{ "name": "score",
+  "arguments": { "op": "accept", "session": "a1b2c3d4-…", "body": "{ node: n5, candidate: 0 }" } }
+
+<span class="c">→</span> { node: n6, count: 5, results: [ … ], accepted_from: n5 }</pre>
+      <p>The result is whatever that operation returns, plus <code>accepted_from</code>: the tree
+      records that this node came from a suggestion, and the suggestion records what was made of it.
+      Omit <code>node</code> and the active node is used, which is what you want immediately after a
+      <code>suggest</code>. Suggestion chains are depth-limited, so a client cannot loop by
+      suggesting from a suggestion indefinitely.</p>
+      <div class="callout">
+        <p style="margin:0;">Ordinary results carry advice too. A <code>select</code> that returns a
+        great many rows comes back with a <code>suggestions</code> field proposing
+        <code>narrow</code>; a survey proposes profiling its largest types. They are hints in the
+        result, not nodes — <code>suggest</code> is the operation that ranks candidates you can
+        <code>accept</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 COMPOSING -->
+  <section id="s06" class="section heavy">
+    <div class="rail"><div class="numeral">06</div><div class="vlabel">compose</div></div>
+    <div class="content">
+      <h2>Composing explorations</h2>
+      <p>Every operation leaves a node behind, and nodes combine. This is what the tree is for: two
+      partial views of the same type become one, and a link between types becomes a traversal.</p>
+
+      <h4>join — merge two views of one type</h4>
+      <p>Two selects over <code>foaf:Person</code>, one with contact details and one with
+      affiliation, become a single select over the union of their properties:</p>
+      <pre><span class="c">;; n5 — { @type: foaf:Person, @shape: [foaf:name, foaf:mbox] }</span>
+<span class="c">;; n6 — { @type: foaf:Person, @shape: [foaf:title, org:memberOf] }</span>
+
+{ "op": "join", "body": "{ node1: n5, node2: n6 }" }
+
+<span class="c">→</span> { node: n7, count: …,
+     results: [ { v1: "Alice", v2: "alice@acme.org",
+                  v3: "Engineer", v4: org:Engineering }, … ] }</pre>
+
+      <h4>walk — follow a link to another type</h4>
+      <p>A predicate whose objects are subjects elsewhere becomes a traversal. Give it a source and
+      a predicate and the target type is discovered; give it two nodes and the linking predicate is
+      found for you:</p>
+      <pre>{ "op": "walk", "body": "{ source: n5, predicate: org:memberOf }" }
+
+<span class="c">→ target type: org:Organization</span>
+   { node: n8, count: …, results: [ … ] }</pre>
+      <p>The result is a nested shape — persons, each with the organizations they belong to:</p>
+      <pre>{ @type: foaf:Person,
+  @shape: [foaf:name, foaf:mbox,
+           {org:memberOf: [foaf:name, org:hasSite]}] }</pre>
+
+      <h4>shape — adjust and re-run</h4>
+      <p>A modifier is merged into a node's shape: <code>@shape</code> adds properties,
+      <code>@type</code> replaces, <code>@options</code> override.</p>
+      <pre>{ "op": "shape", "body": "{ node: n5, @shape: [foaf:age], @options: { limit: 20 } }" }</pre>
+
+      <h4>expand and narrow</h4>
+      <p><code>expand</code> adds one predicate to the active node's shape and re-evaluates — the
+      quickest way to widen a result you have already got:</p>
+      <pre>{ "op": "expand", "body": "org:memberOf" }</pre>
+      <p><code>narrow</code> records a constraint on the active node and re-evaluates it.</p>
+      <div class="callout">
+        <p style="margin:0;"><strong>Note.</strong> <code>narrow</code> currently records the
+        <code>where</code> clause and re-runs the parent query; the <code>$</code>-operator filters
+        are not yet compiled into the query. To restrict a result today, put the constraint in the
+        shape — <code>@anchor</code> binds a property to a value — or write the FILTER in SPARQL
+        through <code>query</code>.</p>
+      </div>
+
+      <h4>Aliases</h4>
+      <p>Node ids are <code>n1</code>, <code>n2</code>, <code>n3</code>. Give the ones you will come
+      back to a name, and use it anywhere an id is accepted:</p>
+      <pre>{ "op": "name", "body": "{ node: n3, alias: people }" }
+
+{ "op": "join", "body": "{ node1: people, node2: n6 }" }</pre>
+
+      <h4>Keeping a session</h4>
+      <p>There is nothing to keep. The exploration is written to the account's own repository as it
+      proceeds, as RDF — so there is no moment at which it is unsaved, and no operation that saves
+      it. That is why the MCP surface has no <code>save</code> and no <code>load</code>: not an
+      omission, but nothing left for them to do.</p>
+      <p>What remains is <i>copying</i>, and it is ordinary Graph Store Protocol work on an ordinary
+      graph: <code>GET</code> the exploration's graph to take a copy elsewhere, <code>PUT</code> one
+      to bring a copy in. Because the tree is stored as terms rather than as an encoded blob, it is
+      also queryable alongside your data — which operations an account uses, which types were
+      profiled and then abandoned, what a bare name resolved to and how often it was ambiguous.</p>
+      <p>A handle still expires after thirty minutes idle, and an expired exploration's graph is
+      retained rather than reclaimed. Removing one is <code>disconnect</code>, or a
+      <code>DELETE</code> on its graph.</p>
+    </div>
+  </section>
+
+  <!-- 07 CONTEXT -->
+  <section id="s07" class="section heavy">
+    <div class="rail"><div class="numeral">07</div><div class="vlabel">context</div></div>
+    <div class="content">
+      <h2>What the server tells you</h2>
+      <p>Beside the two tools, the endpoint serves the context needed to use them. These are
+      generated from the repository itself, so they cannot drift from it — read them instead of
+      describing your data in a system prompt.</p>
+
+      <h3>Resources — things to read</h3>
+      <p>A resource is a document at a URI. Two calls: <code>resources/list</code> to see what is
+      there, <code>resources/read</code> to fetch one. Nothing is fetched implicitly; a client reads
+      what it decides it needs.</p>
+
+      <p class="step">1 · See what is available</p>
+      <pre>{ "jsonrpc": "2.0", "id": 1, "method": "resources/list", "params": { "_meta": { … } } }
+
+<span class="c">→</span> { "resources": [
+       { "uri": "rdf://vocabulary", "name": "RDF Vocabulary",
+         "mimeType": "text/turtle",
+         "description": "RDF classes, properties, domain/range … Read this before writing SPARQL." },
+       { "uri": "score://grammar", "name": "Score Grammar", … },
+       … ],
+     "ttlMs": 300000, "cacheScope": "private" }</pre>
+      <p>A resource is named by <em>what it is</em>, not by where it lives. The endpoint is
+      per-repository and the request already says which one, so the URI does not repeat it.</p>
+
+      <p class="step">2 · Read the one you need</p>
+      <p>The URI goes in <code>params.uri</code> — and, because every request mirrors its target into
+      a header, in <code>MCP-Name</code> as well:</p>
+      <pre><span class="k">POST</span> /acme/org-data/mcp HTTP/1.1
+MCP-Method: resources/read
+MCP-Name: rdf://vocabulary
+
+{ "jsonrpc": "2.0", "id": 2, "method": "resources/read",
+  "params": { "uri": "rdf://vocabulary", "_meta": { … } } }
+
+<span class="c">→</span> { "contents": [
+       { "uri": "rdf://vocabulary",
+         "mimeType": "text/turtle",
+         "text": "@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .\n
+                  @prefix org:  &lt;http://www.w3.org/ns/org#&gt; .\n
+                  foaf:Person a rdfs:Class .\n
+                  foaf:name a rdf:Property ; rdfs:domain foaf:Person ; rdfs:range xsd:string .\n
+                  org:memberOf a rdf:Property ; rdfs:domain foaf:Person ; rdfs:range org:Organization .\n…" } ],
+     "ttlMs": 300000, "cacheScope": "private" }</pre>
+
+      <p class="step">3 · Put it to work</p>
+      <p>What you do with a resource depends on which it is:</p>
+      <table class="data">
+        <thead><tr><th>Resource</th><th>Type</th><th>Read it when</th></tr></thead>
+        <tbody>
+          <tr><td><code>rdf://vocabulary</code></td><td>Turtle</td>
+              <td><strong>Before writing SPARQL or GraphQL.</strong> Place it in the model's context: it is the list of real classes, properties, domains, ranges and prefixes, and it is what stops a model inventing IRIs. On a large repository, read it once per conversation, not once per query.</td></tr>
+          <tr><td><code>rdf://types</code></td><td>JSON</td>
+              <td>You want the classes present without the property detail — a cheap orientation, or a menu to offer a user.</td></tr>
+          <tr><td><code>rdf://graphs</code></td><td>JSON</td>
+              <td>You need to scope a query to a named graph, or to know how the data is partitioned.</td></tr>
+          <tr><td><code>score://grammar</code></td><td>text</td>
+              <td>Before writing score for the first time in a conversation. It is the notation, its operators, and worked examples — enough for a model that has never seen score to write a correct shape.</td></tr>
+          <tr><td><code>score://operations</code></td><td>score</td>
+              <td>Together with the grammar: the catalogue of §05 as data, with an example body for each operation. Generated from the same table the server dispatches on.</td></tr>
+          <tr><td><code>score://session/{handle}</code></td><td>score</td>
+              <td>You hold a session handle and want its tree without spending a tool call — the same content <code>history</code> returns, addressable by URI.</td></tr>
+        </tbody>
+      </table>
+      <p>Every list and read carries <code>ttlMs</code>, a hint for how long the answer stays good,
+      and <code>cacheScope: "private"</code> — what these hold depends on who asked, so no shared
+      cache may keep them. A client may cache them for itself, and should: the vocabulary of a
+      repository changes far more slowly than a conversation moves.</p>
+      <div class="callout">
+        <p style="margin:0;"><strong>The longer form still works.</strong> Earlier releases
+        advertised URIs that also named the repository —
+        <code>rdf://acme/org-data/vocabulary</code>, <code>score://acme/org-data/grammar</code>.
+        Those still resolve, and a read echoes back whichever form you asked for, so a client
+        written against them needs no change. New clients should use the short form: keeping one
+        repository's vocabulary apart from another's in a cache is the business of whoever keeps
+        the cache, and not something the name has to carry.</p>
+      </div>
+
+      <h3>Prompts — workflows to follow</h3>
+      <p>A prompt is a ready-made instruction the server writes for its own surface, filled in with
+      your repository and your question. A host application usually offers them to the user by name;
+      a client can also fetch one directly and prepend it to the conversation.</p>
+
+      <p class="step">1 · See what is offered</p>
+      <pre>{ "method": "prompts/list", "params": { "_meta": { … } } }
+
+<span class="c">→</span> { "prompts": [
+       { "name": "explore-with-score",
+         "description": "Explore the repository in score notation: survey, select, narrow or expand, then materialize the compiled SPARQL.",
+         "arguments": [ { "name": "goal",
+                          "description": "What you are trying to find out.", "required": false } ] },
+       … ] }</pre>
+
+      <p class="step">2 · Fill one in</p>
+      <pre>{ "method": "prompts/get",
+  "params": { "name": "explore-with-score",
+              "arguments": { "goal": "which teams has Alice worked with" },
+              "_meta": { … } } }
+
+<span class="c">→</span> { "description": "Explore in score notation",
+     "messages": [
+       { "role": "user",
+         "content": { "type": "text",
+                      "text": "Explore repository acme/org-data to: which teams has Alice worked with.\n
+                               1. Read score://acme/org-data/grammar for the notation and
+                                  score://acme/org-data/operations for the operations.\n
+                               2. Call score with op=connect and keep the session handle …\n
+                               3. op=survey to see the types, op=profile on a type …\n
+                               4. op=select with a shape …\n
+                               5. op=narrow or op=expand to refine, op=history to see the tree.\n
+                               6. op=materialize to read the SPARQL your shape compiled to." } } ] }</pre>
+
+      <p class="step">3 · Use the messages</p>
+      <p>The <code>messages</code> array is ready to place in the conversation as it stands — role
+      and content, in the shape a model expects. It is not executed and it is not a template to
+      further fill in: the server has already written the whole instruction, naming this
+      repository's own resource URIs. The three on offer:</p>
+      <table class="data">
+        <thead><tr><th>Prompt</th><th>Argument</th><th>Use it to</th></tr></thead>
+        <tbody>
+          <tr><td><code>explore-repository</code></td><td><code>focus</code></td>
+              <td>Open a conversation about an unfamiliar repository: read the vocabulary, then query. Give <code>focus</code> a type or topic to steer it.</td></tr>
+          <tr><td><code>write-sparql-query</code></td><td><code>description</code></td>
+              <td>Get one SPARQL SELECT written and tested for a stated need, with the vocabulary read first.</td></tr>
+          <tr><td><code>explore-with-score</code></td><td><code>goal</code></td>
+              <td>Run the whole exploration loop — grammar, connect, survey, select, refine, materialize — for a stated goal.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <p style="margin:0;">A short recipe for a client with no prior knowledge of a repository:
+        <code>server/discover</code> for the <code>instructions</code>, then
+        <code>resources/read</code> on the vocabulary, then either write SPARQL or take
+        <code>explore-with-score</code> from <code>prompts/get</code> and follow it. Three calls
+        before the first question, and the model is working from the repository rather than from
+        guesswork.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 IN PRACTICE -->
+  <section id="s08" class="section">
+    <div class="rail"><div class="numeral">08</div><div class="vlabel">in practice</div></div>
+    <div class="content">
+      <h2>In practice</h2>
+
+      <h4>Two kinds of error, and only one is yours to fix</h4>
+      <p>Anything a model could correct by trying again — a SPARQL syntax error, an unknown media
+      type, a name that will not resolve, an expired session handle, or an exploration another
+      client moved while you were working on it — comes back as a normal result flagged
+      <code>"isError": true</code>, carrying an explanation to act on:</p>
+      <pre>{ "resultType": "complete",
+  "content": [ { "type": "text",
+                 "text": "Unsupported request mimeType: application/x-nonesuch\n\n
+                          Accepted request media types: application/sparql-query,
+                          application/sparql-update, application/score, application/graphql." } ],
+  "isError": true }</pre>
+      <p>A JSON-RPC <code>error</code> means something else — an unknown method or tool, a malformed
+      request, a header that disagrees with the body. Those are for the client's author, not for the
+      model:</p>
+      <table class="data">
+        <thead><tr><th>Code</th><th>HTTP</th><th>Condition</th></tr></thead>
+        <tbody>
+          <tr><td><code>-32700</code></td><td>400</td><td>The body is not JSON.</td></tr>
+          <tr><td><code>-32600</code></td><td>200</td><td>Not a JSON-RPC 2.0 message.</td></tr>
+          <tr><td><code>-32601</code></td><td>404</td><td>No such method. The JSON-RPC body is what tells you this is an MCP endpoint that lacks the method, rather than a server that is not one.</td></tr>
+          <tr><td><code>-32602</code></td><td>400 / 200</td><td>Invalid parameters — including an unknown tool, an unknown resource URI, and a request missing its required <code>_meta</code>.</td></tr>
+          <tr><td><code>-32603</code></td><td>200</td><td>An internal fault.</td></tr>
+          <tr><td><code>-32020</code></td><td>400</td><td>A required header is missing, or disagrees with the body.</td></tr>
+          <tr><td><code>-32022</code></td><td>400</td><td>Unsupported protocol version; <code>data.supported</code> lists the ones served.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Habits that pay</h4>
+      <ul>
+        <li><strong>Read the vocabulary first.</strong> One resource read replaces a great deal of
+          guessing, and it is the difference between a model that writes real IRIs and one that
+          invents them.</li>
+        <li><strong>Explore in score, deliver in SPARQL.</strong> Shape the question with the score
+          tool, then <code>materialize</code> and keep the SPARQL. It runs anywhere and does not
+          depend on a session.</li>
+        <li><strong>Carry the session handle.</strong> It is an ordinary argument; nothing on the
+          wire remembers it for you. Omitting it on a first call opens a session and hands you the
+          handle in the result — take it from there.</li>
+        <li><strong>Check what the names resolved to.</strong> Bare names are a convenience, not a
+          guarantee. The <code>resolved</code> and <code>ambiguous</code> fields say what happened;
+          <code>strict</code> turns a guess into an error where that matters.</li>
+        <li><strong>Bound your queries.</strong> All three notations admit unbounded ones.
+          <code>limit</code> on the tool call caps what comes back.</li>
+      </ul>
+
+      <h4>Other ways in</h4>
+      <p>The exploration operations are not only reachable through MCP. The same functions answer at
+      <code>POST /orchestration/{account}/{repository}/{operation}</code>, taking and returning
+      score-notation bodies with a <code>session</code> field — a <code>GET</code> on any of those
+      URLs describes the service. And from a Lisp image there is an interactive REPL:</p>
+      <pre>(<span class="k">cli-orchestrator</span> "acme/org-data"
+                  :agent-name "user" :agent-key "token")
+
+orch&gt; connect
+orch&gt; survey
+orch[n1]&gt; profile foaf:Person
+orch[n2]&gt; select { @type: foaf:Person, @shape: [foaf:name] }
+orch[n3]&gt; tree</pre>
+      <p>The CLI takes the same score bodies, prompts with the active node, and continues a line
+      whose braces are unbalanced. It also has <code>save</code> and <code>load</code> against a
+      file path — a convenience of working locally that the network surface does not offer.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wm">dydra</div>
+    <div class="fl">User guide · MCP &amp; score<br>© 2026 Dydra</div>
+  </footer>
+
+</div>
+</body>
+</html>

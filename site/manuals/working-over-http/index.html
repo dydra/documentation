@@ -1,0 +1,346 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Working over HTTP &#8212; Dydra manuals</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database · Triple Store · Manual</div>
+      <div class="wordmark"><a href="#">dydra</a></div>
+    </div>
+    <div class="meta">Manual<br>Working over HTTP</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../index.html">Manuals</a>
+    <a class="cell" href="../../references/index.html">References</a>
+    <a class="cell" href="../../home/index.html">Home</a>
+    <span class="spacer"></span>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="working-over-http">
+<div class="rail"><div class="vlabel">manual</div></div>
+<div class="content">
+<h1>Working over HTTP</h1>
+<p>Dydra is an HTTP service and nothing else: there is no driver to install and no
+wire protocol to learn. Everything a program does – create a repository, load
+statements, run a query, read a past revision – is a request to a URL, made
+with whatever HTTP client the language already has.</p>
+<p>This manual is the tour. It says which endpoint does what, which parameters
+matter in practice, and where the exact specification of each lives in the API
+reference. Where the two disagree, the reference is right.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#the-endpoints"><span class="tn">01</span> The endpoints</a></li>
+<li><a href="#authenticating"><span class="tn">02</span> Authenticating</a></li>
+<li><a href="#sending-and-receiving-rdf"><span class="tn">03</span> Sending and receiving RDF</a></li>
+<li><a href="#querying"><span class="tn">04</span> Querying</a></li>
+<li><a href="#namespace-prefixes"><span class="tn">05</span> Namespace prefixes</a></li>
+<li><a href="#repositories-views-and-indices"><span class="tn">06</span> Repositories, views and indices</a></li>
+<li><a href="#revisions"><span class="tn">07</span> Revisions</a></li>
+<li><a href="#long-operations"><span class="tn">08</span> Long operations</a></li>
+<li><a href="#federation"><span class="tn">09</span> Federation</a></li>
+<li><a href="#the-public-service"><span class="tn">10</span> The public service</a></li>
+<li><a href="#where-the-details-are"><span class="tn">11</span> Where the details are</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="the-endpoints">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">the endpoints</div></div>
+<div class="content">
+<h2>The endpoints</h2>
+<p>Every URL begins with the account name, and repositories hang directly off it.
+For the account <code class="docutils literal notranslate"><span class="pre">me</span></code> and the repository <code class="docutils literal notranslate"><span class="pre">foaf</span></code>:</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>URL</p></th>
+<th class="head"><p>what it is</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/me/foaf/sparql</span></code></p></td>
+<td><p>SPARQL 1.1 Protocol: query and update</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/me/foaf/service</span></code></p></td>
+<td><p>SPARQL 1.1 Graph Store Protocol: bulk read and write</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/me/foaf/&lt;view&gt;</span></code></p></td>
+<td><p>a saved query, addressed by name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/system/accounts/me/repositories</span></code></p></td>
+<td><p>the account’s repositories: create, list, delete</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">/system/accounts/me/repositories/foaf</span></code></p></td>
+<td><p>one repository: its metadata and configuration</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">/me/repositories/foaf/statements</span></code></p></td>
+<td><p>the Sesame-compatible interface, for clients which speak it</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>All of them are under <code class="docutils literal notranslate"><span class="pre">https://dydra.com</span></code>. The first two are standards –
+any SPARQL client can use them without knowing anything about Dydra. The third
+group is ours, and is where accounts, repositories, views and indices are
+administered.</p>
+</div>
+</section>
+<section class="section heavy" id="authenticating">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">authenticating</div></div>
+<div class="content">
+<h2>Authenticating</h2>
+<p>A token in an <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header, or a user name and password by HTTP
+basic authentication. Reading a public repository needs neither. See
+<a class="reference external" href="../getting-started/index.html">Getting started</a> for where the token comes
+from, and the <em>Service Access Authorization</em> part of the reference for how
+access is decided once you are identified.</p>
+</div>
+</section>
+<section class="section heavy" id="sending-and-receiving-rdf">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">sending and receiving</div></div>
+<div class="content">
+<h2>Sending and receiving RDF</h2>
+<p>The Graph Store endpoint moves whole graphs. <code class="docutils literal notranslate"><span class="pre">PUT</span></code> replaces, <code class="docutils literal notranslate"><span class="pre">POST</span></code> adds,
+<code class="docutils literal notranslate"><span class="pre">PATCH</span></code> modifies, <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> clears, <code class="docutils literal notranslate"><span class="pre">GET</span></code> exports:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://dydra.com/me/foaf/service \
+    -H &#39;Content-Type: text/turtle&#39; \
+    -H &#39;Content-Encoding: gzip&#39; \
+    --data-binary @foaf.ttl.gz
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Which serialisation</strong> is stated by <code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> going in and asked for
+by <code class="docutils literal notranslate"><span class="pre">Accept</span></code> coming out. Turtle, N-Triples, N-Quads, TriG, RDF/XML and
+JSON-LD are all understood. The old media type <code class="docutils literal notranslate"><span class="pre">application/x-turtle</span></code> is
+not one of them; use <code class="docutils literal notranslate"><span class="pre">text/turtle</span></code>.</p></li>
+<li><p><strong>Which graph</strong> is named by a <code class="docutils literal notranslate"><span class="pre">graph=</span></code> query argument or a <code class="docutils literal notranslate"><span class="pre">Graph</span></code>
+header. Without one, the operation applies to the default graph, or to the
+whole repository for <code class="docutils literal notranslate"><span class="pre">DELETE</span></code>.</p></li>
+<li><p><strong>How large.</strong> 128 MB per request: the compressed size for a synchronous
+request, the content size for an asynchronous one. Compress the body and say
+so; split what is bigger, or hand the service a URL and let it fetch.</p></li>
+<li><p><strong>Which revision</strong>, for a <code class="docutils literal notranslate"><span class="pre">GET</span></code>: a <code class="docutils literal notranslate"><span class="pre">revision-id</span></code> or <code class="docutils literal notranslate"><span class="pre">revision-window</span></code>
+argument reads the repository as it stood then.</p></li>
+</ul>
+<p>A <code class="docutils literal notranslate"><span class="pre">PATCH</span></code> may also carry <code class="docutils literal notranslate"><span class="pre">multipart/related</span></code>, each part modifying the
+repository according to its own <code class="docutils literal notranslate"><span class="pre">X-HTTP-Method-Override</span></code>, which is how a
+single request both deletes and inserts.</p>
+</div>
+</section>
+<section class="section heavy" id="querying">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">querying</div></div>
+<div class="content">
+<h2>Querying</h2>
+<p>The SPARQL endpoint takes a <code class="docutils literal notranslate"><span class="pre">query=</span></code> parameter, or <code class="docutils literal notranslate"><span class="pre">update=</span></code> to write,
+by <code class="docutils literal notranslate"><span class="pre">GET</span></code> or <code class="docutils literal notranslate"><span class="pre">POST</span></code>. Beyond that, the parameters worth knowing:</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 72%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>parameter</p></th>
+<th class="head"><p>what it does</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Accept</span></code> (header)</p></td>
+<td><p>the result format: SPARQL Results JSON or XML, or an RDF serialisation</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">revision-uuid</span></code></p></td>
+<td><p>evaluate against a past revision of the repository</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">revision-window</span></code></p></td>
+<td><p>evaluate over a window of revisions</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">$</span></code><em>variable</em><code class="docutils literal notranslate"><span class="pre">=</span></code></p></td>
+<td><p>bind a variable for this execution: a dynamic binding</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">limit</span></code>, <code class="docutils literal notranslate"><span class="pre">offset</span></code></p></td>
+<td><p>bound the solution sequence returned</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timeout</span></code></p></td>
+<td><p>bound the time spent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Client-Request-ID</span></code></p></td>
+<td><p>your own identifier, returned in the response</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The full list – and there are three dozen, covering entailment, describe
+forms, skolemization, provenance and the rest – is the <em>HTTP Request
+Parameters</em> chapter of the reference. Two things about all of them are worth
+knowing here:</p>
+<p><strong>Where a setting may be made.</strong> A parameter may be settable in the request, in
+the query text as a <code class="docutils literal notranslate"><span class="pre">PREFIX</span></code> declaration, or in the repository, account or
+system configuration. A request value beats the query text, which beats
+configuration; among configurations, repository beats account, which beats
+system. A limit is the exception: a more specific setting may only lower it,
+never raise it.</p>
+<p><strong>What a cached query remembers.</strong> The processor caches compiled queries, and
+some parameters are compiled in: the repository’s statistics, the dataset, the
+entailment ruleset, the federation mode, the base IRI, and the treatment of
+undefined variables. Changing one of those in a later request does not change
+the plan already compiled.</p>
+</div>
+</section>
+<section class="section heavy" id="namespace-prefixes">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">namespace prefixes</div></div>
+<div class="content">
+<h2>Namespace prefixes</h2>
+<p>Rather than repeat the same <code class="docutils literal notranslate"><span class="pre">PREFIX</span></code> lines in every query, declare them once.
+Prefixes are part of a repository’s configuration and of an account’s, and a
+core set is available everywhere:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://dydra.com/system/accounts/me/repositories/foaf \
+    -H &#39;Content-Type: application/json&#39; \
+    -d &#39;{&quot;prefixes&quot;: &quot;PREFIX ex: &lt;http://example.org/&gt;\n&quot;}&#39;
+</pre></div>
+</div>
+<p>The value is ordinary SPARQL prefix syntax, one declaration per line. Account
+prefixes apply to every repository in the account; repository prefixes apply to
+that repository and override the account’s; a <code class="docutils literal notranslate"><span class="pre">PREFIX</span></code> in the query text
+overrides both. In the web interface the same settings appear on the account
+and repository pages.</p>
+</div>
+</section>
+<section class="section heavy" id="repositories-views-and-indices">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">repositories, views</div></div>
+<div class="content">
+<h2>Repositories, views and indices</h2>
+<p>The management resources create and configure things. A repository is created
+by <code class="docutils literal notranslate"><span class="pre">POST</span></code> to the account’s repository collection, deleted by <code class="docutils literal notranslate"><span class="pre">DELETE</span></code>, and
+its metadata and configuration read and written by <code class="docutils literal notranslate"><span class="pre">GET</span></code> and <code class="docutils literal notranslate"><span class="pre">POST</span></code> on the
+repository itself. A repository’s class – <code class="docutils literal notranslate"><span class="pre">lmdb-repository</span></code>,
+<code class="docutils literal notranslate"><span class="pre">revisioned-lmdb-repository</span></code>, <code class="docutils literal notranslate"><span class="pre">hdt-repository</span></code>,
+<code class="docutils literal notranslate"><span class="pre">internal-view-repository</span></code> – is fixed when it is created.</p>
+<p>A <strong>view</strong> is a saved query with a name and, optionally, parameters. It is
+addressable like a repository resource, it can be called with bindings, and its
+results can be materialised into a repository of their own. A <strong>text index</strong> is
+created on demand when a query first addresses it, and refreshed by deleting
+it.</p>
+</div>
+</section>
+<section class="section heavy" id="revisions">
+<div class="rail"><div class="numeral">07</div><div class="vlabel">revisions</div></div>
+<div class="content">
+<h2>Revisions</h2>
+<p>Every write produces a revision, identified by the UUID of the transaction that
+made it. A response carries the revision it read in its <code class="docutils literal notranslate"><span class="pre">ETag</span></code>; a request
+carries the revision it wants in <code class="docutils literal notranslate"><span class="pre">revision-uuid</span></code>, or asks by time with
+<code class="docutils literal notranslate"><span class="pre">Accept-Datetime</span></code>. A repository also publishes a Memento timemap, so the
+list of states is discoverable rather than something you have to record.</p>
+<p>This is transaction time – when the store changed. It composes with valid
+time, the time your data is <em>about</em>, which is the subject of the <em>Temporal
+graphs and collated retrieval</em> manual.</p>
+</div>
+</section>
+<section class="section heavy" id="long-operations">
+<div class="rail"><div class="numeral">08</div><div class="vlabel">long operations</div></div>
+<div class="content">
+<h2>Long operations</h2>
+<p>An import or a large query need not be waited on. Send
+<code class="docutils literal notranslate"><span class="pre">Accept-Asynchronous</span></code> and the service replies immediately with a location to
+poll; the response headers <code class="docutils literal notranslate"><span class="pre">Asynchronous-Location</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Asynchronous-Content-Type</span></code> and <code class="docutils literal notranslate"><span class="pre">Asynchronous-Method</span></code> say where and how.
+The same machinery drives streaming results over WebSocket and MQTT, for which
+the reference has a part of its own.</p>
+</div>
+</section>
+<section class="section heavy" id="federation">
+<div class="rail"><div class="numeral">09</div><div class="vlabel">federation</div></div>
+<div class="content">
+<h2>Federation</h2>
+<p>A query may draw on more than its own repository. <strong>Internal</strong> federation runs
+the sub-query in the same processor against another repository here;
+<strong>external</strong> federation issues a request to a remote SPARQL endpoint and reads
+the results back into the plan; <strong>none</strong> switches it off. The mode is set by
+the <code class="docutils literal notranslate"><span class="pre">federation</span></code> parameter or in configuration.</p>
+<p>Either direction has to be authorized. A repository lists the origins it will
+accept references from – <code class="docutils literal notranslate"><span class="pre">authorized-client-locations</span></code> – and the services
+it may reference – <code class="docutils literal notranslate"><span class="pre">authorized-service-locations</span></code> – as access control
+entries in the account’s <code class="docutils literal notranslate"><span class="pre">system</span></code> repository.</p>
+</div>
+</section>
+<section class="section heavy" id="the-public-service">
+<div class="rail"><div class="numeral">10</div><div class="vlabel">the public service</div></div>
+<div class="content">
+<h2>The public service</h2>
+<p>The free service is for evaluation, and is deliberately bounded. At the time of
+writing:</p>
+<ul class="simple">
+<li><p>federation is disabled;</p></li>
+<li><p>the default graph of the default dataset is fixed to the repository’s own
+default graph;</p></li>
+<li><p>an undefined variable is an error, as is a non-standard vocabulary term;</p></li>
+<li><p>requests are rate limited, and repositories are expected to stay modest in
+size – on the order of a million statements.</p></li>
+</ul>
+<p>Dedicated servers have none of these bounds, and quality of service is
+provisioned per identity and class; the <em>Quality of Service Provisioning</em>
+chapter of the reference describes the mechanism. If a bound is in your way,
+the answer is a conversation rather than a workaround.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Limits are service policy, not protocol, and policy changes. Treat the
+figures above as the shape of the thing and confirm the current numbers
+before you design around them.</p>
+</div>
+</div>
+</section>
+<section class="section" id="where-the-details-are">
+<div class="rail"><div class="numeral">11</div><div class="vlabel">where the details are</div></div>
+<div class="content">
+<h2>Where the details are</h2>
+<p>The API reference is organised by protocol, and is the specification rather
+than the tour:</p>
+<ul class="simple">
+<li><p><em>SPARQL 1.1 Protocol Interface</em> – request parameters, response formats,
+federation, views, asynchronous processing.</p></li>
+<li><p><em>SPARQL 1.1 Graph Store HTTP Protocol</em> – the <code class="docutils literal notranslate"><span class="pre">service</span></code> endpoint, method by
+method, with its headers.</p></li>
+<li><p><em>Revisioning Interface</em> – revision designators, windows, and the metadata.</p></li>
+<li><p><em>Service Access Authorization</em> – identification, access modes, access
+control graphs.</p></li>
+<li><p><em>Administrative Resources</em> – accounts, repositories, views, indices, and
+quality of service.</p></li>
+<li><p>The <em>Glossary</em> names every request property in one place.</p></li>
+</ul>
+</div>
+</section>
+
+
+
+
+  <footer class="footer">
+    <div class="wm"><a href="#">dydra</a></div>
+    <div class="fl">Dydra manuals &middot; 2026-09-03<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

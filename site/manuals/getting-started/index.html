@@ -1,0 +1,284 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Getting started &#8212; Dydra manuals</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database · Triple Store · Manual</div>
+      <div class="wordmark"><a href="#">dydra</a></div>
+    </div>
+    <div class="meta">Manual<br>Getting started</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../index.html">Manuals</a>
+    <a class="cell" href="../../references/index.html">References</a>
+    <a class="cell" href="../../home/index.html">Home</a>
+    <span class="spacer"></span>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="getting-started">
+<div class="rail"><div class="vlabel">manual</div></div>
+<div class="content">
+<h1>Getting started</h1>
+<p>This guides you along the shortest path from nothing to an answer:
+from an account, to a
+repository, then some statements in it, and eventually a query over them.
+It takes a few
+minutes. Everything here can be done in a browser or over HTTP, and both are
+shown, because most people start with the first and arrive at the second.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#an-account"><span class="tn">01</span> An account</a></li>
+<li><a href="#authentication"><span class="tn">02</span> Authentication</a></li>
+<li><a href="#a-repository"><span class="tn">03</span> A repository</a></li>
+<li><a href="#statements-in-it"><span class="tn">04</span> Statements in it</a></li>
+<li><a href="#an-answer"><span class="tn">05</span> An answer</a></li>
+<li><a href="#where-to-go-from-here"><span class="tn">06</span> Where to go from here</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="an-account">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">an account</div></div>
+<div class="content">
+<h2>An account</h2>
+<p>Accounts are created at <code class="docutils literal notranslate"><span class="pre">https://dydra.com</span></code>. The public service is free:
+create an account, make repositories, and query them at no cost.</p>
+<p>An account name is the first segment of every URL you will use afterwards. A
+repository belonging to the account <code class="docutils literal notranslate"><span class="pre">me</span></code> and named <code class="docutils literal notranslate"><span class="pre">foaf</span></code> is addressed as
+<code class="docutils literal notranslate"><span class="pre">https://dydra.com/me/foaf</span></code>, and its SPARQL endpoint is that URL with
+<code class="docutils literal notranslate"><span class="pre">/sparql</span></code> on the end. Nothing else needs to be configured for this to be
+true.</p>
+</div>
+</section>
+<section class="section heavy" id="authentication">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">authentication</div></div>
+<div class="content">
+<h2>Authentication</h2>
+<p>Reading a public repository needs no credentials. Everything else does, and
+there are three ways to present them.</p>
+<p><strong>A user name and password</strong>, by HTTP basic authentication. What the web
+interface uses when you sign in.</p>
+<p><strong>A token.</strong> Your account page carries an authentication token, which may be
+reset at any time – do that if it is ever exposed. A token is presented as
+an <code class="docutils literal notranslate"><span class="pre">Authorization</span></code> header with a bearer token:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Authorization: Bearer &lt;token&gt;
+</pre></div>
+</div>
+<p>or, where signing a request is inconvenient, as basic authentication with the
+token as the user name and an empty password. Prefer a token to a password in
+anything you automate: it is scoped to the account, it can be rotated without
+changing a password, and it will not appear in a shell history if you keep it
+in the environment.</p>
+<p><strong>Neither</strong>, for a repository which permits anonymous access.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requests are made over <code class="docutils literal notranslate"><span class="pre">https</span></code>. A token in a URL query string can
+become a token in a proxy log; send it in a header.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="a-repository">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">a repository</div></div>
+<div class="content">
+<h2>A repository</h2>
+<p>In the web user interface, the account page has a <strong>New Repository</strong> button: a name
+is all that is required. Over HTTP, a repository is created by posting to the
+account’s repository collection:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://dydra.com/system/accounts/me/repositories \
+    -u &#39;&lt;token&gt;:&#39; \
+    -H &#39;Content-Type: application/json&#39; \
+    -d &#39;{&quot;name&quot;: &quot;foaf&quot;, &quot;class&quot;: &quot;lmdb-repository&quot;}&#39;
+</pre></div>
+</div>
+<p>The body is a JSON object of repository settings. Two of them matter here:
+<code class="docutils literal notranslate"><span class="pre">name</span></code>, which is required, and <code class="docutils literal notranslate"><span class="pre">class</span></code>, which may be left out to take the
+default. The rest – <code class="docutils literal notranslate"><span class="pre">summary</span></code>, <code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">homepage</span></code>, <code class="docutils literal notranslate"><span class="pre">privacy</span></code>,
+<code class="docutils literal notranslate"><span class="pre">license</span></code> – can be set now or edited later.</p>
+<p>A repository’s <strong>class</strong> fixes what it can do, and cannot be changed
+afterwards:</p>
+<p>Most classes are the ordinary quad store with something added, and the name
+says which:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">revisioned-</span></code></dt><dd><p>keeps the history of every write, so a query may be addressed to a past
+revision.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">annotated-</span></code></dt><dd><p>opens three triple-term permutation indices alongside the quad indices,
+which is what makes quoted triples – RDF 1.2, SPARQL 1.2 – queryable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">wide-</span></code></dt><dd><p>uses 24-byte index keys and 48-bit term numbers, for a repository that must
+address more distinct terms than a 32-bit term number allows.</p>
+</dd>
+</dl>
+<p>They combine, and the concrete classes are the combinations that exist:</p>
+<div class="tablewrap">
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 60%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>class</p></th>
+<th class="head"><p>what it is for</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmdb-repository</span></code></p></td>
+<td><p>the default: a six-way index over the quads</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">revisioned-lmdb-repository</span></code></p></td>
+<td><p>the same, with history</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">annotated-lmdb-repository</span></code></p></td>
+<td><p>quoted triples</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">annotated-revisioned-lmdb-repository</span></code></p></td>
+<td><p>quoted triples, with history</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wide-lmdb-repository</span></code></p></td>
+<td><p>wide keys</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">wide-revisioned-lmdb-repository</span></code></p></td>
+<td><p>wide keys, with history</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wide-annotated-lmdb-repository</span></code></p></td>
+<td><p>wide keys and quoted triples</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">wide-annotated-revisioned-lmdb-repository</span></code></p></td>
+<td><p>all three</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">lmdb-replicable-repository</span></code></p></td>
+<td><p>revisions identified rather than numbered, so that copies can agree</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temporal-value-lmdb-repository</span></code></p></td>
+<td><p>a valid-time index over the predicates you declare</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hdt-repository</span></code></p></td>
+<td><p>a read-only store backed by an HDT document</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">internal-view-repository</span></code></p></td>
+<td><p>the materialised results of a view</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Take the default unless you know you want one of the others. If you expect to
+ask what the data looked like last Tuesday, take the revisioned class now:
+history cannot be added to a repository after the fact.</p>
+<p>The last four are for particular jobs rather than general use.</p>
+<p>A <strong>replicable</strong> repository differs from a revisioned one in how a revision is
+named. A revisioned repository numbers its revisions with ordinals, which are
+private to the store, so two copies of the same data will not agree about them.
+A replicable repository identifies each revision instead, so a revision means
+the same thing wherever it is read – which is what lets one repository
+propagate its writes to another, at a replica location alongside the SPARQL
+endpoint, ending in <code class="docutils literal notranslate"><span class="pre">replica</span></code>.</p>
+<p>A <strong>temporal-value</strong> repository indexes the valid time your data carries: the
+timestamps on predicates you have declared, indexed so that a time-bounded
+<code class="docutils literal notranslate"><span class="pre">FILTER</span></code> becomes a bounded index scan rather than a pass over the graph. This
+is the class the <em>Temporal graphs and collated retrieval</em> manual builds on, and
+that manual is the place to read about it.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A class cannot be changed after the repository is created, and each of these
+costs something – space for the extra indices, write throughput for the
+revision records. Choose deliberately, and take <code class="docutils literal notranslate"><span class="pre">lmdb-repository</span></code> when
+nothing here applies.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="statements-in-it">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">statements in it</div></div>
+<div class="content">
+<h2>Statements in it</h2>
+<p>Data goes in through the Graph Store protocol. <code class="docutils literal notranslate"><span class="pre">PUT</span></code> replaces the
+repository’s contents, <code class="docutils literal notranslate"><span class="pre">POST</span></code> adds to them:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl -X POST https://dydra.com/me/foaf/service \
+    -u &#39;&lt;token&gt;:&#39; \
+    -H &#39;Content-Type: text/turtle&#39; \
+    --data-binary @foaf.ttl
+</pre></div>
+</div>
+<p>Turtle, N-Triples, N-Quads, TriG, RDF/XML and JSON-LD are all accepted; the
+<code class="docutils literal notranslate"><span class="pre">Content-Type</span></code> header says which one you are sending. A <code class="docutils literal notranslate"><span class="pre">graph=</span></code> query
+argument, or a <code class="docutils literal notranslate"><span class="pre">Graph</span></code> header, puts the statements in a named graph rather
+than the default one.</p>
+<p>The web user interface does the same thing from its <strong>Import</strong> button, from a local
+file or from a URL it fetches for you.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Upload content is limited to 128 MB per request. For a synchronous request
+that is the compressed size, so gzip the body and say
+<code class="docutils literal notranslate"><span class="pre">Content-Encoding:</span> <span class="pre">gzip</span></code>; for an asynchronous request it is the size of
+the data itself. Larger loads are made in several requests, or by pointing
+the service at a URL and letting it fetch.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="an-answer">
+<div class="rail"><div class="numeral">05</div><div class="vlabel">an answer</div></div>
+<div class="content">
+<h2>An answer</h2>
+<p>The endpoint is standard SPARQL 1.1 Protocol, which means every SPARQL client
+already knows how to talk to it, and so does <code class="docutils literal notranslate"><span class="pre">curl</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ curl https://dydra.com/me/foaf/sparql \
+    --data-urlencode &#39;query=SELECT (COUNT(*) AS ?n) WHERE { ?s ?p ?o }&#39; \
+    -H &#39;Accept: application/json&#39;
+
+[ { &quot;n&quot;: 631 } ]
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">Accept</span></code> chooses the response format: SPARQL Results in JSON or XML for
+<code class="docutils literal notranslate"><span class="pre">SELECT</span></code> and <code class="docutils literal notranslate"><span class="pre">ASK</span></code>, an RDF serialisation for <code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> and
+<code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code>. Update is the same endpoint with an <code class="docutils literal notranslate"><span class="pre">update=</span></code> parameter instead
+of <code class="docutils literal notranslate"><span class="pre">query=</span></code>.</p>
+<p>In the browser, a repository page has a query editor, and a query worth keeping
+can be saved as a <strong>view</strong> – a named, parameterised query which is itself
+addressable.</p>
+</div>
+</section>
+<section class="section" id="where-to-go-from-here">
+<div class="rail"><div class="numeral">06</div><div class="vlabel">where to go from here</div></div>
+<div class="content">
+<h2>Where to go from here</h2>
+<ul class="simple">
+<li><p>If the data model or the query language is unfamiliar:
+<a class="reference external" href="../rdf-and-sparql/index.html">RDF and SPARQL</a>.</p></li>
+<li><p>To drive the service from a program – every endpoint, every parameter, the
+prefixes, the limits: <a class="reference external" href="../working-over-http/index.html">Working over HTTP</a>.</p></li>
+<li><p>To do all of this in the browser instead: the <em>Dydra Studio</em> manual.</p></li>
+<li><p>For the exact specification of any request: the API reference.</p></li>
+</ul>
+</div>
+</section>
+
+
+
+
+  <footer class="footer">
+    <div class="wm"><a href="#">dydra</a></div>
+    <div class="fl">Dydra manuals &middot; 2026-09-03<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

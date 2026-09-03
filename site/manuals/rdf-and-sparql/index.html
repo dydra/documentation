@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RDF and SPARQL &#8212; Dydra manuals</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css">
+    <link rel="stylesheet" href="_static/tschichold.css" type="text/css">
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script> 
+  </head>
+<body>
+<div class="container">
+
+  <header class="masthead">
+    <div>
+      <div class="eyebrow">Graph Database · Triple Store · Manual</div>
+      <div class="wordmark"><a href="#">dydra</a></div>
+    </div>
+    <div class="meta">Manual<br>RDF and SPARQL</div>
+  </header>
+
+  <nav class="band" aria-label="Parts">
+    <a class="cell" href="../index.html">Manuals</a>
+    <a class="cell" href="../../references/index.html">References</a>
+    <a class="cell" href="../../home/index.html">Home</a>
+    <span class="spacer"></span>
+    <a class="cell strong" href="https://dydra.com">dydra.com</a>
+  </nav>
+
+
+
+  <section class="title" id="rdf-and-sparql">
+<div class="rail"><div class="vlabel">manual</div></div>
+<div class="content">
+<h1>RDF and SPARQL</h1>
+<p>Dydra stores RDF and answers SPARQL. Both are W3C standards, neither is ours,
+and that is the point: the data model and the query language are specified
+independently of any implementation, so what you write against Dydra you can
+read, move and re-run elsewhere. This manual is the short account of the two,
+for a reader who is about to use them rather than one studying them.</p>
+<nav class="toc" aria-label="Contents">
+<div class="toc-label">Contents</div>
+<ol class="toc-list">
+<li><a href="#statements"><span class="tn">01</span> Statements</a></li>
+<li><a href="#queries"><span class="tn">02</span> Queries</a></li>
+<li><a href="#what-dydra-adds"><span class="tn">03</span> What Dydra adds</a></li>
+<li><a href="#where-to-look-next"><span class="tn">04</span> Where to look next</a></li>
+</ol>
+</nav>
+</div>
+</section>
+<section class="section heavy" id="statements">
+<div class="rail"><div class="numeral">01</div><div class="vlabel">statements</div></div>
+<div class="content">
+<h2>Statements</h2>
+<p>RDF describes the world in <strong>statements</strong>, each one a subject, a predicate and
+an object. Nothing else. A statement asserts that some thing stands in some
+relation to some other thing:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;http://example.org/alice&gt;  &lt;http://xmlns.com/foaf/0.1/knows&gt;  &lt;http://example.org/bob&gt; .
+&lt;http://example.org/alice&gt;  &lt;http://xmlns.com/foaf/0.1/name&gt;   &quot;Alice&quot; .
+</pre></div>
+</div>
+<p>The first names a relation between two things. The second attaches a value to
+one of them. A set of statements is a <strong>graph</strong>, and because every subject and
+predicate is an IRI – a globally unique name – two graphs written by two
+parties who never met can be put side by side and will agree about whatever
+they both name.</p>
+<p>That is the whole model. There is no schema to declare first and migrate
+later, no table to widen, no column to add. A new kind of fact is a new
+predicate.</p>
+<div class="subsection" id="terms">
+<h3>Terms</h3>
+<p>Three kinds of thing appear in a statement:</p>
+<ul class="simple">
+<li><p>an <strong>IRI</strong>, naming something – a person, a document, a relation;</p></li>
+<li><p>a <strong>literal</strong>, a value: a string, a number, a date. A literal carries a
+datatype (<code class="docutils literal notranslate"><span class="pre">&quot;631&quot;^^xsd:integer</span></code>) or a language tag (<code class="docutils literal notranslate"><span class="pre">&quot;Alice&quot;&#64;en</span></code>);</p></li>
+<li><p>a <strong>blank node</strong>, standing for something which exists but is not named.</p></li>
+</ul>
+<p>Objects may be any of the three. Subjects may be IRIs or blank nodes.
+Predicates are always IRIs.</p>
+</div>
+<div class="subsection" id="serialisations">
+<h3>Serialisations</h3>
+<p>The model is one thing; writing it down is another. The same graph has many
+encodings, and Dydra reads and writes the ones in use:</p>
+<ul class="simple">
+<li><p><strong>N-Triples</strong> – one statement per line, as above. Verbose, and the easiest
+thing to generate and to stream.</p></li>
+<li><p><strong>Turtle</strong> – N-Triples with prefixes, abbreviation and nesting. What to
+write by hand.</p></li>
+<li><p><strong>N-Quads</strong> and <strong>TriG</strong> – the same two, extended with a fourth term naming
+the graph a statement belongs to.</p></li>
+<li><p><strong>RDF/XML</strong> and <strong>JSON-LD</strong> – for consumers which want XML or JSON.</p></li>
+</ul>
+<p>Which media type carries which is a matter for the protocols; see
+<a class="reference external" href="../working-over-http/index.html">Working over HTTP</a>.</p>
+</div>
+<div class="subsection" id="named-graphs">
+<h3>Named graphs</h3>
+<p>A repository holds more than one graph. Each statement may be attributed to a
+named graph, and a query may name the graphs it wants, so provenance,
+versioning by source, and per-graph access are all expressible without leaving
+the model. A statement plus its graph is a <strong>quad</strong>, which is why the
+serialisations come in pairs.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="queries">
+<div class="rail"><div class="numeral">02</div><div class="vlabel">queries</div></div>
+<div class="content">
+<h2>Queries</h2>
+<p>SPARQL asks for the statements which match a pattern. A pattern is a statement
+with variables in it:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+SELECT ?name WHERE {
+  ?person foaf:knows &lt;http://example.org/bob&gt; .
+  ?person foaf:name  ?name .
+}
+</pre></div>
+</div>
+<p>Two patterns sharing a variable are a join; the engine finds every assignment
+that satisfies both. Where SQL joins tables you have declared, SPARQL joins
+statements you have merely asserted, which is the practical difference between
+the two languages.</p>
+<div class="subsection" id="four-query-forms">
+<h3>Four query forms</h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">SELECT</span></code> returns a table of variable bindings.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> returns a graph, built from a template.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ASK</span></code> returns true or false.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code> returns the statements around a term. Which statements exactly
+is deliberately left to the implementation; Dydra’s rule is configurable, and
+is described under <em>describe form</em> in the reference.</p></li>
+</ul>
+</div>
+<div class="subsection" id="beyond-matching">
+<h3>Beyond matching</h3>
+<p>SPARQL 1.1 is a good deal more than pattern matching, and Dydra implements the
+specification rather than a subset:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">OPTIONAL</span></code>, <code class="docutils literal notranslate"><span class="pre">UNION</span></code>, <code class="docutils literal notranslate"><span class="pre">MINUS</span></code> and <code class="docutils literal notranslate"><span class="pre">FILTER</span></code> for shaping a result;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GROUP</span> <span class="pre">BY</span></code> with <code class="docutils literal notranslate"><span class="pre">COUNT</span></code>, <code class="docutils literal notranslate"><span class="pre">SUM</span></code>, <code class="docutils literal notranslate"><span class="pre">AVG</span></code> and the rest;</p></li>
+<li><p>property paths, so “a friend of a friend, to any depth” is
+<code class="docutils literal notranslate"><span class="pre">foaf:knows+</span></code> rather than a query per depth;</p></li>
+<li><p>subqueries, <code class="docutils literal notranslate"><span class="pre">VALUES</span></code>, <code class="docutils literal notranslate"><span class="pre">BIND</span></code>, and a function library;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">INSERT</span></code> and <code class="docutils literal notranslate"><span class="pre">DELETE</span></code> – <strong>update</strong> is part of the language, so a
+repository is written with the same language it is read with;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SERVICE</span></code>, which sends part of a query to another endpoint.</p></li>
+</ul>
+<p>Results come back as SPARQL Results in XML or JSON for <code class="docutils literal notranslate"><span class="pre">SELECT</span></code> and <code class="docutils literal notranslate"><span class="pre">ASK</span></code>,
+and as any RDF serialisation for <code class="docutils literal notranslate"><span class="pre">CONSTRUCT</span></code> and <code class="docutils literal notranslate"><span class="pre">DESCRIBE</span></code>.</p>
+</div>
+</div>
+</section>
+<section class="section heavy" id="what-dydra-adds">
+<div class="rail"><div class="numeral">03</div><div class="vlabel">what dydra adds</div></div>
+<div class="content">
+<h2>What Dydra adds</h2>
+<p>Dydra is a standards implementation first: a query which runs here should run
+anywhere, and the extensions are additions rather than dialect.</p>
+<p><strong>Revisions.</strong> Every write produces a new repository state, and a query may be
+addressed to a past one. Transaction time is a property of the store rather
+than something you model in your data.</p>
+<p><strong>Valid time.</strong> A repository may index the timestamps your data carries, so a
+window over the time your facts are <em>about</em> is an index range rather than a
+scan. See the <em>Temporal graphs and collated retrieval</em> manual.</p>
+<p><strong>Views.</strong> A query may be saved, named, given parameters and called – and its
+results may be materialised into a repository of their own.</p>
+<p><strong>Federation.</strong> <code class="docutils literal notranslate"><span class="pre">SERVICE</span></code> against another Dydra repository or a remote
+endpoint, subject to authorization on both ends.</p>
+<p><strong>RDF 1.2, early.</strong> A pre-alpha of quoted triples, which allow a statement to
+be the subject or object of another statement – saying something about a
+statement without reifying it by hand.</p>
+</div>
+</section>
+<section class="section" id="where-to-look-next">
+<div class="rail"><div class="numeral">04</div><div class="vlabel">where to look next</div></div>
+<div class="content">
+<h2>Where to look next</h2>
+<ul class="simple">
+<li><p>To get an account, a repository and a first answer:
+<a class="reference external" href="../getting-started/index.html">Getting started</a>.</p></li>
+<li><p>To drive the store from a program: <a class="reference external" href="../working-over-http/index.html">Working over HTTP</a>.</p></li>
+<li><p>For the exact grammar of a request, the parameters it takes and the shape of
+its response: the API reference.</p></li>
+<li><p>The specifications themselves are the final word: RDF 1.1 Concepts, SPARQL
+1.1 Query, SPARQL 1.1 Update, and SPARQL 1.1 Protocol, all at
+<code class="docutils literal notranslate"><span class="pre">https://www.w3.org/TR/</span></code>.</p></li>
+</ul>
+</div>
+</section>
+
+
+
+
+  <footer class="footer">
+    <div class="wm"><a href="#">dydra</a></div>
+    <div class="fl">Dydra manuals &middot; 2026-09-03<br>&copy; 2011-2026, Datagraph, GmbH</div>
+  </footer>
+
+</div>
+</body>
+</html>

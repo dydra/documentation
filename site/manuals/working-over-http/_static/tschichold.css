@@ -120,8 +120,6 @@ dl.footnote,dl.citation{ font-size:14px; }
 dl.footnote > dt,dl.citation > dt{ display:inline; margin-right:8px; }
 dl.footnote > dd,dl.citation > dd{ display:inline; margin:0; }
 
-kbd{ font-family:"Courier New",Courier,"Nimbus Mono",monospace; font-size:.85em;
-      border:1px solid var(--ink); padding:1px 5px; white-space:nowrap; }
 code,tt{ font-family:"Courier New",Courier,"Nimbus Mono",monospace; font-size:.92em; }
 code.literal{ white-space:nowrap; }
 a.reference{ text-decoration:none; border-bottom:1px solid var(--hair); }
@@ -216,48 +214,6 @@ input[type="submit"]:hover{ background:var(--paper); color:var(--ink);
 #search-results li{ border-bottom:1px solid var(--hair); padding:12px 0; }
 #search-results .context{ font-size:14px; color:var(--muted); }
 
-/* ------------------------------------- collection pages (landing, indexes) */
-
-.lede{ font-size:18px; line-height:1.5; max-width:62ch; margin:34px 0 0; }
-
-.cards{ display:grid; gap:1px; background:var(--ink); border:1px solid var(--ink);
-      margin:8px 0 0; }
-.cards.two{ grid-template-columns:repeat(2,1fr); }
-.cards.three{ grid-template-columns:repeat(3,1fr); }
-a.card{ background:var(--paper); padding:30px 28px 34px; text-decoration:none;
-      display:block; }
-a.card:hover{ background:var(--ink); color:var(--paper); opacity:1; }
-a.card .no{ font-size:34px; font-weight:300; line-height:.8; margin:0 0 24px; }
-a.card h3{ font-size:20px; font-weight:700; letter-spacing:-.02em; margin:0 0 14px;
-      border-bottom:3px solid currentColor; padding-bottom:10px; }
-a.card p{ font-size:15px; line-height:1.55; margin:0 0 20px; max-width:44ch; }
-a.card .go{ font-size:12px; font-weight:700; text-transform:uppercase;
-      letter-spacing:.2em; }
-
-.entries{ list-style:none; margin:8px 0 0; padding:0; max-width:900px;
-      border-top:1px solid var(--ink); }
-.entries li{ border-bottom:1px solid var(--ink); margin:0; }
-.entries a{ display:grid; grid-template-columns:3ch 1fr auto; gap:26px;
-      align-items:baseline; padding:22px 0; text-decoration:none; }
-.entries .tn{ font-weight:300; color:var(--muted); }
-.entries .et{ display:block; font-size:19px; font-weight:700; letter-spacing:-.01em; }
-.entries .eb{ display:block; font-size:15px; line-height:1.5; color:var(--muted);
-      margin:8px 0 0; max-width:70ch; }
-.entries .ed{ font-size:11px; text-transform:uppercase; letter-spacing:.2em;
-      color:var(--muted); white-space:nowrap; }
-
-/* ------------------------------------------------- generated API reference */
-
-h2.code,h3.code{ text-transform:none; letter-spacing:0;
-      font-family:"Courier New",Courier,"Nimbus Mono",monospace; }
-h2.code{ font-size:17px; font-weight:700; margin:0 0 22px; max-width:74ch; }
-.signature,.type-signature,.signature-attributes{ font-weight:400; }
-.signature-attributes{ font-size:.85em; color:var(--muted); }
-.type-signature,.param-type{ color:var(--muted); }
-pre.listing{ font-size:12px; line-height:1.55; max-height:none; }
-pre.listing span[id^="line"]{ display:block; }
-pre.listing span[id^="line"]:target{ background:var(--ink); color:var(--paper); }
-
 /* ------------------------------------------------------------------ footer */
 
 .footer{ border-top:7px solid var(--ink); padding:28px 56px; display:grid;
@@ -282,8 +238,6 @@ pre.listing span[id^="line"]:target{ background:var(--ink); color:var(--paper); 
   .vlabel{ writing-mode:horizontal-tb; transform:none; margin:0; }
   .title .content,.content{ padding:28px 24px 40px; }
   h1{ font-size:11vw; letter-spacing:-.03em; }
-  .cards.two,.cards.three{ grid-template-columns:1fr; }
-  .entries a{ grid-template-columns:1fr; gap:6px; }
   .footer{ grid-template-columns:1fr; padding:24px; }
   .footer .fl{ text-align:left; }
 }
