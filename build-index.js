@@ -260,13 +260,33 @@ function block(html, tag, cls) {
   return null;
 }
 
+/* The order the page already has. A listing that has been rearranged by hand
+   keeps its arrangement: entries are written in the order they appear now, and
+   anything new goes on the end. */
+function asArranged(html, items) {
+  const seen = [];
+  const re = /href="([^"#]*?)\/?index\.html"/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    const slug = m[1].replace(/^\.\//, '');
+    if (slug && !seen.includes(slug)) seen.push(slug);
+  }
+  const rank = (e) => {
+    const i = seen.indexOf(e.slug);
+    return i === -1 ? seen.length + items.indexOf(e) : i;
+  };
+  return items.slice().sort((a, b) => rank(a) - rank(b));
+}
+
 /* Rewrite just the listing of an existing page. */
 function relist(html, items) {
   const grid = block(html, 'div', 'cards');
   if (grid) {
+    /* the arrangement is the listing's own, not the navigation band's */
+    const arranged = asArranged(grid.inner, items);
     const open = grid.open.replace(/class=(["'])([^"']*)\1/i,
-      (m, q, v) => `class=${q}${columns(v, items.length)}${q}`);
-    const body = cards(items, grid.indent + 2);
+      (m, q, v) => `class=${q}${columns(v, arranged.length)}${q}`);
+    const body = cards(arranged, grid.indent + 2);
     return {
       page: html.slice(0, grid.start) + open + '\n' + body + '\n' +
             ' '.repeat(grid.indent) + html.slice(grid.end),
@@ -276,7 +296,7 @@ function relist(html, items) {
 
   const list = block(html, 'ul', 'entries');
   if (list) {
-    const body = entries(items, list.indent + 2);
+    const body = entries(asArranged(list.inner, items), list.indent + 2);
     return {
       page: html.slice(0, list.start) + list.open + '\n' + body + '\n' +
             ' '.repeat(list.indent) + html.slice(list.end),
@@ -339,7 +359,7 @@ function page(w, up, kinds, current, listing) {
   <header class="masthead">
     <div>
       <div class="eyebrow">${w.eyebrow}</div>
-      <div class="wordmark"><a href="${up}index.html">dydra</a></div>
+      <div class="wordmark"><a href="${up}index.html">dydra (1.2)</a></div>
     </div>
     <div class="meta">${w.meta}</div>
   </header>
@@ -366,8 +386,13 @@ ${listing}
   </section>
 
   <footer class="footer">
-    <div class="wm"><a href="${up}index.html">dydra</a></div>
+    <div class="wm"><a href="${up}index.html">dydra (1.2)</a></div>
     <div class="fl">${w.footer}</div>
+    <div class="disclaimer">
+      <p>This documentation describes a <strong>Dydra 1.2 preview</strong>: what is
+      written here is subject to change before release.</p>
+      <p class="service"><a href="https://dydra.com/login">Login</a><a href="https://dydra.com/signup">Sign up</a><a href="https://dydra.com/legal/terms_of_service">Legal</a></p>
+    </div>
   </footer>
 
 </div>

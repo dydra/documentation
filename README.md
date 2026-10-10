@@ -9,8 +9,14 @@ levels:
 
     site/
     ├── index.html
+    ├── home/
+    │   ├── index.html
     ├── manuals/
     │   ├── index.html
+    │   ├── getting-started
+    │   ├── mcp-and-score/
+    │   ├── rdf-and-sparql/
+    │   ├── studio/
     │   └── temporal-collated-retrieval/
     ├── references/
     │   ├── index.html

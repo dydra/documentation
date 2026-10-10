@@ -51,9 +51,19 @@ img{ max-width:100%; height:auto; }
 .title .content{ padding:56px 56px 54px 48px; }
 .chapno{ font-size:12px; text-transform:uppercase; letter-spacing:.3em; color:var(--muted);
       margin:0 0 18px; max-width:none; }
-h1{ font-size:62px; font-weight:700; line-height:.94; letter-spacing:-.035em; margin:0;
-      max-width:22ch; text-wrap:balance; }
-.title .content > h1 + p{ font-size:18px; line-height:1.5; max-width:62ch; margin:34px 0 18px; }
+h1{ font-size:36px; font-weight:700; line-height:1.04; letter-spacing:-.02em; margin:0;
+      max-width:34ch; text-wrap:balance; }
+/* A page's own heading is the one in its title block, whichever level it is
+   given: h1 for the sense of it, h2 where a generator wrote one, and both
+   set the same. Section headings keep the uppercase eyebrow treatment,
+   being inside .section rather than .title. */
+.title .content > h1,
+.title .content > h2{ font-size:36px; font-weight:700; line-height:1.04;
+      letter-spacing:-.02em; margin:0 0 4px; max-width:34ch;
+      text-transform:none; text-wrap:balance; }
+.title .content > h1 + p,
+.title .content > h2 + p{ font-size:18px; line-height:1.5; max-width:62ch;
+      margin:30px 0 18px; }
 
 .toc{ margin:44px 0 0; max-width:600px; }
 .toc-label{ font-size:11px; text-transform:uppercase; letter-spacing:.28em;
@@ -246,6 +256,18 @@ a.card .go{ font-size:12px; font-weight:700; text-transform:uppercase;
 .entries .ed{ font-size:11px; text-transform:uppercase; letter-spacing:.2em;
       color:var(--muted); white-space:nowrap; }
 
+/* ------------------------------------------------- generated API reference */
+
+h2.code,h3.code{ text-transform:none; letter-spacing:0;
+      font-family:"Courier New",Courier,"Nimbus Mono",monospace; }
+h2.code{ font-size:17px; font-weight:700; margin:0 0 22px; max-width:74ch; }
+.signature,.type-signature,.signature-attributes{ font-weight:400; }
+.signature-attributes{ font-size:.85em; color:var(--muted); }
+.type-signature,.param-type{ color:var(--muted); }
+pre.listing{ font-size:12px; line-height:1.55; max-height:none; }
+pre.listing span[id^="line"]{ display:block; }
+pre.listing span[id^="line"]:target{ background:var(--ink); color:var(--paper); }
+
 /* ------------------------------------------------------------------ footer */
 
 .footer{ border-top:7px solid var(--ink); padding:28px 56px; display:grid;
@@ -254,6 +276,16 @@ a.card .go{ font-size:12px; font-weight:700; text-transform:uppercase;
 .footer .wm a{ text-decoration:none; }
 .footer .fl{ font-size:12px; text-transform:uppercase; letter-spacing:.16em;
       text-align:right; line-height:1.9; }
+.footer .disclaimer{ grid-column:1 / -1; display:grid; grid-template-columns:1fr auto;
+      gap:24px; align-items:baseline; border-top:1px solid var(--hair);
+      margin-top:22px; padding-top:18px; }
+.footer .disclaimer p{ font-size:12px; line-height:1.5; margin:0; max-width:86ch;
+      color:var(--muted); }
+.footer .disclaimer .service{ display:flex; white-space:nowrap; }
+.footer .disclaimer .service a{ text-transform:uppercase; letter-spacing:.16em;
+      font-weight:700; color:var(--ink); text-decoration:none; padding:0 14px;
+      border-left:1px solid var(--ink); }
+.footer .disclaimer .service a:first-child{ padding-left:0; border-left:0; }
 
 /* -------------------------------------------------------------- responsive */
 
@@ -274,6 +306,8 @@ a.card .go{ font-size:12px; font-weight:700; text-transform:uppercase;
   .entries a{ grid-template-columns:1fr; gap:6px; }
   .footer{ grid-template-columns:1fr; padding:24px; }
   .footer .fl{ text-align:left; }
+  .footer .disclaimer{ grid-template-columns:1fr; }
+  .footer .disclaimer .service{ flex-wrap:wrap; }
 }
 
 @media print{
